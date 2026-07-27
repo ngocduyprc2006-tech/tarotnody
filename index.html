@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nody Tarot — Lắng Nghe Phép Màu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <svg width="0" height="0"><defs>
+  <radialGradient id="moonGrad" cx="35%" cy="35%" r="65%">
+    <stop offset="0%" stop-color="var(--bg-panel)"/>
+    <stop offset="55%" stop-color="var(--gold)"/>
+    <stop offset="100%" stop-color="var(--gold-soft)"/>
+  </radialGradient>
+</defs></svg>
+
+    <div id="sky"></div>
+    <div id="stars"></div>
+
+    <div class="app">
+        <header class="top">
+            <div class="brand">
+                <div class="moon-mark"></div><span>Nody&nbsp;Tarot</span></div>
+
+            <div class="header-actions">
+                <button id="themeToggle" class="ui-font theme-btn" title="Đổi giao diện">☀️</button>
+                <button class="reset-link ui-font" id="btnResetTop">Bắt đầu lại</button>
+            </div>
+        </header>
+
+        <main>
+            <!-- TOPIC SELECT SCREEN -->
+            <section class="screen active" id="screen-topic">
+                <div class="section-head">
+                    <h2>Or choose a topic.</h2>
+                </div>
+                <div class="topics-grid ui-font">
+                    <button class="topic-btn" onclick="selectTopic('Work')">WORK</button>
+                    <button class="topic-btn" onclick="selectTopic('Relationships')">RELATIONSHIPS</button>
+                    <button class="topic-btn" onclick="selectTopic('Life Changes')">LIFE CHANGES</button>
+                    <button class="topic-btn" onclick="selectTopic('Creativity')">CREATIVITY</button>
+                    <button class="topic-btn" onclick="selectTopic('Inner Magic')">INNER MAGIC</button>
+                    <button class="topic-btn" onclick="selectTopic('IDK')">IDK</button>
+                </div>
+                <div class="center-actions" style="margin-top: 36px;">
+                    <button class="btn-text ui-font" onclick="selectTopic('Tổng quan')">Skip theme</button>
+                </div>
+            </section>
+
+            <!-- INTRO -->
+            <section class="screen" id="screen-intro">
+                <div class="moon-dial"><svg viewBox="0 0 100 100">
+        <circle class="rim" cx="50" cy="50" r="47"/>
+        <circle class="core" cx="50" cy="50" r="30"/>
+      </svg></div>
+                <div class="intro-eyebrow ui-font">Chủ đề: <span id="display-topic" style="color: var(--gold);"></span></div>
+                <h1 class="intro-title">Lắng nghe phép màu<br>trong tâm trí bạn</h1>
+                <p class="intro-sub">Tĩnh tâm một phút, nghĩ về điều bạn đang trăn trở, rồi để bộ bài 78 lá dẫn lối cho bạn một góc nhìn mới.</p>
+                <button class="btn-primary" id="btnStart">Bắt đầu trải bài</button>
+            </section>
+
+            <!-- SPREAD SELECT -->
+            <section class="screen" id="screen-spread">
+                <div class="section-head">
+                    <div class="eyebrow ui-font">Bước một</div>
+                    <h2>Chọn kiểu trải bài</h2>
+                </div>
+                <div class="spreads" id="spreadList"></div>
+                <div class="question-wrap">
+                    <label class="ui-font" for="questionInput">Điều bạn muốn hỏi vũ trụ (không bắt buộc)</label>
+                    <textarea id="questionInput" placeholder="Ví dụ: Mình nên tập trung vào điều gì sắp tới?"></textarea>
+                </div>
+                <div class="center-actions">
+                    <button class="btn-ghost" id="btnBackIntro">Quay lại</button>
+                    <button class="btn-primary" id="btnToDeck">Tiếp tục</button>
+                </div>
+            </section>
+
+            <!-- DECK / SHUFFLE / DRAW -->
+            <section class="screen" id="screen-deck">
+                <div class="section-head">
+                    <div class="eyebrow ui-font">Bước hai</div>
+                    <h2 id="deckHeading">Xáo bài &amp; rút bài</h2>
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn-ghost shuffle-btn ui-font" id="btnShuffle">✨ Xáo bài</button>
+                    <div class="draw-progress ui-font" id="drawProgress"></div>
+                </div>
+                <div class="deck-stage">
+                    <div class="fanned-deck" id="fannedDeck"></div>
+                </div>
+                <p class="deck-hint">Nhắm mắt, hít thở sâu, rồi chạm vào từng lá để rút bài.</p>
+            </section>
+
+            <!-- READING TABLE -->
+            <section class="screen" id="screen-reading">
+                <div class="reading-head">
+                    <div class="eyebrow ui-font" style="text-align:center;color:var(--lavender);letter-spacing:.32em;font-size:.7rem;">Bước ba</div>
+                    <h2 style="text-align:center;color:var(--gold-soft);margin-top:10px;font-size:clamp(1.6rem,3.5vw,2.2rem);" id="readingHeading">Trải bài của bạn</h2>
+                </div>
+                <p class="reading-question" id="readingQuestion"></p>
+                <div class="table-area" id="tableArea"></div>
+
+                <div class="reveal-all-wrap">
+                    <button class="btn-ghost ui-font" id="btnRevealAll">Lật tất cả các lá</button>
+                </div>
+
+                <!-- BẢNG LUẬN GIẢI TỔNG QUAN -->
+                <div id="summaryBoard" class="summary-board">
+                    <h3 style="text-align: center; font-family: 'Cinzel', serif; color: var(--gold); margin-bottom: 20px;">✧ Bức Tranh Vũ Trụ ✧</h3>
+                    <div id="summaryContent"></div>
+                </div>
+
+                <div class="reading-actions">
+                    <button class="btn-primary" id="btnGetSummary" style="display: none; margin-bottom: 20px;">✨ Đọc thông điệp liên kết</button>
+                </div>
+                <div class="reading-actions">
+                    <button class="btn-ghost" id="btnNewSpread">Chọn kiểu trải khác</button>
+                    <button class="btn-primary" id="btnRestart">Trải bài mới</button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="foot">Nody Tarot · một không gian để bạn tự vấn mỗi ngày</footer>
+    </div>
+
+    <div id="overlay">
+        <div class="detail-panel">
+            <button class="detail-close" id="detailClose">✕</button>
+            <div class="detail-top">
+                <div class="detail-sigil" id="detailSigil"></div>
+                <div class="detail-header-info">
+                    <div class="pos ui-font" id="detailPos"></div>
+                    <h3 id="detailName"></h3>
+                    <div class="detail-orient" id="detailOrient"></div>
+                </div>
+            </div>
+
+            <div id="detailMeaning"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
