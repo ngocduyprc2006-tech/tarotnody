@@ -29,6 +29,8 @@
                 <div class="moon-mark"></div><span>Nody&nbsp;Tarot</span></div>
 
             <div class="header-actions">
+                <!-- ĐÃ THÊM NÚT ĐĂNG NHẬP Ở ĐÂY -->
+                <button id="btnLogin" class="ui-font topic-btn" style="padding: 8px 16px;">Đăng nhập Google</button>
                 <button id="themeToggle" class="ui-font theme-btn" title="Đổi giao diện">☀️</button>
                 <button class="reset-link ui-font" id="btnResetTop">Bắt đầu lại</button>
             </div>
@@ -145,6 +147,18 @@
             <div id="detailMeaning"></div>
         </div>
     </div>
+
+    <!-- ĐÃ THÊM CODE CẤU HÌNH FIREBASE Ở ĐÂY -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"; import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"; import {
+        getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Cấu hình từ Firebase của bạn const firebaseConfig = { apiKey: "AIzaSyBcQvVK1BLQ9EtffcQggLBLAbOJPZhBJTs", authDomain:
+        "nodytarot.firebaseapp.com", projectId: "nodytarot", storageBucket: "nodytarot.firebasestorage.app", messagingSenderId: "592759055543", appId: "1:592759055543:web:4dede040734856c9505932", measurementId: "G-91Q88CNMPJ" }; const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app); const db = getFirestore(app); const provider = new GoogleAuthProvider(); // Hàm Đăng nhập / Đăng xuất window.loginGoogle = async () => { try { await signInWithPopup(auth, provider); } catch (error) { console.error("Lỗi
+        đăng nhập:", error); } }; window.logoutGoogle = () => signOut(auth); // Lắng nghe trạng thái đăng nhập để đổi tên nút onAuthStateChanged(auth, (user) => { window.currentUser = user; const loginBtn = document.getElementById('btnLogin'); if (loginBtn)
+        { if (user) { loginBtn.textContent = `🔮 ${user.displayName}`; loginBtn.onclick = window.logoutGoogle; } else { loginBtn.textContent = "Đăng nhập Google"; loginBtn.onclick = window.loginGoogle; } } }); // Hàm lưu lịch sử trải bài window.saveTarotReading
+        = async (spreadData) => { if (!window.currentUser) return; try { await addDoc(collection(db, "readings"), { userId: window.currentUser.uid, userEmail: window.currentUser.email, topic: spreadData.topic, question: spreadData.question, spread: spreadData.spread,
+        drawnCards: spreadData.drawnCards.map(d => ({ name: d.card.name, isReversed: d.reversed })), createdAt: serverTimestamp() }); console.log("Đã lưu lịch sử vào Database!"); } catch (e) { console.error("Lỗi khi lưu bài:", e); } };
+    </script>
 
     <script src="script.js"></script>
 </body>
