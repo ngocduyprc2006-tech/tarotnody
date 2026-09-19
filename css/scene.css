@@ -1,0 +1,109 @@
+/* ============================================================
+   scene.css — bầu trời 3D nhiều lớp chạy nền mọi trang
+   ============================================================ */
+
+#scene {
+  position: fixed;
+  inset: -8%;
+  z-index: 0;
+  pointer-events: none;
+  perspective: 900px;
+  perspective-origin: 50% 45%;
+  transform-style: preserve-3d;
+}
+
+/* --- lớp trời --- */
+.sky {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 80% at 18% 8%,  rgba(52, 92, 190, .46), transparent 58%),
+    radial-gradient(100% 70% at 82% 18%, rgba(95, 180, 236, .16), transparent 55%),
+    radial-gradient(130% 90% at 50% 105%, rgba(111, 224, 214, .14), transparent 60%),
+    linear-gradient(175deg, var(--night) 0%, var(--void) 55%, #030612 100%);
+  transition: background var(--t-slow);
+}
+
+body.dawn .sky {
+  background:
+    radial-gradient(120% 80% at 18% 8%,  rgba(95, 180, 236, .18), transparent 58%),
+    radial-gradient(100% 70% at 82% 18%, rgba(31, 116, 184, .12), transparent 55%),
+    radial-gradient(130% 90% at 50% 105%, rgba(111, 224, 214, .14), transparent 60%),
+    linear-gradient(175deg, #f8fbff 0%, var(--void) 50%, #eef4fc 100%);
+}
+
+/* --- cực quang chậm --- */
+.aurora {
+  position: absolute;
+  width: 68vmax; height: 68vmax;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: .34;
+  mix-blend-mode: screen;
+  animation: drift 34s var(--ease) infinite alternate;
+}
+body.dawn .aurora { opacity: .28; mix-blend-mode: multiply; filter: blur(110px); }
+
+.aurora.a1 { left: -22vmax; top: -18vmax; background: radial-gradient(circle, var(--moon), transparent 64%); }
+.aurora.a2 { right: -24vmax; top: 24vmax; background: radial-gradient(circle, var(--blossom), transparent 64%); animation-delay: -12s; }
+.aurora.a3 { left: 28vmax; bottom: -30vmax; background: radial-gradient(circle, var(--mist), transparent 64%); animation-delay: -22s; }
+
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(5vmax, -4vmax, 0) scale(1.14); }
+}
+
+/* --- ba lớp sao, mỗi lớp lùi sâu hơn --- */
+.star-layer {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform .5s var(--ease);
+}
+.star-layer.l1 { transform: translateZ(-220px) scale(1.26); }
+.star-layer.l2 { transform: translateZ(-110px) scale(1.13); }
+.star-layer.l3 { transform: translateZ(0); }
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--star);
+  animation: twinkle 4s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: .18; transform: scale(.7); }
+  50%      { opacity: .95; transform: scale(1); }
+}
+
+/* sao băng thi thoảng lướt qua */
+.shooting {
+  position: absolute;
+  width: 140px; height: 1.4px;
+  background: linear-gradient(90deg, transparent, var(--star), transparent);
+  opacity: 0;
+  animation: shoot 1.5s var(--ease) forwards;
+}
+@keyframes shoot {
+  0%   { opacity: 0; transform: translate3d(0, 0, 0) rotate(18deg) scaleX(.2); }
+  14%  { opacity: .9; }
+  100% { opacity: 0; transform: translate3d(58vw, 34vh, 0) rotate(18deg) scaleX(1); }
+}
+
+/* --- cánh hoa / bụi sao rơi --- */
+.petal {
+  position: absolute;
+  top: -6vh;
+  border-radius: 60% 40% 55% 45%;
+  opacity: 0;
+  animation: fall linear infinite;
+}
+@keyframes fall {
+  0%   { opacity: 0; transform: translate3d(0, -6vh, 0) rotate(0deg); }
+  12%  { opacity: .55; }
+  88%  { opacity: .45; }
+  100% { opacity: 0; transform: translate3d(9vw, 108vh, 0) rotate(420deg); }
+}
+
+/* mọi nội dung nổi lên trên nền */
+.page { position: relative; z-index: 1; }

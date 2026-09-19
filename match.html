@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bói ghép đôi theo tên và ngày sinh — Nody Tarot</title>
+<meta name="description" content="Tính độ hợp của hai người từ cung hoàng đạo, số đường đời và duyên tên gọi.">
+<meta name="theme-color" content="#0a0714">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/scene.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/tarot.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+
+<body>
+<div class="page">
+  <header id="site-head"></header>
+  <main class="wrap section">
+    <div class="section-head center">
+      <h2>Hai người có hợp nhau không?</h2>
+      <p>Điểm số được ghép từ ba lớp: hành của hai cung, số đường đời, và một chút
+         duyên nằm trong chính hai cái tên.</p>
+    </div>
+
+    <div class="narrow panel lit">
+      <div class="pair-grid">
+        <div>
+          <div class="field">
+            <label for="mA">Người thứ nhất</label>
+            <input class="input" type="text" id="mA" placeholder="Tên của bạn">
+          </div>
+          <div class="field">
+            <label for="mADob">Ngày sinh</label>
+            <input class="input" type="date" id="mADob">
+          </div>
+        </div>
+        <div class="pair-heart">🌸</div>
+        <div>
+          <div class="field">
+            <label for="mB">Người thứ hai</label>
+            <input class="input" type="text" id="mB" placeholder="Tên người ấy">
+          </div>
+          <div class="field">
+            <label for="mBDob">Ngày sinh</label>
+            <input class="input" type="date" id="mBDob">
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-moon btn-block" id="btnMatch" style="margin-top:8px">Xem hai người hợp tới đâu</button>
+    </div>
+
+    <div class="narrow result hidden" id="matchResult">
+      <div id="matchBody"></div>
+    </div>
+  </main>
+  <footer id="site-foot"></footer>
+</div>
+
+<script type="module" src="js/firebase-init.js"></script>
+<script src="js/shell.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/data/lore.js"></script>
+<script src="js/match.js"></script>
+</body>
+</html>

@@ -1,166 +1,190 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nody Tarot — Lắng Nghe Phép Màu</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nody Tarot — Xem bói online dịu dàng cùng Cún Nody</title>
+<meta name="description" content="Trải bài Tarot, lá bài hôm nay, thần số học, chiêm tinh, ghép đôi và giải mã giấc mơ. Luận giải nhẹ nhàng để bạn hiểu mình hơn, không doạ ai bao giờ.">
+<meta name="theme-color" content="#0a0714">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Nody Tarot — Xem bói online dịu dàng cùng Cún Nody">
+<meta property="og:description" content="Trải bài Tarot, thần số học, chiêm tinh, giải mã giấc mơ. Một góc nhỏ để bạn ngồi xuống và thở một nhịp.">
+<meta property="og:locale" content="vi_VN">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/scene.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/tarot.css">
+<link rel="stylesheet" href="css/pages.css">
 </head>
 
 <body>
+<div class="page">
+  <header id="site-head"></header>
 
-    <svg width="0" height="0"><defs>
-  <radialGradient id="moonGrad" cx="35%" cy="35%" r="65%">
-    <stop offset="0%" stop-color="var(--bg-panel)"/>
-    <stop offset="55%" stop-color="var(--gold)"/>
-    <stop offset="100%" stop-color="var(--gold-soft)"/>
-  </radialGradient>
-</defs></svg>
-
-    <div id="sky"></div>
-    <div id="stars"></div>
-
-    <div class="app">
-        <header class="top">
-            <div class="brand">
-                <div class="moon-mark"></div><span>Nody&nbsp;Tarot</span></div>
-
-            <div class="header-actions">
-                <!-- ĐÃ THÊM NÚT ĐĂNG NHẬP Ở ĐÂY -->
-                <button id="btnLogin" class="ui-font topic-btn" style="padding: 8px 16px;">Đăng nhập Google</button>
-                <button id="themeToggle" class="ui-font theme-btn" title="Đổi giao diện">☀️</button>
-                <button class="reset-link ui-font" id="btnResetTop">Bắt đầu lại</button>
-            </div>
-        </header>
-
-        <main>
-            <!-- TOPIC SELECT SCREEN -->
-            <section class="screen active" id="screen-topic">
-                <div class="section-head">
-                    <h2>Or choose a topic.</h2>
-                </div>
-                <div class="topics-grid ui-font">
-                    <button class="topic-btn" onclick="selectTopic('Work')">WORK</button>
-                    <button class="topic-btn" onclick="selectTopic('Relationships')">RELATIONSHIPS</button>
-                    <button class="topic-btn" onclick="selectTopic('Life Changes')">LIFE CHANGES</button>
-                    <button class="topic-btn" onclick="selectTopic('Creativity')">CREATIVITY</button>
-                    <button class="topic-btn" onclick="selectTopic('Inner Magic')">INNER MAGIC</button>
-                    <button class="topic-btn" onclick="selectTopic('IDK')">IDK</button>
-                </div>
-                <div class="center-actions" style="margin-top: 36px;">
-                    <button class="btn-text ui-font" onclick="selectTopic('Tổng quan')">Skip theme</button>
-                </div>
-            </section>
-
-            <!-- INTRO -->
-            <section class="screen" id="screen-intro">
-                <div class="moon-dial"><svg viewBox="0 0 100 100">
-        <circle class="rim" cx="50" cy="50" r="47"/>
-        <circle class="core" cx="50" cy="50" r="30"/>
-      </svg></div>
-                <div class="intro-eyebrow ui-font">Chủ đề: <span id="display-topic" style="color: var(--gold);"></span></div>
-                <h1 class="intro-title">Lắng nghe phép màu<br>trong tâm trí bạn</h1>
-                <p class="intro-sub">Tĩnh tâm một phút, nghĩ về điều bạn đang trăn trở, rồi để bộ bài 78 lá dẫn lối cho bạn một góc nhìn mới.</p>
-                <button class="btn-primary" id="btnStart">Bắt đầu trải bài</button>
-            </section>
-
-            <!-- SPREAD SELECT -->
-            <section class="screen" id="screen-spread">
-                <div class="section-head">
-                    <div class="eyebrow ui-font">Bước một</div>
-                    <h2>Chọn kiểu trải bài</h2>
-                </div>
-                <div class="spreads" id="spreadList"></div>
-                <div class="question-wrap">
-                    <label class="ui-font" for="questionInput">Điều bạn muốn hỏi vũ trụ (không bắt buộc)</label>
-                    <textarea id="questionInput" placeholder="Ví dụ: Mình nên tập trung vào điều gì sắp tới?"></textarea>
-                </div>
-                <div class="center-actions">
-                    <button class="btn-ghost" id="btnBackIntro">Quay lại</button>
-                    <button class="btn-primary" id="btnToDeck">Tiếp tục</button>
-                </div>
-            </section>
-
-            <!-- DECK / SHUFFLE / DRAW -->
-            <section class="screen" id="screen-deck">
-                <div class="section-head">
-                    <div class="eyebrow ui-font">Bước hai</div>
-                    <h2 id="deckHeading">Xáo bài &amp; rút bài</h2>
-                </div>
-                <div style="text-align: center;">
-                    <button class="btn-ghost shuffle-btn ui-font" id="btnShuffle">✨ Xáo bài</button>
-                    <div class="draw-progress ui-font" id="drawProgress"></div>
-                </div>
-                <div class="deck-stage">
-                    <div class="fanned-deck" id="fannedDeck"></div>
-                </div>
-                <p class="deck-hint">Nhắm mắt, hít thở sâu, rồi chạm vào từng lá để rút bài.</p>
-            </section>
-
-            <!-- READING TABLE -->
-            <section class="screen" id="screen-reading">
-                <div class="reading-head">
-                    <div class="eyebrow ui-font" style="text-align:center;color:var(--lavender);letter-spacing:.32em;font-size:.7rem;">Bước ba</div>
-                    <h2 style="text-align:center;color:var(--gold-soft);margin-top:10px;font-size:clamp(1.6rem,3.5vw,2.2rem);" id="readingHeading">Trải bài của bạn</h2>
-                </div>
-                <p class="reading-question" id="readingQuestion"></p>
-                <div class="table-area" id="tableArea"></div>
-
-                <div class="reveal-all-wrap">
-                    <button class="btn-ghost ui-font" id="btnRevealAll">Lật tất cả các lá</button>
-                </div>
-
-                <!-- BẢNG LUẬN GIẢI TỔNG QUAN -->
-                <div id="summaryBoard" class="summary-board">
-                    <h3 style="text-align: center; font-family: 'Cinzel', serif; color: var(--gold); margin-bottom: 20px;">✧ Bức Tranh Vũ Trụ ✧</h3>
-                    <div id="summaryContent"></div>
-                </div>
-
-                <div class="reading-actions">
-                    <button class="btn-primary" id="btnGetSummary" style="display: none; margin-bottom: 20px;">✨ Đọc thông điệp liên kết</button>
-                </div>
-                <div class="reading-actions">
-                    <button class="btn-ghost" id="btnNewSpread">Chọn kiểu trải khác</button>
-                    <button class="btn-primary" id="btnRestart">Trải bài mới</button>
-                </div>
-            </section>
-        </main>
-
-        <footer class="foot">Nody Tarot · một không gian để bạn tự vấn mỗi ngày</footer>
-    </div>
-
-    <div id="overlay">
-        <div class="detail-panel">
-            <button class="detail-close" id="detailClose">✕</button>
-            <div class="detail-top">
-                <div class="detail-sigil" id="detailSigil"></div>
-                <div class="detail-header-info">
-                    <div class="pos ui-font" id="detailPos"></div>
-                    <h3 id="detailName"></h3>
-                    <div class="detail-orient" id="detailOrient"></div>
-                </div>
-            </div>
-
-            <div id="detailMeaning"></div>
+  <main>
+    <!-- ============ Khu mở đầu ============ -->
+    <section class="wrap hero">
+      <div class="hero-copy">
+        <h1>Ngồi xuống đây,<br>rút một lá <em>rồi hẵng đi tiếp</em></h1>
+        <p>
+          Nody Tarot là một góc nhỏ để bạn dừng lại giữa ngày, hỏi mình một câu thật
+          và nghe một câu trả lời dịu dàng. Cún Nody luận bài bằng giọng của một người
+          bạn ngồi cạnh, chứ không phải giọng của một lời phán.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-moon" href="tarot.html">Bắt đầu trải bài</a>
+          <a class="btn btn-ghost" href="daily.html">Lá bài hôm nay</a>
         </div>
-    </div>
+        <div class="hero-facts">
+          <span>trọn bộ 78 lá</span>
+          <span>6 kiểu trải bài</span>
+          <span>không cần tài khoản vẫn dùng được</span>
+        </div>
+      </div>
 
-    <!-- ĐÃ THÊM CODE CẤU HÌNH FIREBASE Ở ĐÂY -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"; import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"; import {
-        getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Cấu hình từ Firebase của bạn const firebaseConfig = { apiKey: "AIzaSyBcQvVK1BLQ9EtffcQggLBLAbOJPZhBJTs", authDomain:
-        "nodytarot.firebaseapp.com", projectId: "nodytarot", storageBucket: "nodytarot.firebasestorage.app", messagingSenderId: "592759055543", appId: "1:592759055543:web:4dede040734856c9505932", measurementId: "G-91Q88CNMPJ" }; const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app); const db = getFirestore(app); const provider = new GoogleAuthProvider(); // Hàm Đăng nhập / Đăng xuất window.loginGoogle = async () => { try { await signInWithPopup(auth, provider); } catch (error) { console.error("Lỗi
-        đăng nhập:", error); } }; window.logoutGoogle = () => signOut(auth); // Lắng nghe trạng thái đăng nhập để đổi tên nút onAuthStateChanged(auth, (user) => { window.currentUser = user; const loginBtn = document.getElementById('btnLogin'); if (loginBtn)
-        { if (user) { loginBtn.textContent = `🔮 ${user.displayName}`; loginBtn.onclick = window.logoutGoogle; } else { loginBtn.textContent = "Đăng nhập Google"; loginBtn.onclick = window.loginGoogle; } } }); // Hàm lưu lịch sử trải bài window.saveTarotReading
-        = async (spreadData) => { if (!window.currentUser) return; try { await addDoc(collection(db, "readings"), { userId: window.currentUser.uid, userEmail: window.currentUser.email, topic: spreadData.topic, question: spreadData.question, spread: spreadData.spread,
-        drawnCards: spreadData.drawnCards.map(d => ({ name: d.card.name, isReversed: d.reversed })), createdAt: serverTimestamp() }); console.log("Đã lưu lịch sử vào Database!"); } catch (e) { console.error("Lỗi khi lưu bài:", e); } };
-    </script>
+      <div class="hero-card-stage">
+        <div class="hero-card" id="heroCard"></div>
+      </div>
+    </section>
 
-    <script src="script.js"></script>
+    <!-- ============ Dải trăng ============ -->
+    <section class="wrap" data-reveal>
+      <div class="moon-panel" id="moonPanel"></div>
+    </section>
+
+    <!-- ============ Công cụ ============ -->
+    <section class="wrap section" id="kham-pha">
+      <div class="section-head">
+        <h2>Tám cách để hiểu mình hơn một chút</h2>
+        <p>
+          Mỗi công cụ làm một việc nhỏ. Bạn không cần dùng hết — chọn cái đang
+          đúng với tâm trạng hôm nay là được rồi.
+        </p>
+      </div>
+      <div id="homeTools" data-reveal></div>
+    </section>
+
+    <!-- ============ Cách dùng ============ -->
+    <section class="wrap section" data-reveal>
+      <div class="section-head">
+        <h2>Một lượt trải bài diễn ra thế nào</h2>
+      </div>
+      <div class="tool-grid">
+        <div class="panel">
+          <h3>Chọn chuyện bạn đang vướng</h3>
+          <p class="soft tiny">Công việc, tình cảm, một ngã rẽ, hay chỉ là chưa rõ. Chủ đề
+          quyết định giọng luận giải về sau.</p>
+        </div>
+        <div class="panel">
+          <h3>Chọn kiểu trải</h3>
+          <p class="soft tiny">Một lá cho câu hỏi gọn, ba lá cho dòng thời gian, mười lá khi
+          bạn muốn mổ xẻ tới nơi.</p>
+        </div>
+        <div class="panel">
+          <h3>Xáo và rút</h3>
+          <p class="soft tiny">Nhắm mắt, nghĩ về điều bạn đang vướng, rồi chạm vào lá nào
+          gọi bạn. Không có lá nào rút sai.</p>
+        </div>
+        <div class="panel">
+          <h3>Đọc và cất lại</h3>
+          <p class="soft tiny">Lật từng lá, đọc lời giải, rồi xem bản luận tổng. Đăng nhập
+          thì Cún cất giúp để sau này còn giở lại.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Cảm nhận ============ -->
+    <section class="section" data-reveal>
+      <div class="wrap section-head">
+        <h2>Người ghé qua nói gì</h2>
+      </div>
+      <div class="voices">
+        <div class="voices-track">
+          <div class="voice"><p>Đọc xong tự nhiên thấy nhẹ. Không doạ, không phán, chỉ nói đúng chỗ mình đang rối.</p><cite>Thảo Linh</cite></div>
+          <div class="voice"><p>Thích nhất là phần luận tổng. Nó ghép các lá lại thành một mạch chứ không đọc rời từng lá.</p><cite>Minh Anh</cite></div>
+          <div class="voice"><p>Giao diện đẹp mà vẫn dễ dùng. Mẹ mình sáu mươi tuổi cũng tự rút được.</p><cite>Quang Huy</cite></div>
+          <div class="voice"><p>Sáng nào cũng vào rút một lá. Thành thói quen lúc nào không hay.</p><cite>Mỹ Duyên</cite></div>
+          <div class="voice"><p>Phần giải mã giấc mơ hợp lý bất ngờ. Câu hỏi gợi mở ở cuối mới là thứ đáng giá.</p><cite>Tuấn Kiệt</cite></div>
+          <div class="voice"><p>Lá bài quay 3D nhìn đã mắt thật sự. Mà vẫn mượt trên điện thoại cũ của mình.</p><cite>Bảo Trân</cite></div>
+          <div class="voice"><p>Đọc xong tự nhiên thấy nhẹ. Không doạ, không phán, chỉ nói đúng chỗ mình đang rối.</p><cite>Thảo Linh</cite></div>
+          <div class="voice"><p>Thích nhất là phần luận tổng. Nó ghép các lá lại thành một mạch chứ không đọc rời từng lá.</p><cite>Minh Anh</cite></div>
+          <div class="voice"><p>Giao diện đẹp mà vẫn dễ dùng. Mẹ mình sáu mươi tuổi cũng tự rút được.</p><cite>Quang Huy</cite></div>
+          <div class="voice"><p>Sáng nào cũng vào rút một lá. Thành thói quen lúc nào không hay.</p><cite>Mỹ Duyên</cite></div>
+          <div class="voice"><p>Phần giải mã giấc mơ hợp lý bất ngờ. Câu hỏi gợi mở ở cuối mới là thứ đáng giá.</p><cite>Tuấn Kiệt</cite></div>
+          <div class="voice"><p>Lá bài quay 3D nhìn đã mắt thật sự. Mà vẫn mượt trên điện thoại cũ của mình.</p><cite>Bảo Trân</cite></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Câu hỏi hay gặp ============ -->
+    <section class="narrow section faq" data-reveal>
+      <div class="section-head">
+        <h2>Câu hỏi hay gặp</h2>
+      </div>
+
+      <details open>
+        <summary>Dùng Nody Tarot có mất phí không?</summary>
+        <p>Không. Toàn bộ công cụ trên web đều dùng được miễn phí, không giới hạn số lượt.
+        Tài khoản chỉ để lưu lịch sử, không phải để mở khoá tính năng.</p>
+      </details>
+
+      <details>
+        <summary>Không đăng nhập thì có rút bài được không?</summary>
+        <p>Được hết. Đăng nhập chỉ thêm một việc: Cún cất giúp các lượt bạn đã xem, để sau này
+        bạn mở lại trên máy khác vẫn thấy.</p>
+      </details>
+
+      <details>
+        <summary>Lá bài được rút ngẫu nhiên thật hay có sắp xếp?</summary>
+        <p>Ngẫu nhiên thật. Riêng "lá bài hôm nay" thì cố định theo ngày — cùng một ngày
+        bạn tải lại bao nhiêu lần cũng ra cùng một lá, để không ai rút lại tới khi vừa ý.</p>
+      </details>
+
+      <details>
+        <summary>Rút ra lá xấu thì có sao không?</summary>
+        <p>Không có lá xấu. Những lá nghe đáng sợ như Tòa Tháp hay Cái Chết thường chỉ đang nói
+        về một kết thúc cần thiết. Cún viết lời giải theo hướng giúp bạn hiểu mình, không doạ bạn.</p>
+      </details>
+
+      <details>
+        <summary>Tarot có đoán đúng tương lai không?</summary>
+        <p>Tarot không phải công cụ tiên tri, và Nody Tarot cũng không hứa điều đó. Nó là một tấm
+        gương: giúp bạn gọi tên thứ mình đang cảm thấy, rồi tự quyết định. Các vấn đề về sức khoẻ,
+        pháp lý hay tài chính, bạn vẫn nên hỏi người có chuyên môn.</p>
+      </details>
+
+      <details>
+        <summary>Dữ liệu của tôi được lưu ở đâu?</summary>
+        <p>Trên Firebase của chính chủ web, gắn với tài khoản bạn đăng nhập. Bạn xoá được từng lượt
+        bất cứ lúc nào trong mục Lịch sử.</p>
+      </details>
+    </section>
+
+    <!-- ============ Lời mời cuối ============ -->
+    <section class="narrow section center" data-reveal>
+      <h2>Hôm nay bạn đang vướng chuyện gì?</h2>
+      <p class="soft">Kể cho Cún nghe bằng cách rút một lá. Mất chừng hai phút thôi.</p>
+      <div class="hero-cta" style="justify-content:center">
+        <a class="btn btn-moon" href="tarot.html">Trải bài ngay</a>
+        <button class="btn btn-ghost" id="btnHomeAuth">Tạo tài khoản</button>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-foot"></footer>
+</div>
+
+<script type="module" src="js/firebase-init.js"></script>
+<script src="js/shell.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/data/deck.js"></script>
+<script src="js/home.js"></script>
 </body>
-
 </html>

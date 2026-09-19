@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chiêm tinh & cung hoàng đạo hôm nay — Nody Tarot</title>
+<meta name="description" content="Tra cung hoàng đạo từ ngày sinh và xem thời tiết tâm trạng hôm nay theo pha trăng.">
+<meta name="theme-color" content="#0a0714">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/scene.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/tarot.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+
+<body>
+<div class="page">
+  <header id="site-head"></header>
+  <main class="wrap section">
+    <div class="section-head center">
+      <h2>Cung hoàng đạo và hôm nay của bạn</h2>
+      <p>Chiêm tinh mô tả thời tiết chứ không quyết định bạn đi đâu. Xem để mang ô
+         cho đúng, vậy thôi.</p>
+    </div>
+
+    <div class="narrow panel lit" style="margin-bottom:34px">
+      <div class="field">
+        <label for="signDob">Nhập ngày sinh để Cún tra cung giúp bạn</label>
+        <input class="input" type="date" id="signDob">
+      </div>
+      <button class="btn btn-moon btn-block" id="btnFindSign">Tra cung của tôi</button>
+    </div>
+
+    <h3 class="group-title center">Hoặc chọn thẳng cung bạn biết</h3>
+    <div class="tool-grid" id="signGrid"></div>
+
+    <div class="narrow result hidden" id="signResult">
+      <div id="signBody"></div>
+    </div>
+  </main>
+  <footer id="site-foot"></footer>
+</div>
+
+<script type="module" src="js/firebase-init.js"></script>
+<script src="js/shell.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/data/lore.js"></script>
+<script src="js/horoscope.js"></script>
+</body>
+</html>

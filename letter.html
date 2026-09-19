@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thư gửi mai sau — Nody Tarot</title>
+<meta name="description" content="Viết một lá thư cho chính bạn ở tương lai. Cún giữ kín cho tới đúng ngày bạn hẹn.">
+<meta name="theme-color" content="#0a0714">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/scene.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/tarot.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+
+<body>
+<div class="page">
+  <header id="site-head"></header>
+  <main class="wrap section">
+    <div class="section-head center">
+      <h2>Viết cho chính bạn của mai sau</h2>
+      <p>Hẹn một ngày, viết vài dòng, rồi quên nó đi. Đến hẹn, mở ra đọc lại xem
+         bạn của hôm nay đã nói gì.</p>
+    </div>
+
+    <div class="narrow panel lit">
+      <div class="letter-paper" style="margin-bottom:18px">
+        <textarea class="textarea" id="letterBody"
+          placeholder="Gửi mình của một năm nữa,&#10;&#10;Hôm nay mình đang..."></textarea>
+      </div>
+
+      <div class="field">
+        <label for="letterDate">Ngày mở thư</label>
+        <input class="input" type="date" id="letterDate">
+      </div>
+      <div class="chips" id="quickDates"></div>
+
+      <button class="btn btn-moon btn-block" id="btnSendLetter">Gửi cho mai sau</button>
+      <p class="tiny mute" style="margin:14px 0 0">Thư được cất trong tài khoản của bạn.
+         Trước ngày hẹn, ngay cả bạn mở lại cũng chỉ thấy đếm ngược.</p>
+    </div>
+
+    <h3 class="group-title" style="margin-top:44px">Hộp thư của bạn</h3>
+    <div class="narrow" id="letterList"></div>
+  </main>
+  <footer id="site-foot"></footer>
+</div>
+
+<script type="module" src="js/firebase-init.js"></script>
+<script src="js/shell.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/letter.js"></script>
+</body>
+</html>

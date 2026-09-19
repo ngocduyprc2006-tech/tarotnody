@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Giải mã giấc mơ — Nody Tarot</title>
+<meta name="description" content="Kể lại giấc mơ của bạn, Cún Nody lật sổ tay biểu tượng và rút thêm một lá bài gợi ý.">
+<meta name="theme-color" content="#0a0714">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/scene.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/tarot.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+
+<body>
+<div class="page">
+  <header id="site-head"></header>
+  <main class="wrap section">
+    <div class="section-head center">
+      <h2>Đêm qua bạn mơ thấy gì?</h2>
+      <p>Kể lại bằng lời của bạn, càng cụ thể càng tốt. Cún sẽ tìm những biểu tượng quen
+         trong sổ tay, rồi hỏi bạn vài câu để bạn tự dịch nốt phần còn lại.</p>
+    </div>
+
+    <div class="narrow panel lit">
+      <div class="field">
+        <label for="dreamText">Giấc mơ của bạn</label>
+        <textarea class="textarea" id="dreamText" style="min-height:150px"
+          placeholder="Đêm qua mình mơ thấy đang đi trên một con đường lạ, trời tối, và mình cứ tìm mãi không thấy nhà..."></textarea>
+      </div>
+
+      <p class="tiny mute" style="margin-bottom:8px">Chưa biết bắt đầu từ đâu? Bấm vào một biểu tượng:</p>
+      <div class="chips" id="dreamHints"></div>
+
+      <button class="btn btn-moon btn-block" id="btnDream">Giải giúp mình</button>
+    </div>
+
+    <div class="narrow result hidden" id="dreamResult">
+      <div id="dreamBody"></div>
+    </div>
+  </main>
+  <footer id="site-foot"></footer>
+</div>
+
+<script type="module" src="js/firebase-init.js"></script>
+<script src="js/shell.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/data/deck.js"></script>
+<script src="js/data/dreams.js"></script>
+<script src="js/dream.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Không tìm thấy trang — Nody Tarot</title>
+<meta name="theme-color" content="#0a0714">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/scene.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+
+<body>
+<div class="page">
+  <header id="site-head"></header>
+
+  <main class="wrap">
+    <div class="oops">
+      <div id="pupHere"></div>
+      <h1 style="font-size:clamp(1.8rem,5vw,2.8rem)">Cún tìm mãi mà không thấy trang này</h1>
+      <p class="soft" style="margin:14px auto 26px">
+        Có thể đường dẫn bị gõ nhầm một chữ, hoặc trang đã được dọn đi.
+        Bạn quay về nhà rồi bắt đầu lại nhé.
+      </p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-moon" href="index.html">Về trang chủ</a>
+        <a class="btn btn-ghost" href="tarot.html">Trải một lá bài</a>
+      </div>
+    </div>
+  </main>
+
+  <footer id="site-foot"></footer>
+</div>
+
+<script src="js/shell.js"></script>
+<script src="js/scene.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('pupHere').innerHTML = window.Shell.pupSVG();
+  });
+</script>
+</body>
+</html>

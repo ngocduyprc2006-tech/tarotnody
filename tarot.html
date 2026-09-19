@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trải bài Tarot online — Nody Tarot</title>
+<meta name="description" content="Trải bài Tarot đầy đủ 78 lá với 6 kiểu trải: một lá, ba lá, hai ngả, tình cảm, công việc và Thập tự Celtic. Luận giải tiếng Việt dịu dàng.">
+<meta name="theme-color" content="#0a0714">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/scene.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/tarot.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+
+<body>
+<div class="page">
+  <header id="site-head"></header>
+
+  <main class="wrap section">
+
+    <div class="steps">
+      <span class="step on"><b>1</b>Chủ đề</span>
+      <span class="step"><b>2</b>Kiểu trải</span>
+      <span class="step"><b>3</b>Rút bài</span>
+      <span class="step"><b>4</b>Luận giải</span>
+    </div>
+
+    <!-- ============ Bước 1 ============ -->
+    <section class="stage on" id="stage-topic">
+      <div class="section-head center">
+        <h2>Hôm nay bạn muốn hỏi về chuyện gì?</h2>
+        <p>Chọn một chủ đề để Cún biết nên nói với bạn bằng giọng nào. Chưa rõ cũng không sao.</p>
+      </div>
+      <div class="tool-grid" id="topicGrid"></div>
+    </section>
+
+    <!-- ============ Bước 2 ============ -->
+    <section class="stage" id="stage-spread">
+      <div class="section-head center">
+        <h2>Chọn kiểu trải bài</h2>
+        <p>Bạn đang hỏi về <b id="spreadTopic" style="color:var(--moon)"></b>.
+           Càng nhiều lá thì càng nhiều góc nhìn, nhưng một lá cũng đủ cho một câu hỏi gọn.</p>
+      </div>
+
+      <div class="spread-list" id="spreadList"></div>
+
+      <div class="narrow" style="margin-top:34px">
+        <div class="field">
+          <label for="questionInput">Điều bạn muốn hỏi — không bắt buộc, nhưng viết ra thì bài sẽ trúng hơn</label>
+          <textarea class="textarea" id="questionInput"
+            placeholder="Ví dụ: Mình có nên nhận lời đề nghị công việc kia không?"></textarea>
+        </div>
+      </div>
+
+      <div class="center" style="margin-top:22px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-ghost" id="btnBackTopic">Quay lại</button>
+        <button class="btn btn-moon" id="btnToDeck">Tới bộ bài</button>
+      </div>
+    </section>
+
+    <!-- ============ Bước 3 ============ -->
+    <section class="stage" id="stage-deck">
+      <div class="section-head center">
+        <h2 id="deckTitle">Xáo bài rồi rút</h2>
+        <p id="drawHint">Nhắm mắt, nghĩ về điều bạn đang vướng, rồi chạm vào lá nào gọi bạn.</p>
+      </div>
+
+      <div class="center" style="display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" id="btnShuffle">Xáo lại bộ bài</button>
+        <span class="label-sm" id="drawCount"></span>
+      </div>
+
+      <div class="deck-stage">
+        <div class="fan" id="fan"></div>
+      </div>
+
+      <div class="center">
+        <button class="btn-quiet" id="btnBackSpread">Đổi kiểu trải</button>
+      </div>
+    </section>
+
+    <!-- ============ Bước 4 ============ -->
+    <section class="stage" id="stage-read">
+      <div class="section-head center">
+        <h2 id="readTitle"></h2>
+        <p class="poem" id="readQuestion"></p>
+        <p class="tiny mute">Chạm vào lá để lật. Chạm lần nữa để đọc kỹ từng lá.</p>
+      </div>
+
+      <div class="table" id="table"></div>
+
+      <div class="center" style="margin:10px 0 26px">
+        <button class="btn btn-ghost btn-sm" id="btnRevealAll">Lật hết các lá</button>
+      </div>
+
+      <div class="center">
+        <button class="btn btn-moon hidden" id="btnSynth">Đọc bản luận giải tổng</button>
+      </div>
+
+      <div class="narrow result hidden" id="synth">
+        <h3 class="center">Các lá nói gì khi đứng cạnh nhau</h3>
+        <div id="synthBody"></div>
+      </div>
+
+      <div class="center" style="margin-top:34px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-ghost" id="btnOtherSpread">Thử kiểu trải khác</button>
+        <button class="btn btn-moon" id="btnAgain">Trải một lượt mới</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer id="site-foot"></footer>
+</div>
+
+<!-- Bảng chi tiết một lá -->
+<div class="modal" id="detailModal">
+  <div class="modal-box wide" role="dialog" aria-modal="true" aria-label="Chi tiết lá bài">
+    <button class="modal-x" data-close>✕</button>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+<script type="module" src="js/firebase-init.js"></script>
+<script src="js/shell.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/data/deck.js"></script>
+<script src="js/data/spreads.js"></script>
+<script src="js/tarot.js"></script>
+</body>
+</html>

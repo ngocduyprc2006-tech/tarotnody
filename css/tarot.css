@@ -1,0 +1,303 @@
+/* ============================================================
+   tarot.css — bộ bài 3D: độ dày, ánh hologram, lật, bàn trải
+   Đây là chỗ "bạo tay" nhất của cả web. Mọi thứ khác giữ yên.
+   ============================================================ */
+
+/* ---------- Màn hình từng bước ---------- */
+.stage { display: none; }
+.stage.on { display: block; animation: riseIn .5s var(--ease); }
+
+/* ============================================================
+   1. Nan quạt bài — vòng cung 3D
+   ============================================================ */
+.deck-stage {
+  position: relative;
+  height: 330px;
+  margin: 30px 0 10px;
+  perspective: 1400px;
+  perspective-origin: 50% 40%;
+}
+
+.fan {
+  position: absolute;
+  left: 50%; bottom: 8px;
+  width: 0; height: 0;
+  transform-style: preserve-3d;
+}
+
+.fan-card {
+  position: absolute;
+  width: 78px; height: 132px;
+  margin-left: -39px;
+  bottom: 0;
+  transform-origin: 50% 128%;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  transition: transform .42s var(--ease), opacity .42s var(--ease), filter .2s;
+}
+@media (max-width: 620px) { .fan-card { width: 62px; height: 106px; margin-left: -31px; } .deck-stage { height: 280px; } }
+
+.fan-card:hover { filter: brightness(1.18); }
+.fan-card.taken { opacity: 0; pointer-events: none; }
+
+.card-back {
+  position: absolute; inset: 0;
+  border-radius: 7px;
+  background:
+    repeating-linear-gradient(45deg, rgba(95,180,236,.08) 0 5px, transparent 5px 10px),
+    linear-gradient(155deg, #16305e, #0a1224 62%, #123156);
+  border: 1px solid var(--card-edge);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .5), inset 0 0 22px rgba(95, 180, 236, .14);
+  display: grid; place-items: center;
+  overflow: hidden;
+}
+.card-back svg { width: 62%; opacity: .82; }
+
+/* ============================================================
+   2. Lá bài trên bàn — khối 3D có bề dày
+   ============================================================ */
+.table {
+  position: relative;
+  perspective: 1500px;
+  perspective-origin: 50% 42%;
+  margin: 8px auto 20px;
+  transition: height var(--t-mid);
+}
+
+.slot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  transform-style: preserve-3d;
+  text-align: center;
+}
+
+.slot .pos-label {
+  font-size: .72rem;
+  color: var(--ink-mute);
+  margin-bottom: 7px;
+  white-space: nowrap;
+}
+
+/* khung lật */
+.flip {
+  position: relative;
+  width: 112px; height: 190px;
+  margin: 0 auto;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  transition: transform .8s var(--ease);
+  will-change: transform;
+}
+@media (max-width: 720px) { .flip { width: 84px; height: 143px; } }
+
+.flip.turned { transform: rotateY(180deg); }
+.slot.crossed .flip { transform: rotate(90deg); }
+.slot.crossed .flip.turned { transform: rotate(90deg) rotateY(180deg); }
+
+.face {
+  position: absolute; inset: 0;
+  border-radius: 9px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, .55);
+}
+
+.face.rear {
+  background:
+    repeating-linear-gradient(45deg, rgba(95,180,236,.08) 0 6px, transparent 6px 12px),
+    linear-gradient(155deg, #183763, #0a1224 60%, #153560);
+  border: 1px solid var(--card-edge);
+  display: grid; place-items: center;
+}
+.face.rear svg { width: 58%; opacity: .85; }
+
+.face.front {
+  transform: rotateY(180deg);
+  background: var(--card-face);
+  border: 1px solid var(--card-edge);
+}
+.face.front img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform var(--t-mid);
+}
+.face.front img.upside { transform: rotate(180deg); }
+
+/* dải tên dưới chân lá */
+.card-strip {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 16px 7px 6px;
+  background: linear-gradient(transparent, rgba(10, 7, 20, .92) 45%);
+  color: #fff;
+}
+.card-strip .nm { font-family: 'Lora', serif; font-size: .72rem; line-height: 1.2; }
+.card-strip .or { font-size: .6rem; color: var(--moon); }
+.card-strip .or.rev { color: var(--blossom); }
+
+/* ánh hologram quét qua khi rê chuột */
+.face.front::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(115deg,
+    transparent 38%,
+    rgba(255, 255, 255, .4) 48%,
+    rgba(111, 224, 214, .32) 53%,
+    transparent 62%);
+  transform: translateX(-120%);
+  transition: transform .75s var(--ease);
+  pointer-events: none;
+}
+.flip.turned:hover .face.front::after { transform: translateX(120%); }
+
+/* hào quang khi lá còn úp */
+.flip:not(.turned)::before {
+  content: '';
+  position: absolute; inset: -14px;
+  border-radius: 18px;
+  background: radial-gradient(circle, rgba(95, 180, 236, .24), transparent 68%);
+  opacity: 0;
+  animation: breathe 3.4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes breathe { 0%, 100% { opacity: .25; } 50% { opacity: .75; } }
+
+/* lá bài hiện ra lần lượt */
+.slot { animation: dealIn .6s var(--ease) backwards; }
+@keyframes dealIn {
+  from { opacity: 0; transform: translate(-50%, -30%) scale(.86); }
+}
+
+/* ============================================================
+   3. Thẻ chọn kiểu trải bài
+   ============================================================ */
+.spread-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 13px;
+}
+
+.spread {
+  padding: 22px 20px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line-soft);
+  background: var(--panel);
+  text-align: left;
+  transform-style: preserve-3d;
+  transition: transform var(--t-mid), border-color var(--t-fast), box-shadow var(--t-mid);
+}
+.spread:hover { border-color: var(--line); }
+.spread.picked {
+  border-color: var(--moon);
+  box-shadow: 0 0 0 1px var(--moon), var(--glow);
+  background: color-mix(in srgb, var(--moon) 8%, var(--panel));
+}
+.spread .mini { display: flex; gap: 3px; height: 30px; margin-bottom: 13px; align-items: flex-end; }
+.spread .mini i {
+  display: block; width: 13px; height: 21px;
+  border-radius: 2px;
+  background: linear-gradient(160deg, var(--moon), var(--moon-deep));
+  opacity: .55;
+}
+.spread.picked .mini i { opacity: 1; }
+.spread h3 { font-size: 1.04rem; margin-bottom: 4px; }
+.spread p { font-size: .84rem; color: var(--ink-mute); margin: 0 0 10px; }
+.spread .n { font-size: .76rem; color: var(--moon); }
+
+/* ============================================================
+   4. Bảng chi tiết một lá
+   ============================================================ */
+.detail-top { display: flex; gap: 18px; align-items: flex-start; margin-bottom: 18px; flex-wrap: wrap; }
+.detail-img {
+  width: 108px; flex-shrink: 0;
+  border-radius: 9px;
+  overflow: hidden;
+  border: 1px solid var(--card-edge);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .45);
+}
+@media (max-width: 380px) { .detail-img { width: 92px; } }
+.detail-top h3 { color: var(--ink); margin: 4px 0 6px; }
+.detail-pos { font-size: .78rem; color: var(--moon); }
+.detail-or { font-size: .8rem; color: var(--sage); }
+.detail-or.rev { color: var(--blossom); }
+.detail-body p { font-size: .93rem; color: var(--ink-soft); }
+.detail-body h4 {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: .88rem; font-weight: 600;
+  color: var(--moon);
+  margin: 18px 0 7px;
+}
+
+/* ============================================================
+   5. Lá bài hôm nay (trang daily) — một lá lớn, xoay nhẹ
+   ============================================================ */
+.daily-stage { perspective: 1400px; display: grid; place-items: center; padding: 20px 0 10px; }
+.daily-card {
+  position: relative;
+  width: 210px; height: 356px;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  transition: transform 1s var(--ease);
+  animation: sway 7s ease-in-out infinite;
+}
+.daily-card.turned { transform: rotateY(180deg); animation: none; }
+@keyframes sway {
+  0%, 100% { transform: rotateY(-9deg) rotateX(4deg); }
+  50%      { transform: rotateY(9deg) rotateX(-3deg); }
+}
+@media (max-width: 480px) { .daily-card { width: 168px; height: 285px; } }
+
+.streak {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--moon) 10%, transparent);
+  font-size: .84rem;
+  color: var(--moon);
+}
+
+/* ============================================================
+   6. Vòng quay 3D
+   ============================================================ */
+.wheel-wrap { position: relative; display: grid; place-items: center; padding: 26px 0; perspective: 1100px; }
+.wheel {
+  width: min(84vw, 340px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  position: relative;
+  border: 6px solid var(--moon);
+  box-shadow: 0 0 0 10px color-mix(in srgb, var(--moon) 14%, transparent),
+              0 26px 60px rgba(0, 0, 0, .5);
+  transform: rotateX(16deg);
+  transition: transform 4.6s cubic-bezier(.13, .78, .18, 1);
+  overflow: hidden;
+}
+.wheel-hub {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 58px; height: 58px; border-radius: 50%;
+  background: var(--panel-solid);
+  border: 2px solid var(--moon);
+  display: grid; place-items: center;
+  z-index: 3;
+}
+.wheel-pin {
+  position: absolute; top: -2px; left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 13px solid transparent;
+  border-right: 13px solid transparent;
+  border-top: 26px solid var(--blossom);
+  z-index: 4;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, .5));
+}
+.wheel-label {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform-origin: 0 0;
+  font-size: .72rem;
+  color: #fff;
+  white-space: nowrap;
+  pointer-events: none;
+}

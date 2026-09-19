@@ -122,7 +122,7 @@ const RANKS = [
 function buildDeck() {
     const deck = [];
     const baseUrl = 'sacred-texts.com/tarot/pkt/img/';
-    const proxyUrl = 'https://wsrv.nl/?url='; // Proxy xịn nhất hiện nay
+    const proxyUrl = 'https://wsrv.nl/?url=';
 
     MAJORS.forEach((m, i) => {
         const code = 'ar' + i.toString().padStart(2, '0');
@@ -143,7 +143,6 @@ function buildDeck() {
         RANKS.forEach((r, ri) => {
             const nm = (r.label === 'A' || r.label === 'P' || r.label === 'K' || r.label === 'Q' || r.label === 'Vua') ? `${r.name} of ${s.name}` : `${r.name} of ${s.name}`;
 
-            // ĐÃ SỬA LỖI Ở ĐÂY: Lấy đúng 2 ký tự (wa, cu, sw, pe)
             const suitCode = s.key.substring(0, 2);
             const rankCode = (ri + 1).toString().padStart(2, '0');
             const imgPath = suitCode + rankCode + '.jpg';
@@ -199,8 +198,10 @@ function selectTopic(topicName) {
     showScreen('screen-intro');
 }
 
-document.getElementById('btnStart').onclick = () => { renderSpreadList();
-    showScreen('screen-spread'); };
+document.getElementById('btnStart').onclick = () => {
+    renderSpreadList();
+    showScreen('screen-spread');
+};
 document.getElementById('btnBackIntro').onclick = () => showScreen('screen-intro');
 document.getElementById('btnResetTop').onclick = restartAll;
 document.getElementById('btnRestart').onclick = restartAll;
@@ -222,8 +223,10 @@ function renderSpreadList() {
         el.innerHTML = `<div class="spread-icon">${sigilSVG(sp.count*7+3, 'var(--gold)')}</div>
       <h3>${sp.name}</h3><p>${sp.desc}</p>
       <span class="spread-count ui-font">${sp.count} lá bài</span>`;
-        el.onclick = () => { state.spread = sp.id;
-            renderSpreadList(); };
+        el.onclick = () => {
+            state.spread = sp.id;
+            renderSpreadList();
+        };
         wrap.appendChild(el);
     });
 }
@@ -259,8 +262,10 @@ function setupDeckScreen(sp) {
 }
 
 function shuffleArray(arr) {
-    for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]]; }
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
     return arr;
 }
 document.getElementById('btnShuffle').onclick = () => {
@@ -298,7 +303,7 @@ function drawFromDeck(el, sp) {
     }
 }
 
-/* ============ READING TABLE (ẢNH THẬT + LINK DỰ PHÒNG) ============ */
+/* ============ READING TABLE ============ */
 function buildReadingTable(sp) {
     document.getElementById('readingHeading').textContent = sp.name;
     document.getElementById('readingQuestion').textContent = state.question ? `“${state.question}”` : '';
@@ -318,7 +323,6 @@ function buildReadingTable(sp) {
         flipWrap.className = 'card-flip';
         if (pos.cross) flipWrap.style.transform = 'rotate(90deg)';
 
-        // CƠ CHẾ BACKUP ẢNH MỚI NHẤT
         const fallbackHTML = `if(this.dataset.tried==='1'){this.outerHTML='<div style=\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--gold-soft);color:#fff;border-radius:4px;font-weight:bold;font-size:0.8rem\\'>LỖI ẢNH</div>';}else{this.dataset.tried='1';this.src='${drawn.card.backupUrl}';}`;
 
         flipWrap.innerHTML = `
@@ -347,8 +351,10 @@ function buildReadingTable(sp) {
 document.getElementById('btnRevealAll').onclick = () => {
     document.querySelectorAll('.card-flip').forEach(f => f.classList.add('flipped'));
 };
-document.getElementById('btnNewSpread').onclick = () => { renderSpreadList();
-    showScreen('screen-spread'); };
+document.getElementById('btnNewSpread').onclick = () => {
+    renderSpreadList();
+    showScreen('screen-spread');
+};
 
 /* ============ LOGIC BẢNG LUẬN GIẢI CHI TIẾT ============ */
 document.getElementById('btnGetSummary').onclick = () => {
@@ -382,6 +388,11 @@ document.getElementById('btnGetSummary').onclick = () => {
     board.style.display = 'block';
     board.scrollIntoView({ behavior: "smooth", block: "nearest" });
     document.querySelectorAll('.card-flip').forEach(f => f.classList.add('flipped'));
+
+    // Đã liên kết gọi hàm lưu Database
+    if (window.saveTarotReading) {
+        window.saveTarotReading(state);
+    }
 };
 
 /* ============ DETAIL OVERLAY (Click từng lá) ============ */
@@ -389,7 +400,6 @@ function openDetail(drawn, posLabel) {
     document.getElementById('detailPos').textContent = posLabel;
     document.getElementById('detailName').textContent = drawn.card.name;
 
-    // CƠ CHẾ BACKUP TRONG DETAIL PANEL
     const fallbackHTML = `if(this.dataset.tried==='1'){this.outerHTML='<div style=\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--gold-soft);color:#fff;border-radius:8px;font-weight:bold;min-height:150px;\\'>LỖI ẢNH</div>';}else{this.dataset.tried='1';this.src='${drawn.card.backupUrl}';}`;
 
     document.getElementById('detailSigil').innerHTML = `<img src="${drawn.card.imgUrl}" class="${drawn.reversed ? 'reversed-img' : ''}" style="transition: transform 0.3s; ${drawn.reversed ? 'transform: rotate(180deg);' : ''}" onerror="${fallbackHTML}">`;

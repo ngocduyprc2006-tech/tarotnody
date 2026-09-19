@@ -1,0 +1,263 @@
+/* ============================================================
+   components.css — nút, ô nhập, thẻ, khối nội dung dùng lại
+   ============================================================ */
+
+/* ---------- Nút ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  padding: 13px 28px;
+  border-radius: 999px;
+  font-size: .94rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  transition: transform var(--t-fast), box-shadow var(--t-fast),
+              background var(--t-fast), border-color var(--t-fast);
+}
+.btn:active { transform: scale(.975); }
+.btn[disabled] { opacity: .45; pointer-events: none; }
+
+.btn-moon {
+  background: linear-gradient(135deg, var(--moon), var(--blossom));
+  color: #061024;
+  font-weight: 600;
+  box-shadow: 0 8px 26px rgba(95, 180, 236, .32);
+}
+.btn-moon:hover { transform: translateY(-2px); box-shadow: 0 14px 38px rgba(95, 180, 236, .45); }
+
+.btn-ghost {
+  border-color: var(--line);
+  background: var(--panel);
+  color: var(--ink);
+}
+.btn-ghost:hover { border-color: var(--moon); transform: translateY(-2px); }
+
+.btn-quiet { color: var(--ink-mute); padding: 10px 16px; }
+.btn-quiet:hover { color: var(--moon); }
+
+.btn-sm { padding: 9px 18px; font-size: .86rem; }
+.btn-block { width: 100%; }
+
+/* ---------- Ô nhập ---------- */
+.field { margin-bottom: 14px; }
+.field > label {
+  display: block;
+  font-size: .84rem;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+
+.input, .textarea, select.input {
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line-soft);
+  background: color-mix(in srgb, var(--dusk) 40%, transparent);
+  color: var(--ink);
+  transition: border-color var(--t-fast), background var(--t-fast);
+}
+.input::placeholder, .textarea::placeholder { color: var(--ink-mute); }
+.input:focus, .textarea:focus, select.input:focus {
+  outline: none;
+  border-color: var(--moon);
+  background: color-mix(in srgb, var(--dusk) 60%, transparent);
+}
+.textarea { min-height: 110px; resize: vertical; line-height: 1.6; }
+
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 560px) { .row-2 { grid-template-columns: 1fr; } }
+
+/* ---------- Khối / panel ---------- */
+.panel {
+  padding: 28px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line-soft);
+  background: var(--panel);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.panel.lit { border-color: var(--line); box-shadow: var(--glow); }
+
+/* ---------- Đầu mục ---------- */
+.section { padding-block: clamp(48px, 8vw, 88px); }
+.section-head { margin-bottom: 34px; }
+.section-head p { color: var(--ink-soft); margin-top: 10px; }
+.section-head .label-sm { display: block; margin-bottom: 8px; }
+
+/* ---------- Lưới thẻ công cụ ---------- */
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+  gap: 14px;
+}
+
+.tool {
+  position: relative;
+  display: block;
+  padding: 20px 20px 22px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line-soft);
+  background: var(--panel);
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition: transform var(--t-mid), border-color var(--t-fast), box-shadow var(--t-mid);
+}
+.tool:hover {
+  border-color: var(--line);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, .35);
+}
+.tool .glyph {
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+  display: block;
+  transform: translateZ(26px);
+}
+.tool h3 { font-size: 1.05rem; margin-bottom: 5px; transform: translateZ(18px); }
+.tool p { font-size: .86rem; color: var(--ink-mute); margin: 0; }
+
+.tag {
+  position: absolute; top: 15px; right: 15px;
+  font-size: .68rem;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--blossom) 22%, transparent);
+  color: var(--blossom);
+  border: 1px solid color-mix(in srgb, var(--blossom) 36%, transparent);
+}
+.tag.free { background: color-mix(in srgb, var(--sage) 20%, transparent); color: var(--sage); border-color: color-mix(in srgb, var(--sage) 34%, transparent); }
+
+.group-title {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: .86rem; font-weight: 600;
+  color: var(--moon);
+  margin: 34px 0 14px;
+}
+.group-title:first-of-type { margin-top: 0; }
+
+/* ---------- Khối kết quả luận giải ---------- */
+.result {
+  margin-top: 26px;
+  padding: 30px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(14px);
+  animation: riseIn .55s var(--ease);
+}
+@keyframes riseIn { from { opacity: 0; transform: translateY(18px); } }
+
+.result h3 { color: var(--moon); margin-bottom: 12px; }
+.result h4 {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: .92rem; font-weight: 600;
+  color: var(--blossom);
+  margin: 22px 0 8px;
+}
+.result p { color: var(--ink-soft); }
+.result blockquote {
+  margin: 20px 0;
+  padding: 16px 22px;
+  border-left: 2px solid var(--moon);
+  font-family: 'Lora', serif;
+  font-style: italic;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--dusk) 34%, transparent);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--moon) 9%, transparent);
+  font-size: .8rem;
+  color: var(--moon);
+}
+.chip.alt { color: var(--mist); border-color: color-mix(in srgb, var(--mist) 34%, transparent); background: color-mix(in srgb, var(--mist) 10%, transparent); }
+
+/* số lớn (chỉ số thần số học, % hợp đôi) */
+.big-num {
+  font-family: 'Lora', serif;
+  font-size: clamp(2.6rem, 8vw, 4.4rem);
+  line-height: 1;
+  color: var(--moon);
+  display: block;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+.stat {
+  padding: 16px 14px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line-soft);
+  background: color-mix(in srgb, var(--dusk) 30%, transparent);
+  text-align: center;
+}
+.stat .n { font-family: 'Lora', serif; font-size: 1.9rem; color: var(--moon); line-height: 1.1; }
+.stat .k { font-size: .76rem; color: var(--ink-mute); margin-top: 4px; }
+
+/* thanh đo */
+.meter { height: 7px; border-radius: 999px; background: var(--line-soft); overflow: hidden; margin: 8px 0 16px; }
+.meter i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--mist), var(--moon), var(--blossom)); transition: width 1.1s var(--ease); }
+
+/* ---------- Câu hỏi thường gặp ---------- */
+.faq details {
+  border-bottom: 1px solid var(--line-soft);
+  padding: 4px 0;
+}
+.faq summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 16px 34px 16px 0;
+  position: relative;
+  font-weight: 500;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: '+';
+  position: absolute; right: 6px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--moon); font-size: 1.25rem;
+  transition: transform var(--t-fast);
+}
+.faq details[open] summary::after { transform: translateY(-50%) rotate(45deg); }
+.faq details p { color: var(--ink-soft); font-size: .93rem; padding-bottom: 14px; margin: 0; }
+
+/* ---------- Trạng thái rỗng / đang tải ---------- */
+.empty {
+  text-align: center;
+  padding: 54px 24px;
+  color: var(--ink-mute);
+}
+.empty .pup { width: 76px; height: 76px; margin: 0 auto 16px; opacity: .8; }
+.empty p { margin-inline: auto; }
+
+.thinking { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 30px; color: var(--ink-mute); font-size: .9rem; }
+.thinking i {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--moon);
+  animation: bob 1.1s ease-in-out infinite;
+}
+.thinking i:nth-child(2) { animation-delay: .16s; }
+.thinking i:nth-child(3) { animation-delay: .32s; }
+@keyframes bob { 0%, 100% { transform: translateY(0); opacity: .4; } 50% { transform: translateY(-7px); opacity: 1; } }
+
+/* ---------- Các bước (chỉ dùng khi thật sự là chuỗi tuần tự) ---------- */
+.steps { display: flex; gap: 8px; justify-content: center; margin-bottom: 28px; flex-wrap: wrap; }
+.step {
+  display: flex; align-items: center; gap: 7px;
+  font-size: .82rem; color: var(--ink-mute);
+}
+.step b {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 1px solid var(--line-soft);
+  font-size: .74rem; font-weight: 500;
+}
+.step.on { color: var(--moon); }
+.step.on b { border-color: var(--moon); background: color-mix(in srgb, var(--moon) 16%, transparent); }
+.step.done b { background: var(--moon); color: var(--void); border-color: var(--moon); }

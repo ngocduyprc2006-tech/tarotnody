@@ -992,3 +992,135 @@ footer.foot {
         width: 100%;
     }
 }
+
+
+/* ---------- AUTH OVERLAY & MODAL ---------- */
+
+.auth-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(6px);
+    z-index: 50;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.auth-overlay.active {
+    display: flex;
+    animation: fadeUp .3s ease;
+}
+
+.auth-panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 400px;
+    padding: 36px 24px 24px;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    text-align: center;
+}
+
+.auth-tabs {
+    display: flex;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+}
+
+.auth-tabs button {
+    flex: 1;
+    padding: 12px;
+    font-weight: bold;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid transparent;
+    font-size: 0.95rem;
+}
+
+.auth-tabs button.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+}
+
+.auth-form {
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.auth-form.active {
+    display: flex;
+}
+
+.auth-form input {
+    background: var(--bg-void);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.auth-form input:focus {
+    border-color: var(--gold);
+    outline: none;
+}
+
+.auth-options {
+    text-align: right;
+    font-size: 0.85rem;
+}
+
+.forgot-link {
+    color: var(--lavender);
+    cursor: pointer;
+}
+
+.forgot-link:hover {
+    color: var(--gold);
+    text-decoration: underline;
+}
+
+.auth-submit {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    margin-top: 8px;
+}
+
+.auth-divider {
+    margin: 24px 0;
+    position: relative;
+    border-top: 1px solid var(--line);
+}
+
+.auth-divider span {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-panel);
+    padding: 0 10px;
+    color: var(--ink-muted);
+    font-size: 0.8rem;
+}
+
+.google-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.auth-msg {
+    margin-top: 16px;
+    font-size: 0.9rem;
+    min-height: 20px;
+}
