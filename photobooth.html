@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="js/perf.js"></script>
+<title>Photobooth cùng Cún Nody | Nody Tarot</title>
+<meta name="description" content="Chụp ảnh cùng lá bài vừa rút, chọn khung viền huyền bí rồi tải về hoặc chia sẻ.">
+<meta name="theme-color" content="#0a0714">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/scene.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/tarot.css">
+<link rel="stylesheet" href="css/pages.css">
+<link rel="stylesheet" href="css/upgrade.css">
+</head>
+<body>
+<div class="page">
+  <header id="site-head"></header>
+  <main class="wrap section">
+    <div class="section-head center">
+      <h2 data-i18n="photo.title">Photobooth cùng Cún Nody</h2>
+      <p class="mute">Chụp một tấm cùng lá bài của bạn, chọn khung, rồi tải về hoặc chia sẻ.</p>
+    </div>
+
+    <div class="booth-stage" id="boothStage">
+      <video id="boothVideo" autoplay playsinline muted></video>
+      <canvas id="boothCanvas" class="hidden"></canvas>
+      <div class="booth-frame moon" id="boothFrame"></div>
+    </div>
+
+    <div class="frame-swatches">
+      <button class="frame-swatch on" data-frame="moon" style="background:linear-gradient(140deg,#5fb4ec,#8b9bf6)"></button>
+      <button class="frame-swatch" data-frame="gold" style="background:linear-gradient(140deg,#f4d58d,#b9852f)"></button>
+      <button class="frame-swatch" data-frame="sage" style="background:linear-gradient(140deg,#6fd0a8,#6fe0d6)"></button>
+    </div>
+
+    <p class="tiny mute center" style="margin-top:16px" data-i18n="photo.filter">Bộ lọc</p>
+    <div class="filter-swatches" id="filterSwatches">
+      <button class="filter-swatch on" data-filter="none" data-i18n="photo.filter.none">Gốc</button>
+      <button class="filter-swatch" data-filter="vintage" data-i18n="photo.filter.vintage">Vintage</button>
+      <button class="filter-swatch" data-filter="bw" data-i18n="photo.filter.bw">Đen trắng</button>
+      <button class="filter-swatch" data-filter="warm" data-i18n="photo.filter.warm">Ấm</button>
+      <button class="filter-swatch" data-filter="cool" data-i18n="photo.filter.cool">Lạnh</button>
+      <button class="filter-swatch" data-filter="dreamy" data-i18n="photo.filter.dreamy">Mộng mơ</button>
+      <button class="filter-swatch" data-filter="neon" data-i18n="photo.filter.neon">Neon</button>
+    </div>
+
+    <div class="booth-controls">
+      <button class="btn btn-moon" id="btnStart" data-i18n="photo.start">Bật máy ảnh</button>
+      <button class="btn btn-moon hidden" id="btnCapture" data-i18n="photo.capture">Chụp</button>
+      <button class="btn btn-ghost hidden" id="btnRetake" data-i18n="photo.retake">Chụp lại</button>
+      <a class="btn btn-ghost hidden" id="btnDownload" data-i18n="photo.download" download="nody-tarot-photobooth.png">Tải ảnh về</a>
+    </div>
+    <label class="tiny mute center" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px">
+      <input type="checkbox" id="boothTimer"> Đếm ngược 3 giây trước khi chụp
+    </label>
+    <p class="tiny mute center" id="boothMsg" style="margin-top:6px"></p>
+  </main>
+  <footer id="site-foot"></footer>
+</div>
+
+<script type="module" src="js/firebase-init.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/shell.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/photobooth.js"></script>
+</body>
+</html>

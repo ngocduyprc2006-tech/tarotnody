@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="js/perf.js"></script>
+<title>Nạp & Gói thành viên | Nody Tarot</title>
+<meta name="description" content="Xem gói miễn phí và gói nâng cấp của Nody Tarot, gửi yêu cầu nạp và theo dõi lịch sử nạp tiền.">
+<meta name="theme-color" content="#0a0714">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/scene.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/tarot.css">
+<link rel="stylesheet" href="css/pages.css">
+<link rel="stylesheet" href="css/upgrade.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="page">
+  <header id="site-head"></header>
+  <main class="wrap section">
+    <div class="section-head center">
+      <h2 data-i18n="wallet.title">Nạp & Gói thành viên</h2>
+      <p id="walletBalanceLine" class="mute"></p>
+    </div>
+
+    <div class="plan-grid" style="margin-bottom:34px">
+      <div class="plan-card">
+        <h3 data-i18n="wallet.free.title">Miễn phí</h3>
+        <div class="price">0đ</div>
+        <ul id="planFreeList"></ul>
+        <button class="btn btn-ghost btn-block" disabled>✓</button>
+      </div>
+      <div class="plan-card featured">
+        <h3 data-i18n="wallet.plus.title">Nody Plus</h3>
+        <div class="price">49.000đ<span style="font-size:.9rem;color:var(--ink-mute)">/tháng</span></div>
+        <ul id="planPlusList"></ul>
+        <button class="btn btn-moon btn-block js-choose-plan" data-amount="49000" data-i18n="wallet.topupBtn">Nạp tiền</button>
+      </div>
+      <div class="plan-card">
+        <h3 data-i18n="wallet.vip.title">Nody VIP</h3>
+        <div class="price">129.000đ<span style="font-size:.9rem;color:var(--ink-mute)">/tháng</span></div>
+        <ul id="planVipList"></ul>
+        <button class="btn btn-moon btn-block js-choose-plan" data-amount="129000" data-i18n="wallet.topupBtn">Nạp tiền</button>
+      </div>
+    </div>
+
+    <div class="panel" style="max-width:560px;margin:0 auto 34px;padding:22px;border:1px solid var(--line);border-radius:var(--r-lg)">
+      <h3 data-i18n="wallet.method">Hình thức nạp</h3>
+      <p class="mute" id="bankInfo" style="font-size:.88rem;line-height:1.7"></p>
+      <div class="field">
+        <label id="lblAmount">Số tiền (đ)</label>
+        <input class="input" type="number" id="topupAmount" min="10000" step="1000" placeholder="49000">
+      </div>
+      <div class="field">
+        <label id="lblNote">Ghi chú (mã giao dịch, số tài khoản đã chuyển…)</label>
+        <input class="input" type="text" id="topupNote" placeholder="VD: đã chuyển lúc 21:05, ND: NODY 0912xxxxxx">
+      </div>
+      <button class="btn btn-moon btn-block" id="btnRequestTopup" data-i18n="common.submit">Xác nhận</button>
+      <p class="tiny mute" id="topupMsg" style="margin-top:10px"></p>
+    </div>
+
+    <div class="section-head"><h3 data-i18n="wallet.history">Lịch sử nạp tiền</h3></div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr>
+          <th>Thời gian</th><th>Số tiền</th><th data-i18n="wallet.method">Hình thức</th><th>Ghi chú</th><th>Trạng thái</th>
+        </tr></thead>
+        <tbody id="topupRows"><tr><td colspan="5" class="mute" data-i18n="common.loading">Đang tải…</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+  <footer id="site-foot"></footer>
+</div>
+
+<script type="module" src="js/firebase-init.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/shell.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/wallet.js"></script>
+</body>
+</html>

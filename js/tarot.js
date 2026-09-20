@@ -205,6 +205,7 @@
   function showDetail(d, label) {
     const voice = S.TOPIC_VOICE[st.topic] || S.TOPIC_VOICE.open;
     const topicName = S.topic(st.topic).name;
+    Sh.store.set('lastCard', { name: d.card.vi, img: d.card.img, reversed: !!d.reversed });
 
     $('detailBody').innerHTML = `
       <div class="detail-top">

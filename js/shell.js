@@ -14,15 +14,21 @@
      1. Danh mục — sửa ở đây là đổi menu toàn web
      ========================================================== */
   const MENU = [
-    { href: 'tarot.html',      label: 'Trải bài Tarot' },
-    { href: 'daily.html',      label: 'Lá bài hôm nay' },
-    { href: 'numerology.html', label: 'Thần số học' },
-    { href: 'horoscope.html',  label: 'Chiêm tinh' },
-    { href: 'match.html',      label: 'Ghép đôi' },
-    { href: 'dream.html',      label: 'Giải mã giấc mơ' },
-    { href: 'wheel.html',      label: 'Vòng quay' },
-    { href: 'letter.html',     label: 'Thư gửi mai sau' }
+    { href: 'tarot.html',      key: 'nav.tarot',      label: 'Trải bài Tarot' },
+    { href: 'daily.html',      key: 'nav.daily',      label: 'Lá bài hôm nay' },
+    { href: 'numerology.html', key: 'nav.numerology', label: 'Thần số học' },
+    { href: 'horoscope.html',  key: 'nav.horoscope',  label: 'Chiêm tinh' },
+    { href: 'match.html',      key: 'nav.match',      label: 'Ghép đôi' },
+    { href: 'dream.html',      key: 'nav.dream',      label: 'Giải mã giấc mơ' },
+    { href: 'wheel.html',      key: 'nav.wheel',      label: 'Vòng quay' },
+    { href: 'letter.html',     key: 'nav.letter',     label: 'Thư gửi mai sau' },
+    { href: 'photobooth.html', key: 'nav.photobooth', label: 'Photobooth' },
+    { href: 'wallet.html',     key: 'nav.wallet',     label: 'Nạp & Gói' }
   ];
+
+  function L(key, fallback) {
+    return (window.I18N ? window.I18N.t(key) : null) || fallback;
+  }
 
   /* ==========================================================
      2. Cún Nody — linh vật, vẽ bằng SVG nên không cần file ảnh
@@ -183,20 +189,23 @@
         <button class="nav-toggle" id="navToggle" aria-label="Mở danh mục" aria-expanded="false">☰</button>
 
         <nav class="nav" id="nav">
-          ${MENU.map(i => `<a href="${i.href}"${i.href.toLowerCase() === here ? ' class="on"' : ''}>${i.label}</a>`).join('')}
+          ${MENU.map(i => `<a href="${i.href}"${i.href.toLowerCase() === here ? ' class="on"' : ''}>${L(i.key, i.label)}</a>`).join('')}
         </nav>
 
         <div class="head-tools">
+          ${langSwitcherHTML()}
+          <button class="icon-btn" id="fxBtn" title="${L('fx.auto', 'Hiệu ứng: Tự động')}">${fxIcon()}</button>
           <button class="icon-btn" id="themeBtn" title="Đổi giao diện">☀️</button>
+          <span id="adminLinkSlot"></span>
           <button class="acct-btn" id="acctBtn">
             <span class="avatar" id="acctAvatar">?</span>
-            <span id="acctText">Đăng nhập</span>
+            <span id="acctText">${L('head.login', 'Đăng nhập')}</span>
           </button>
         </div>
       </div>
 
       <div class="moon-strip">
-        <span>Hôm nay <b>${new Date().toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'numeric' })}</b></span>
+        <span>${L('head.today', 'Hôm nay')} <b>${new Date().toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'numeric' })}</b></span>
         <i class="dot"></i>
         <span>${moonGlyph(m.index)} <b>${m.name}</b></span>
         <i class="dot"></i>
@@ -214,10 +223,106 @@
       applyTheme(document.body.classList.contains('dawn') ? 'night' : 'dawn');
     };
 
+    document.getElementById('fxBtn').onclick = cycleFx;
+
     document.getElementById('acctBtn').onclick = () => {
       if (window.Nody && window.Nody.user) location.href = 'history.html';
       else openAuth('login');
     };
+
+    wireLangSwitcher();
+    paintAdminLink();
+  }
+
+  /* ==========================================================
+     6b. Nút bật/tắt hiệu ứng — Tự động ⇄ Bật ⇄ Tắt, nhớ theo máy
+     ========================================================== */
+  function fxIcon() {
+    const mode = window.NodyPerf ? window.NodyPerf.overrideMode : null;
+    if (mode === 'off') return '🚫✨';
+    if (mode === 'on') return '✨';
+    return '🌗✨';
+  }
+
+  function cycleFx() {
+    if (!window.NodyPerf) return;
+    const cur = window.NodyPerf.overrideMode; // null | 'on' | 'off'
+    const next = cur === null ? 'off' : cur === 'off' ? 'on' : null;
+    window.NodyPerf.setOverride(next);
+    const btn = document.getElementById('fxBtn');
+    if (btn) {
+      btn.innerHTML = fxIcon();
+      btn.title = next === 'off' ? L('fx.off', 'Hiệu ứng: Đã tắt (mượt hơn)')
+                : next === 'on' ? L('fx.on', 'Hiệu ứng: Đang bật')
+                : L('fx.auto', 'Hiệu ứng: Tự động');
+    }
+    if (window.Shell && window.Shell.toast) {
+      window.Shell.toast(btn ? btn.title : '');
+    }
+  }
+
+  /* ==========================================================
+     6c. Lối vào trang Quản trị — chỉ hiện khi tài khoản là admin
+     ========================================================== */
+  function paintAdminLink() {
+    const slot = document.getElementById('adminLinkSlot');
+    if (!slot) return;
+    const isAdmin = !!(window.Nody && window.Nody.isAdmin && window.Nody.isAdmin());
+    slot.innerHTML = isAdmin
+      ? `<a class="icon-btn" href="admin.html" title="${L('admin.linkTitle', 'Trang quản trị')}" style="text-decoration:none;display:grid;place-items:center">⚙️</a>`
+      : '';
+  }
+
+  /* ==========================================================
+     7b. Bộ chọn ngôn ngữ — 5 lá cờ, đổi là dịch toàn trang ngay
+     ========================================================== */
+  function flagBadge(code, size) {
+    const meta = window.I18N.meta[code] || { flag: '🌐', cc: '' };
+    const px = size || 20;
+    if (!meta.cc) return `<span class="flag-badge" style="width:${px}px;height:${px}px;font-size:${px * .6}px">${meta.flag}</span>`;
+    return `<span class="flag-badge" style="width:${px}px;height:${px}px">
+      <img src="https://flagcdn.com/w80/${meta.cc}.png" alt=""
+           onerror="this.parentElement.textContent='${meta.flag}'">
+    </span>`;
+  }
+
+  function langSwitcherHTML() {
+    if (!window.I18N) return '';
+    const cur = window.I18N.get();
+    const items = window.I18N.langs.map(code => {
+      const m = window.I18N.meta[code];
+      return `<button class="lang-item${code === cur ? ' on' : ''}" data-lang="${code}">
+                ${flagBadge(code, 24)}<span>${m.label}</span>
+              </button>`;
+    }).join('');
+    return `
+      <div class="lang-switch" id="langSwitch">
+        <button class="icon-btn lang-trigger" id="langBtn" title="${L('head.langLabel', 'Ngôn ngữ')}" aria-haspopup="true" aria-expanded="false">
+          ${flagBadge(cur, 24)}
+        </button>
+        <div class="lang-menu" id="langMenu">${items}</div>
+      </div>`;
+  }
+
+  function wireLangSwitcher() {
+    const btn = document.getElementById('langBtn');
+    const menu = document.getElementById('langMenu');
+    const wrap = document.getElementById('langSwitch');
+    if (!btn || !menu || !wrap) return;
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      const open = wrap.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open);
+    };
+    menu.querySelectorAll('[data-lang]').forEach(b => {
+      b.onclick = () => {
+        window.I18N.setLang(b.getAttribute('data-lang'));
+        wrap.classList.remove('open');
+      };
+    });
+    document.addEventListener('click', (e) => {
+      if (!wrap.contains(e.target)) wrap.classList.remove('open');
+    });
   }
 
   function moonGlyph(i) {
@@ -232,34 +337,33 @@
       <div class="wrap foot-grid">
         <div>
           <a class="brand" href="index.html">${pupSVG()}<span class="brand-name">Nody <b>Tarot</b></span></a>
-          <p class="soft" style="font-size:.9rem;margin-top:14px;max-width:34ch">
-            Một góc nhỏ để bạn ngồi xuống, thở một nhịp và tự hỏi mình đang cần gì.
-            Cún Nody luận giải dịu dàng, không doạ ai bao giờ.
-          </p>
+          <p class="soft" style="font-size:.9rem;margin-top:14px;max-width:34ch">${L('foot.slogan', 'Một góc nhỏ để bạn ngồi xuống, thở một nhịp và tự hỏi mình đang cần gì. Cún Nody luận giải dịu dàng, không doạ ai bao giờ.')}</p>
         </div>
         <div>
-          <h4>Bói bài &amp; con số</h4>
+          <h4>${L('foot.group1', 'Bói bài &amp; con số')}</h4>
           <div class="foot-links">
-            <a href="tarot.html">Trải bài Tarot</a>
-            <a href="daily.html">Lá bài hôm nay</a>
-            <a href="numerology.html">Thần số học</a>
-            <a href="horoscope.html">Chiêm tinh</a>
-            <a href="match.html">Ghép đôi</a>
+            <a href="tarot.html">${L('nav.tarot', 'Trải bài Tarot')}</a>
+            <a href="daily.html">${L('nav.daily', 'Lá bài hôm nay')}</a>
+            <a href="numerology.html">${L('nav.numerology', 'Thần số học')}</a>
+            <a href="horoscope.html">${L('nav.horoscope', 'Chiêm tinh')}</a>
+            <a href="match.html">${L('nav.match', 'Ghép đôi')}</a>
           </div>
         </div>
         <div>
-          <h4>Nhẹ nhàng hơn</h4>
+          <h4>${L('foot.group2', 'Nhẹ nhàng hơn')}</h4>
           <div class="foot-links">
-            <a href="dream.html">Giải mã giấc mơ</a>
-            <a href="wheel.html">Vòng quay Cún Nody</a>
-            <a href="letter.html">Thư gửi mai sau</a>
-            <a href="history.html">Lịch sử &amp; hồ sơ</a>
+            <a href="dream.html">${L('nav.dream', 'Giải mã giấc mơ')}</a>
+            <a href="wheel.html">${L('nav.wheel', 'Vòng quay Cún Nody')}</a>
+            <a href="letter.html">${L('nav.letter', 'Thư gửi mai sau')}</a>
+            <a href="photobooth.html">${L('nav.photobooth', 'Photobooth')}</a>
+            <a href="wallet.html">${L('nav.wallet', 'Nạp & Gói')}</a>
+            <a href="history.html">${L('nav.history', 'Lịch sử &amp; hồ sơ')}</a>
           </div>
         </div>
       </div>
       <div class="wrap foot-note">
-        <span>© ${new Date().getFullYear()} Nody Tarot</span>
-        <span>Tarot là tấm gương soi, không phải bản án. Quyết định luôn là của bạn.</span>
+        <span>© ${new Date().getFullYear()} ${L('foot.rights', 'Nody Tarot')}</span>
+        <span>${L('foot.note', 'Tarot là tấm gương soi, không phải bản án. Quyết định luôn là của bạn.')}</span>
       </div>`;
   }
 
@@ -277,37 +381,37 @@
 
         <div class="auth-head">
           ${pupSVG()}
-          <h3 id="authTitle">Chào bạn trở lại</h3>
-          <p id="authSub">Đăng nhập để Cún giữ giúp bạn mọi lá bài đã rút.</p>
+          <h3 id="authTitle">${L('auth.welcomeBack', 'Chào bạn trở lại')}</h3>
+          <p id="authSub">${L('auth.welcomeSub', 'Đăng nhập để Cún giữ giúp bạn mọi lá bài đã rút.')}</p>
         </div>
 
         <div class="auth-tabs">
-          <button id="tabLogin" class="on" data-tab="login">Đăng nhập</button>
-          <button id="tabReg" data-tab="reg">Đăng ký</button>
+          <button id="tabLogin" class="on" data-tab="login">${L('auth.login', 'Đăng nhập')}</button>
+          <button id="tabReg" data-tab="reg">${L('auth.register', 'Đăng ký')}</button>
         </div>
 
         <div class="auth-pane on" id="paneLogin">
-          <div class="field"><label for="liMail">Email</label>
+          <div class="field"><label for="liMail">${L('auth.email', 'Email')}</label>
             <input class="input" type="email" id="liMail" autocomplete="email" placeholder="ban@email.com"></div>
-          <div class="field"><label for="liPass">Mật khẩu</label>
+          <div class="field"><label for="liPass">${L('auth.password', 'Mật khẩu')}</label>
             <input class="input" type="password" id="liPass" autocomplete="current-password" placeholder="••••••"></div>
           <div style="text-align:right;margin:-6px 0 14px">
-            <button class="link-btn tiny" id="btnForgot">Quên mật khẩu?</button>
+            <button class="link-btn tiny" id="btnForgot">${L('auth.forgot', 'Quên mật khẩu?')}</button>
           </div>
-          <button class="btn btn-moon btn-block" id="btnDoLogin">Vào không gian của bạn</button>
+          <button class="btn btn-moon btn-block" id="btnDoLogin">${L('auth.enterSpace', 'Vào không gian của bạn')}</button>
         </div>
 
         <div class="auth-pane" id="paneReg">
-          <div class="field"><label for="rgName">Bạn muốn Cún gọi bạn là gì?</label>
+          <div class="field"><label for="rgName">${L('auth.displayName', 'Bạn muốn Cún gọi bạn là gì?')}</label>
             <input class="input" type="text" id="rgName" autocomplete="name" placeholder="Tên hiển thị"></div>
-          <div class="field"><label for="rgMail">Email</label>
+          <div class="field"><label for="rgMail">${L('auth.email', 'Email')}</label>
             <input class="input" type="email" id="rgMail" autocomplete="email" placeholder="ban@email.com"></div>
-          <div class="field"><label for="rgPass">Mật khẩu</label>
+          <div class="field"><label for="rgPass">${L('auth.password', 'Mật khẩu')}</label>
             <input class="input" type="password" id="rgPass" autocomplete="new-password" placeholder="Ít nhất 6 ký tự"></div>
-          <button class="btn btn-moon btn-block" id="btnDoReg">Tạo tài khoản</button>
+          <button class="btn btn-moon btn-block" id="btnDoReg">${L('auth.createAcct', 'Tạo tài khoản')}</button>
         </div>
 
-        <div class="divider"><span>hoặc</span></div>
+        <div class="divider"><span>${L('auth.or', 'hoặc')}</span></div>
 
         <button class="btn btn-ghost google-btn" id="btnGoogle">
           <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
@@ -316,7 +420,7 @@
             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
           </svg>
-          Tiếp tục với Google
+          ${L('auth.continueGoogle', 'Tiếp tục với Google')}
         </button>
 
         <div class="auth-msg" id="authMsg"></div>
@@ -350,11 +454,11 @@
     document.getElementById('paneLogin').classList.toggle('on', tab === 'login');
     document.getElementById('paneReg').classList.toggle('on', tab === 'reg');
     document.getElementById('authTitle').textContent =
-      tab === 'login' ? 'Chào bạn trở lại' : 'Tạo một góc riêng';
+      tab === 'login' ? L('auth.welcomeBack', 'Chào bạn trở lại') : L('auth.newSpace', 'Tạo một góc riêng');
     document.getElementById('authSub').textContent =
       tab === 'login'
-        ? 'Đăng nhập để Cún giữ giúp bạn mọi lá bài đã rút.'
-        : 'Có tài khoản rồi thì lịch sử xem bói sẽ theo bạn qua mọi thiết bị.';
+        ? L('auth.welcomeSub', 'Đăng nhập để Cún giữ giúp bạn mọi lá bài đã rút.')
+        : L('auth.newSpaceSub', 'Có tài khoản rồi thì lịch sử xem bói sẽ theo bạn qua mọi thiết bị.');
     msg('');
   }
 
@@ -455,11 +559,12 @@
       av.textContent = name.trim().charAt(0).toUpperCase();
       av.style.background = 'linear-gradient(140deg, var(--moon), var(--blossom))';
     } else {
-      txt.textContent = 'Đăng nhập';
+      txt.textContent = L('head.login', 'Đăng nhập');
       av.textContent = '🐾';
       av.style.background = 'transparent';
     }
     document.body.classList.toggle('signed-in', !!user);
+    paintAdminLink();
   }
 
   /* ==========================================================
@@ -469,8 +574,11 @@
     initTheme();
     buildHeader();
     buildFooter();
+    buildHelpButton();
+    buildAssistant();
     applyTheme(document.body.classList.contains('dawn') ? 'dawn' : 'night');
     paintAccount(window.Nody && window.Nody.user);
+    if (window.I18N) window.I18N.apply();
 
     document.addEventListener('keydown', (e) => {
       if (e.key !== 'Escape') return;
@@ -479,6 +587,221 @@
   }
 
   window.addEventListener('nody:auth', (e) => paintAccount(e.detail));
+
+  /* Đổi ngôn ngữ xong: vẽ lại toàn bộ khung để không sót chữ nào */
+  window.addEventListener('nody:lang', () => {
+    buildHeader();
+    buildFooter();
+    paintAccount(window.Nody && window.Nody.user);
+    if (document.getElementById('authModal')) {
+      switchTab(document.getElementById('tabLogin').classList.contains('on') ? 'login' : 'reg');
+    }
+    renderHelpBody();
+    renderAssistantGreeting();
+    if (window.I18N) window.I18N.apply();
+  });
+
+  /* ==========================================================
+     11. Nút hỗ trợ nổi — kéo-thả tự do, có hướng dẫn dùng web
+     ========================================================== */
+  const HELP_SECTIONS = ['nav', 'tools', 'account', 'plans', 'photobooth', 'assistant'];
+
+  function buildHelpButton() {
+    if (document.getElementById('helpFab')) return;
+
+    const fab = document.createElement('button');
+    fab.id = 'helpFab';
+    fab.className = 'floating-fab help-fab';
+    fab.innerHTML = pupSVG('fab-pup');
+    fab.setAttribute('aria-label', 'Help');
+    fab.title = L('help.btnTitle', 'Trợ giúp — cách dùng web');
+    document.body.appendChild(fab);
+
+    const pos = Shell.store.get('helpFabPos', null);
+    if (pos && typeof pos.right === 'number' && typeof pos.bottom === 'number') {
+      fab.style.right = pos.right + 'px';
+      fab.style.bottom = pos.bottom + 'px';
+    }
+
+    makeDraggable(fab, (right, bottom) => Shell.store.set('helpFabPos', { right, bottom }));
+
+    fab.addEventListener('click', (e) => {
+      if (fab.dataset.dragged === '1') { fab.dataset.dragged = '0'; return; }
+      openHelp();
+    });
+
+    buildHelpModal();
+  }
+
+  function makeDraggable(el, onDrop) {
+    let sx = 0, sy = 0, startRight = 0, startBottom = 0, dragging = false, moved = false;
+
+    function start(x, y) {
+      dragging = true; moved = false;
+      sx = x; sy = y;
+      const r = el.getBoundingClientRect();
+      startRight = window.innerWidth - r.right;
+      startBottom = window.innerHeight - r.bottom;
+      el.classList.add('dragging');
+    }
+    function move(x, y) {
+      if (!dragging) return;
+      const dx = x - sx, dy = y - sy;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
+      let right = startRight - dx;
+      let bottom = startBottom - dy;
+      const w = el.offsetWidth, h = el.offsetHeight;
+      right = Math.max(-w * 0.4, Math.min(window.innerWidth - w * 0.6, right));
+      bottom = Math.max(-h * 0.4, Math.min(window.innerHeight - h * 0.6, bottom));
+      el.style.right = right + 'px';
+      el.style.bottom = bottom + 'px';
+    }
+    function end() {
+      if (!dragging) return;
+      dragging = false;
+      el.classList.remove('dragging');
+      if (moved) {
+        el.dataset.dragged = '1';
+        const right = parseFloat(el.style.right) || 0;
+        const bottom = parseFloat(el.style.bottom) || 0;
+        onDrop(right, bottom);
+      }
+    }
+
+    el.addEventListener('mousedown', (e) => { start(e.clientX, e.clientY); e.preventDefault(); });
+    window.addEventListener('mousemove', (e) => move(e.clientX, e.clientY));
+    window.addEventListener('mouseup', end);
+
+    el.addEventListener('touchstart', (e) => {
+      const t = e.touches[0]; start(t.clientX, t.clientY);
+    }, { passive: true });
+    window.addEventListener('touchmove', (e) => {
+      const t = e.touches[0]; move(t.clientX, t.clientY);
+    }, { passive: true });
+    window.addEventListener('touchend', end);
+  }
+
+  function buildHelpModal() {
+    if (document.getElementById('helpModal')) return;
+    const el = document.createElement('div');
+    el.className = 'modal';
+    el.id = 'helpModal';
+    el.innerHTML = `
+      <div class="modal-box help-box" role="dialog" aria-modal="true">
+        <button class="modal-x" data-close>✕</button>
+        <div id="helpBody"></div>
+      </div>`;
+    document.body.appendChild(el);
+    el.addEventListener('click', (e) => {
+      if (e.target === el || e.target.hasAttribute('data-close')) el.classList.remove('open');
+    });
+    renderHelpBody();
+  }
+
+  function renderHelpBody() {
+    const host = document.getElementById('helpBody');
+    if (!host) return;
+    host.innerHTML = `
+      ${pupSVG()}
+      <h3>${L('help.title', 'Hướng dẫn dùng Nody Tarot')}</h3>
+      <p class="mute" style="font-size:.92rem">${L('help.dragHint', 'Mẹo: giữ và kéo nút 🐾 để đặt nó ở bất kỳ đâu trên màn hình.')}</p>
+      <div class="help-sections">
+        ${HELP_SECTIONS.map(s => `
+          <div class="help-sec">
+            <h4>${L('help.section.' + s + '.title', s)}</h4>
+            <p>${L('help.section.' + s + '.body', '')}</p>
+          </div>`).join('')}
+      </div>`;
+  }
+
+  function openHelp() {
+    buildHelpModal();
+    document.getElementById('helpModal').classList.add('open');
+  }
+
+  /* ==========================================================
+     12. Trợ lý Cún AI — hỏi đáp dựa trên luật, chạy offline
+     ------------------------------------------------------------
+     Không gọi API ngoài (không cần khoá bí mật) nên luôn hoạt
+     động. Muốn nối vào Claude/API thật: xem ghi chú trong README.
+     ========================================================== */
+  const ASSIST_RULES = [
+    { test: /(ngôn ngữ|language|语言|언어|言語|đổi tiếng)/i, key: 'help.section.nav.body' },
+    { test: /(nạp|top.?up|충전|充值|チャージ|gói|plan|membership|vip)/i, key: 'help.section.plans.body' },
+    { test: /(photobooth|chụp ảnh|拍照|포토|フォトブース|camera)/i, key: 'help.section.photobooth.body' },
+    { test: /(lịch sử|history|hồ sơ|记录|기록|履歴|account|tài khoản)/i, key: 'help.section.account.body' },
+    { test: /(admin|quản trị|管理)/i, key: 'admin.title' },
+    { test: /(tarot|lá bài|card|카드|카드|牌|바로)/i, key: 'help.section.tools.body' }
+  ];
+
+  function buildAssistant() {
+    if (document.getElementById('assistFab')) return;
+    const fab = document.createElement('button');
+    fab.id = 'assistFab';
+    fab.className = 'floating-fab assist-fab';
+    fab.innerHTML = '💬';
+    fab.title = L('assist.title', 'Trợ lý Cún Nody');
+    document.body.appendChild(fab);
+
+    const panel = document.createElement('div');
+    panel.id = 'assistPanel';
+    panel.className = 'assist-panel';
+    panel.innerHTML = `
+      <div class="assist-head">
+        ${pupSVG()}
+        <b id="assistTitle">${L('assist.title', 'Trợ lý Cún Nody')}</b>
+        <button class="modal-x" id="assistClose">✕</button>
+      </div>
+      <div class="assist-log" id="assistLog"></div>
+      <form class="assist-form" id="assistForm">
+        <input class="input" id="assistInput" data-i18n-placeholder="assist.placeholder" placeholder="${L('assist.placeholder', 'Hỏi Cún điều gì đó…')}" autocomplete="off">
+        <button class="btn btn-moon" type="submit">➤</button>
+      </form>`;
+    document.body.appendChild(panel);
+
+    fab.onclick = () => {
+      panel.classList.toggle('open');
+      if (panel.classList.contains('open') && !panel.dataset.greeted) {
+        renderAssistantGreeting();
+        panel.dataset.greeted = '1';
+      }
+    };
+    document.getElementById('assistClose').onclick = () => panel.classList.remove('open');
+
+    document.getElementById('assistForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = document.getElementById('assistInput');
+      const q = input.value.trim();
+      if (!q) return;
+      addAssistLine(q, 'me');
+      input.value = '';
+      setTimeout(() => addAssistLine(answerAssistant(q), 'bot'), 260);
+    });
+  }
+
+  function addAssistLine(text, who) {
+    const log = document.getElementById('assistLog');
+    if (!log) return;
+    const row = document.createElement('div');
+    row.className = 'assist-line ' + who;
+    row.textContent = text;
+    log.appendChild(row);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function renderAssistantGreeting() {
+    const log = document.getElementById('assistLog');
+    if (!log) return;
+    log.innerHTML = '';
+    addAssistLine(L('assist.greeting', "Chào bạn 🐾 Mình là Cún Nody."), 'bot');
+  }
+
+  function answerAssistant(q) {
+    for (const rule of ASSIST_RULES) {
+      if (rule.test.test(q)) return L(rule.key, '');
+    }
+    return L('assist.fallback', 'Mình chưa chắc câu này, thử hỏi cách khác nhé.');
+  }
 
   /* ---------- Xuất ra cho các file khác dùng ---------- */
   window.Shell = {

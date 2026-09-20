@@ -8,6 +8,8 @@
 
   const slowMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const small = window.innerWidth < 720;
+  function perfLow() { return !!(window.NodyPerf && window.NodyPerf.low); }
+  function perfHigh() { return !window.NodyPerf || window.NodyPerf.high; }
 
   /* ==========================================================
      1. Dựng trời
@@ -26,11 +28,12 @@
 
     document.body.insertBefore(scene, document.body.firstChild);
 
-    // ba lớp sao, lớp xa thì nhỏ và mờ hơn
+    // ba lớp sao, lớp xa thì nhỏ và mờ hơn — bớt hẳn nếu máy đuối
+    const cut = perfLow() ? 0.4 : 1;
     const layers = [
-      { el: scene.querySelector('.l1'), n: small ? 34 : 70, size: [.6, 1.3], dim: .45 },
-      { el: scene.querySelector('.l2'), n: small ? 24 : 48, size: [1.0, 2.0], dim: .7 },
-      { el: scene.querySelector('.l3'), n: small ? 14 : 26, size: [1.6, 2.9], dim: 1 }
+      { el: scene.querySelector('.l1'), n: Math.round((small ? 34 : 70) * cut), size: [.6, 1.3], dim: .45 },
+      { el: scene.querySelector('.l2'), n: Math.round((small ? 24 : 48) * cut), size: [1.0, 2.0], dim: .7 },
+      { el: scene.querySelector('.l3'), n: Math.round((small ? 14 : 26) * cut), size: [1.6, 2.9], dim: 1 }
     ];
 
     layers.forEach(L => {
@@ -50,7 +53,7 @@
       L.el.appendChild(frag);
     });
 
-    if (!slowMotion) {
+    if (!slowMotion && !perfLow()) {
       petals(scene);
       scheduleShootingStar(scene);
     }
@@ -100,7 +103,7 @@
      4. Trời nghiêng theo chuột / theo nghiêng điện thoại
      ========================================================== */
   function parallax() {
-    if (slowMotion) return;
+    if (slowMotion || perfLow()) return;
     const scene = document.getElementById('scene');
     if (!scene) return;
     const L = [
@@ -109,9 +112,12 @@
       { el: scene.querySelector('.l3'), z: 0,    sc: 1,    amt: 7  }
     ];
 
-    let tx = 0, ty = 0, cx = 0, cy = 0, running = false;
+    let tx = 0, ty = 0, cx = 0, cy = 0, running = false, paused = false;
+    window.addEventListener('nody:perf-downgrade', () => { paused = true; });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) paused = true; });
 
     function loop() {
+      if (paused) { running = false; return; }
       cx += (tx - cx) * .06;
       cy += (ty - cy) * .06;
       L.forEach(l => {
@@ -121,7 +127,7 @@
       if (Math.abs(tx - cx) > .001 || Math.abs(ty - cy) > .001) requestAnimationFrame(loop);
       else running = false;
     }
-    function kick() { if (!running) { running = true; requestAnimationFrame(loop); } }
+    function kick() { if (!running && !paused) { running = true; requestAnimationFrame(loop); } }
 
     window.addEventListener('mousemove', (e) => {
       tx = (e.clientX / window.innerWidth - .5) * 2;
@@ -142,7 +148,7 @@
         Gắn bằng: <div data-tilt> hoặc Scene.tilt(el, 12)
      ========================================================== */
   function tilt(el, strength) {
-    if (slowMotion || window.matchMedia('(hover: none)').matches) return;
+    if (slowMotion || perfLow() || window.matchMedia('(hover: none)').matches) return;
     const max = strength || 10;
     let raf = null;
 
@@ -203,6 +209,14 @@
     parallax();
     autoTilt();
     revealOnScroll();
+
+    // Nếu FPS đo được sau đó thấp hơn dự đoán ban đầu, dọn bớt hiệu ứng đang chạy
+    window.addEventListener('nody:perf-downgrade', () => {
+      const scene = document.getElementById('scene');
+      if (!scene) return;
+      scene.querySelectorAll('.petal, .shooting').forEach(n => n.remove());
+      scene.querySelectorAll('.star').forEach((n, i) => { if (i % 2) n.remove(); });
+    });
   }
 
   window.Scene = { tilt, autoTilt, revealOnScroll };

@@ -58,6 +58,7 @@
     setTimeout(() => {
       const d = picked;
       const text = d.reversed ? d.card.rev : d.card.up;
+      Sh.store.set('lastCard', { name: d.card.vi, img: d.card.img, reversed: !!d.reversed });
 
       $('dailyBody').innerHTML = `
         <div class="chips">

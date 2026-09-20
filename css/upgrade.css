@@ -1,0 +1,292 @@
+/* ============================================================
+   upgrade.css — lớp nâng cấp thị giác + responsive + đa ngôn ngữ
+   ------------------------------------------------------------
+   File này KHÔNG thay thế các file css khác, chỉ cộng thêm.
+   Nạp sau cùng (xem thứ tự <link> ở mỗi trang) nên có thể ghi đè
+   khi cần mà không phải sửa các file gốc.
+   ============================================================ */
+
+/* ---------- 1. Phông chữ đa ngôn ngữ ----------
+   Mỗi máy (Windows/Mac/Linux/Android/iOS) có sẵn phông khác nhau
+   cho tiếng Trung/Hàn/Nhật — chuỗi fallback dưới đây đảm bảo chữ
+   nào cũng hiển thị đẹp mà không cần cài thêm gì. */
+:root {
+  --font-latin: 'Be Vietnam Pro', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-cjk:   'Noto Sans SC', 'Noto Sans KR', 'Noto Sans JP',
+                'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB',
+                'Malgun Gothic', 'Apple SD Gothic Neo',
+                'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo',
+                sans-serif;
+  --font-emoji: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+html[lang="zh-CN"] body, html[lang="ko"] body, html[lang="ja"] body {
+  font-family: var(--font-cjk), var(--font-latin), var(--font-emoji);
+}
+body, .btn, input, textarea, select {
+  font-family: var(--font-latin), var(--font-cjk), var(--font-emoji);
+}
+
+/* ---------- 2. An toàn cho điện thoại có tai thỏ / thanh cử chỉ ---------- */
+html { -webkit-text-size-adjust: 100%; }
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  overflow-x: hidden;
+}
+.site-head { padding-top: env(safe-area-inset-top); }
+.site-foot { padding-bottom: calc(env(safe-area-inset-bottom) + 6px); }
+
+/* ---------- 3. Chữ co giãn mượt theo màn hình (đồng bộ mobile/PC) ---------- */
+h1 { font-size: clamp(1.7rem, 4.4vw, 3rem); }
+h2 { font-size: clamp(1.35rem, 3vw, 2.1rem); }
+h3 { font-size: clamp(1.1rem, 2.4vw, 1.5rem); }
+.wrap, .site-head .wrap, .site-foot .wrap { max-width: min(var(--maxw), 96vw); }
+
+@media (max-width: 480px) {
+  .wrap { padding-left: 14px; padding-right: 14px; }
+  .modal-box { max-height: calc(100dvh - 32px); overflow-y: auto; }
+}
+
+/* ---------- 4. "8D" — hào quang chuyển động, kính mờ, glow sâu ----------
+   Toàn bộ mục này tự tắt bớt trên máy yếu (html[data-perf="low"], gắn bởi
+   js/perf.js chạy đầu tiên trên mọi trang) để web không giật/lag. */
+@keyframes nody-aurora {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+html:not([data-perf="low"]) body::before {
+  content: '';
+  position: fixed;
+  inset: -10%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 15% 20%, color-mix(in srgb, var(--moon) 22%, transparent) 0%, transparent 42%),
+    radial-gradient(circle at 85% 15%, color-mix(in srgb, var(--blossom) 20%, transparent) 0%, transparent 45%),
+    radial-gradient(circle at 50% 90%, color-mix(in srgb, var(--mist) 16%, transparent) 0%, transparent 50%);
+  background-size: 200% 200%;
+  animation: nody-aurora 22s ease-in-out infinite;
+  opacity: .8;
+}
+/* Máy yếu: vẫn giữ chút màu sắc nhưng KHÔNG chuyển động và KHÔNG blur nền cố định */
+html[data-perf="low"] body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle at 20% 10%, color-mix(in srgb, var(--moon) 14%, transparent), transparent 60%);
+}
+
+html:not([data-perf="low"]) .card,
+html:not([data-perf="low"]) .panel,
+html:not([data-perf="low"]) .modal-box,
+html:not([data-perf="low"]) .site-head,
+html:not([data-perf="low"]) .lang-menu,
+html:not([data-perf="low"]) .assist-panel,
+html:not([data-perf="low"]) .help-box {
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+/* backdrop-filter là phép tính GPU khá nặng khi lặp lại nhiều lớp cùng lúc —
+   máy yếu dùng nền đặc (--panel-solid) thay vì kính mờ, vẫn đẹp, nhẹ hơn nhiều */
+html[data-perf="low"] .card,
+html[data-perf="low"] .panel,
+html[data-perf="low"] .modal-box,
+html[data-perf="low"] .site-head,
+html[data-perf="low"] .lang-menu,
+html[data-perf="low"] .assist-panel,
+html[data-perf="low"] .help-box {
+  background: var(--panel-solid);
+}
+
+/* Glow nhẹ khi hover trên các nút chính — cảm giác "chiều sâu" */
+.btn-moon, .icon-btn, .acct-btn, .floating-fab {
+  transition: transform var(--t-fast), box-shadow var(--t-fast), filter var(--t-fast);
+}
+.btn-moon:hover { box-shadow: 0 10px 34px color-mix(in srgb, var(--moon) 45%, transparent); transform: translateY(-2px); }
+
+/* Nghiêng nhẹ 3D khi rê chuột qua các lá bài tĩnh (thẻ không lật) — chỉ máy khoẻ */
+@media (hover: hover) {
+  html:not([data-perf="low"]) .card-strip .card,
+  html:not([data-perf="low"]) .grid-cards .card {
+    transition: transform var(--t-mid);
+  }
+  html:not([data-perf="low"]) .card-strip .card:hover,
+  html:not([data-perf="low"]) .grid-cards .card:hover {
+    transform: perspective(800px) rotateX(4deg) rotateY(-6deg) translateY(-4px) scale(1.03);
+  }
+}
+
+/* Tắt hẳn mọi animation/transition không thiết yếu khi máy quá yếu hoặc
+   người dùng đã bật "giảm chuyển động" trong hệ điều hành */
+html[data-perf="low"] *, html[data-perf="low"] *::before, html[data-perf="low"] *::after {
+  animation-duration: .001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: .12s !important;
+  scroll-behavior: auto !important;
+}
+html[data-perf="low"] #scene .aurora,
+html[data-perf="low"] #scene .petal,
+html[data-perf="low"] #scene .shooting {
+  display: none;
+}
+
+/* ---------- 5. Bộ chọn ngôn ngữ — lá cờ tròn ---------- */
+.lang-switch { position: relative; }
+.flag-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%; overflow: hidden; flex-shrink: 0;
+  background: var(--line-soft); line-height: 1;
+  border: 1px solid var(--line-soft);
+}
+.flag-badge img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.lang-trigger.icon-btn { padding: 0; }
+.lang-menu {
+  position: absolute; right: 0; top: calc(100% + 8px);
+  background: var(--panel-solid); border: 1px solid var(--line);
+  border-radius: var(--r-md); box-shadow: 0 18px 46px rgba(0,0,0,.35);
+  padding: 6px; display: none; min-width: 190px; z-index: 80;
+}
+.lang-switch.open .lang-menu { display: block; }
+.lang-item {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  background: none; border: none; text-align: left; color: var(--ink);
+  padding: 8px 10px; border-radius: var(--r-sm); cursor: pointer;
+  font-size: .9rem;
+}
+.lang-item:hover { background: var(--line-soft); }
+.lang-item.on { color: var(--moon); font-weight: 600; }
+.lang-item.on .flag-badge { box-shadow: 0 0 0 2px var(--moon); }
+
+/* ---------- 6. Nút hỗ trợ nổi — kéo-thả tự do ---------- */
+.floating-fab {
+  position: fixed; right: 20px; bottom: 20px; z-index: 400;
+  width: 56px; height: 56px; border-radius: 50%;
+  display: grid; place-items: center; cursor: grab;
+  background: linear-gradient(140deg, var(--moon), var(--blossom));
+  border: none; box-shadow: 0 12px 30px rgba(0,0,0,.35);
+  touch-action: none; user-select: none;
+}
+.floating-fab.dragging { cursor: grabbing; transition: none !important; }
+.help-fab { bottom: 20px; }
+.help-fab svg.fab-pup { width: 34px; height: 34px; }
+.assist-fab { right: 88px; bottom: 20px; font-size: 1.4rem; }
+
+@media (max-width: 560px) {
+  .floating-fab { width: 50px; height: 50px; right: 14px; bottom: 14px; }
+  .assist-fab { right: 72px; }
+}
+
+.help-box { max-width: min(560px, 92vw); text-align: left; }
+.help-sections { display: grid; gap: 14px; margin-top: 14px; max-height: 56vh; overflow-y: auto; padding-right: 4px; }
+.help-sec h4 { margin: 0 0 4px; color: var(--moon); font-size: 1rem; }
+.help-sec p { margin: 0; font-size: .92rem; color: var(--ink-soft); line-height: 1.55; }
+
+/* ---------- 7. Bảng trợ lý AI ---------- */
+.assist-panel {
+  position: fixed; right: 20px; bottom: 88px; z-index: 400;
+  width: min(340px, 88vw); height: min(440px, 68vh);
+  background: var(--panel-solid); border: 1px solid var(--line);
+  border-radius: var(--r-lg); box-shadow: 0 24px 60px rgba(0,0,0,.4);
+  display: none; flex-direction: column; overflow: hidden;
+}
+.assist-panel.open { display: flex; }
+.assist-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line-soft); }
+.assist-head svg { width: 30px; height: 30px; flex-shrink: 0; }
+.assist-head b { flex: 1; font-size: .95rem; }
+.assist-log { flex: 1; overflow-y: auto; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.assist-line { max-width: 84%; padding: 8px 12px; border-radius: 14px; font-size: .88rem; line-height: 1.45; }
+.assist-line.bot { align-self: flex-start; background: var(--line-soft); color: var(--ink); border-bottom-left-radius: 4px; }
+.assist-line.me  { align-self: flex-end; background: linear-gradient(140deg, var(--moon), var(--blossom)); color: #fff; border-bottom-right-radius: 4px; }
+.assist-form { display: flex; gap: 8px; padding: 10px; border-top: 1px solid var(--line-soft); }
+.assist-form .input { flex: 1; }
+.assist-form .btn { padding: 0 16px; }
+
+@media (max-width: 560px) {
+  .assist-panel { right: 10px; bottom: 78px; width: min(94vw, 360px); }
+}
+
+/* ---------- 8. Thẻ giá / ví / admin dùng chung ---------- */
+.plan-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.plan-card {
+  border: 1px solid var(--line); border-radius: var(--r-lg); padding: 22px;
+  background: var(--panel); position: relative; overflow: hidden;
+}
+.plan-card.featured { border-color: var(--moon); box-shadow: 0 0 0 1px var(--moon), var(--glow); }
+.plan-card h3 { margin: 0 0 6px; }
+.plan-card .price { font-family: 'Lora', serif; font-size: 1.8rem; color: var(--moon); margin: 6px 0 14px; }
+.plan-card ul { margin: 0 0 16px; padding-left: 18px; color: var(--ink-soft); font-size: .9rem; line-height: 1.7; }
+
+.data-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.data-table th, .data-table td { padding: 10px 12px; border-bottom: 1px solid var(--line-soft); text-align: left; }
+.data-table th { color: var(--ink-mute); font-weight: 600; text-transform: uppercase; font-size: .74rem; letter-spacing: .04em; }
+.data-table tr:hover td { background: var(--line-soft); }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-md); }
+
+.status-pill { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: .76rem; font-weight: 600; }
+.status-pill.pending  { background: color-mix(in srgb, #e0a736 22%, transparent); color: #e0a736; }
+.status-pill.approved { background: color-mix(in srgb, var(--sage) 22%, transparent); color: var(--sage); }
+.status-pill.rejected { background: color-mix(in srgb, #e0736f 22%, transparent); color: #e0736f; }
+
+/* ---------- 8b. Lật bài "5D/8D" — xoay ảo diệu khi mở lá bài ----------
+   Chỉ chạy trên máy khoẻ (không phải data-perf="low"); lá bài trong thế
+   bắt chéo (Celtic Cross) và daily-card giữ nguyên hiệu ứng lật đơn giản
+   để không lệch vị trí/không đụng animation "đung đưa" gốc. */
+@keyframes nodyFlipMagic {
+  0%   { transform: rotateY(0deg)   rotateZ(0deg)  scale(1);    filter: brightness(1)    drop-shadow(0 0 0 transparent); }
+  35%  { transform: rotateY(100deg) rotateZ(-5deg) scale(1.09); filter: brightness(1.3)  drop-shadow(0 0 26px color-mix(in srgb, var(--moon) 65%, transparent)); }
+  65%  { transform: rotateY(205deg) rotateZ(4deg)  scale(1.05); filter: brightness(1.15) drop-shadow(0 0 16px color-mix(in srgb, var(--blossom) 55%, transparent)); }
+  100% { transform: rotateY(180deg) rotateZ(0deg)  scale(1);    filter: brightness(1)    drop-shadow(0 0 0 transparent); }
+}
+@keyframes nodySheen { from { transform: translateX(-130%) rotate(8deg); } to { transform: translateX(130%) rotate(8deg); } }
+
+html:not([data-perf="low"]) .slot:not(.crossed) .flip.turned,
+html:not([data-perf="low"]) .daily-card.turned {
+  animation: nodyFlipMagic .95s cubic-bezier(.22,.9,.24,1) both;
+}
+html:not([data-perf="low"]) .face.front { position: relative; }
+html:not([data-perf="low"]) .face.front::after {
+  content: '';
+  position: absolute; top: -30%; bottom: -30%; left: -30%; width: 46%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.65), transparent);
+  transform: translateX(-130%) rotate(8deg);
+  pointer-events: none; mix-blend-mode: overlay;
+}
+html:not([data-perf="low"]) .slot:not(.crossed) .flip.turned .face.front::after,
+html:not([data-perf="low"]) .daily-card.turned .face.front::after {
+  animation: nodySheen 1s ease-out .05s 1;
+}
+
+/* ---------- 9. Photobooth ---------- */
+.booth-stage {
+  position: relative; width: min(480px, 92vw); aspect-ratio: 3/4; margin: 0 auto;
+  border-radius: var(--r-lg); overflow: hidden; background: #000;
+  border: 1px solid var(--line); box-shadow: var(--glow);
+}
+.booth-stage video, .booth-stage canvas, .booth-stage img.shot { width: 100%; height: 100%; object-fit: cover; display: block; }
+.booth-frame { position: absolute; inset: 0; pointer-events: none; border: 10px solid transparent; }
+.booth-frame.moon    { border-image: linear-gradient(160deg, var(--moon), var(--blossom)) 1; }
+.booth-frame.gold    { border-image: linear-gradient(160deg, #f4d58d, #b9852f) 1; }
+.booth-frame.sage    { border-image: linear-gradient(160deg, var(--sage), var(--mist)) 1; }
+.booth-controls { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+.frame-swatches { display: flex; gap: 8px; justify-content: center; margin-top: 10px; }
+.frame-swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+.frame-swatch.on { border-color: var(--ink); }
+
+.filter-swatches { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+.filter-swatch {
+  padding: 6px 13px; border-radius: 999px; font-size: .8rem;
+  border: 1px solid var(--line); background: var(--panel); color: var(--ink-soft);
+  cursor: pointer; transition: border-color var(--t-fast), color var(--t-fast);
+}
+.filter-swatch:hover { border-color: var(--moon); color: var(--ink); }
+.filter-swatch.on { border-color: var(--moon); color: var(--moon); background: color-mix(in srgb, var(--moon) 10%, transparent); font-weight: 600; }
+
+.btn-ghost.on { color: var(--moon); border-color: var(--moon); background: color-mix(in srgb, var(--moon) 10%, transparent); }
+.btn.tiny { padding: 6px 12px; font-size: .8rem; }
+.admin-pane { margin-top: 18px; }
+
+/* ---------- 10. Nút quay lên đầu trang trên di động ---------- */
+@media (max-width: 700px) {
+  .head-row { gap: 8px; }
+  .brand-name { font-size: .92rem; }
+}

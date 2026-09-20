@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="js/perf.js"></script>
+<title>Quản trị | Nody Tarot</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0a0714">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/scene.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/tarot.css">
+<link rel="stylesheet" href="css/pages.css">
+<link rel="stylesheet" href="css/upgrade.css">
+</head>
+<body>
+<div class="page">
+  <header id="site-head"></header>
+  <main class="wrap section">
+
+    <div id="adminDenied" class="center hidden" style="padding:60px 0">
+      <p style="font-size:2.4rem">🔒</p>
+      <p data-i18n="admin.denied">Bạn không có quyền vào trang này.</p>
+    </div>
+
+    <div id="adminBody" class="hidden">
+      <div class="section-head">
+        <h2 data-i18n="admin.title">Bảng quản trị</h2>
+        <div class="tabs" id="adminTabs" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+          <button class="btn btn-ghost on" data-tab="overview" data-i18n="admin.overview">Tổng quan</button>
+          <button class="btn btn-ghost" data-tab="users" data-i18n="admin.users">Người dùng</button>
+          <button class="btn btn-ghost" data-tab="topups" data-i18n="admin.topups">Yêu cầu nạp tiền</button>
+          <button class="btn btn-ghost" data-tab="readings" data-i18n="admin.readings">Lượt xem bói</button>
+          <button class="btn btn-ghost" data-tab="letters" data-i18n="admin.letters">Thư gửi mai sau</button>
+        </div>
+      </div>
+
+      <section class="admin-pane" id="pane-overview">
+        <div class="plan-grid" id="overviewGrid">
+          <div class="plan-card"><h3 data-i18n="admin.totalUsers">Tổng người dùng</h3><div class="price" id="ovUsers">—</div></div>
+          <div class="plan-card"><h3 data-i18n="admin.totalWallet">Tổng số dư ví</h3><div class="price" id="ovWallet">—</div></div>
+          <div class="plan-card"><h3 data-i18n="admin.pendingTopups">Yêu cầu đang chờ duyệt</h3><div class="price" id="ovPending">—</div></div>
+          <div class="plan-card"><h3 data-i18n="admin.totalReadings">Tổng lượt xem bói</h3><div class="price" id="ovReadings">—</div></div>
+        </div>
+      </section>
+
+      <section class="admin-pane hidden" id="pane-users">
+        <div class="table-wrap"><table class="data-table">
+          <thead><tr><th>Email</th><th>Tên</th><th>Vai trò</th><th>Ví (đ)</th><th>Hành động</th></tr></thead>
+          <tbody id="usersRows"><tr><td colspan="5" class="mute" data-i18n="common.loading">Đang tải…</td></tr></tbody>
+        </table></div>
+      </section>
+
+      <section class="admin-pane hidden" id="pane-topups">
+        <div class="table-wrap"><table class="data-table">
+          <thead><tr><th>Thời gian</th><th>Email</th><th>Số tiền</th><th>Ghi chú</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+          <tbody id="topupsRows"><tr><td colspan="6" class="mute" data-i18n="common.loading">Đang tải…</td></tr></tbody>
+        </table></div>
+      </section>
+
+      <section class="admin-pane hidden" id="pane-readings">
+        <div class="table-wrap"><table class="data-table">
+          <thead><tr><th>Thời gian</th><th>Email</th><th>Loại</th><th>Chủ đề</th><th>Tóm tắt</th></tr></thead>
+          <tbody id="readingsRows"><tr><td colspan="5" class="mute" data-i18n="common.loading">Đang tải…</td></tr></tbody>
+        </table></div>
+      </section>
+
+      <section class="admin-pane hidden" id="pane-letters">
+        <div class="table-wrap"><table class="data-table">
+          <thead><tr><th>Email</th><th>Mở vào ngày</th><th>Đã mở?</th><th>Nội dung</th></tr></thead>
+          <tbody id="lettersRows"><tr><td colspan="4" class="mute" data-i18n="common.loading">Đang tải…</td></tr></tbody>
+        </table></div>
+      </section>
+    </div>
+  </main>
+  <footer id="site-foot"></footer>
+</div>
+
+<script type="module" src="js/firebase-init.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/shell.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

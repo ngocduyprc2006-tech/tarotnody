@@ -23,7 +23,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import {
   getFirestore, collection, addDoc, getDocs, deleteDoc, doc,
-  query, where, serverTimestamp
+  query, where, serverTimestamp, getDoc, setDoc, updateDoc
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 /* ---------- CẤU HÌNH GỐC — ĐỪNG SỬA ---------- */
@@ -175,6 +175,127 @@ const Nody = {
 
   deleteLetter(id) {
     return deleteDoc(doc(db, 'letters', id));
+  },
+
+  /* ==========================================================
+     Hồ sơ người dùng — vai trò (role) & số dư ví (wallet)
+     Doc users/{uid} được tự tạo lần đăng nhập đầu tiên.
+     Muốn cấp quyền admin cho ai: vào Firebase Console → Firestore
+     → users → chọn đúng người → sửa role thành "admin" (thủ công
+     lần đầu; sau đó có thể phong qua trang Admin ngay trên web).
+     ========================================================== */
+  profile: null,
+
+  async ensureProfile() {
+    if (!auth.currentUser) return null;
+    const ref = doc(db, 'users', auth.currentUser.uid);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) {
+      const data = {
+        email: auth.currentUser.email || '',
+        name: auth.currentUser.displayName || '',
+        role: 'user',
+        wallet: 0,
+        createdAt: serverTimestamp()
+      };
+      await setDoc(ref, data);
+      return { id: auth.currentUser.uid, ...data };
+    }
+    return { id: snap.id, ...snap.data() };
+  },
+
+  async myProfile() {
+    if (!auth.currentUser) return null;
+    const snap = await getDoc(doc(db, 'users', auth.currentUser.uid));
+    return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+  },
+
+  isAdmin() {
+    return !!(Nody.profile && Nody.profile.role === 'admin');
+  },
+
+  async renameProfile(name) {
+    if (!auth.currentUser) throw new Error('chưa đăng nhập');
+    await updateDoc(doc(db, 'users', auth.currentUser.uid), { name });
+  },
+
+  /* ---------- Nạp tiền / gói thành viên ----------
+     Không có cổng thanh toán thật (Momo/VNPay/Stripe) trong bản này
+     — người dùng gửi yêu cầu (chuyển khoản tay), admin duyệt thủ công
+     trong trang Admin, số dư ví được cộng tự động khi duyệt. */
+  async requestTopup({ amount, method, note }) {
+    if (!auth.currentUser) throw new Error('chưa đăng nhập');
+    const ref = await addDoc(collection(db, 'topups'), {
+      userId: auth.currentUser.uid,
+      userEmail: auth.currentUser.email || '',
+      amount: Number(amount) || 0,
+      method: method || 'bank',
+      note: (note || '').slice(0, 300),
+      status: 'pending',
+      createdAt: serverTimestamp()
+    });
+    return ref.id;
+  },
+
+  async myTopups() {
+    if (!auth.currentUser) return [];
+    const snap = await getDocs(query(collection(db, 'topups'), where('userId', '==', auth.currentUser.uid)));
+    const rows = [];
+    snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+    rows.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+    return rows;
+  },
+
+  /* ==========================================================
+     Vùng dành cho Admin — trang admin.html tự kiểm tra isAdmin()
+     trước khi gọi các hàm này. An toàn thật sự phải đến từ
+     Firestore Security Rules (xem README) chứ không phải code
+     phía trình duyệt — hãy nhớ bật rules trước khi công khai web.
+     ========================================================== */
+  async adminListUsers() {
+    const snap = await getDocs(collection(db, 'users'));
+    const rows = [];
+    snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+    return rows;
+  },
+
+  async adminSetRole(uid, role) {
+    await updateDoc(doc(db, 'users', uid), { role });
+  },
+
+  async adminListTopups() {
+    const snap = await getDocs(collection(db, 'topups'));
+    const rows = [];
+    snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+    rows.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+    return rows;
+  },
+
+  async adminApproveTopup(topup) {
+    await updateDoc(doc(db, 'topups', topup.id), { status: 'approved', decidedAt: serverTimestamp() });
+    const uref = doc(db, 'users', topup.userId);
+    const usnap = await getDoc(uref);
+    const cur = usnap.exists() ? (usnap.data().wallet || 0) : 0;
+    await updateDoc(uref, { wallet: cur + (Number(topup.amount) || 0) });
+  },
+
+  async adminRejectTopup(id) {
+    await updateDoc(doc(db, 'topups', id), { status: 'rejected', decidedAt: serverTimestamp() });
+  },
+
+  async adminListReadings() {
+    const snap = await getDocs(collection(db, 'readings'));
+    const rows = [];
+    snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+    rows.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+    return rows.slice(0, 200);
+  },
+
+  async adminListLetters() {
+    const snap = await getDocs(collection(db, 'letters'));
+    const rows = [];
+    snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+    return rows;
   }
 };
 
@@ -183,9 +304,14 @@ function broadcast() {
   window.dispatchEvent(new CustomEvent('nody:auth', { detail: Nody.user }));
 }
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   Nody.user = user;
   Nody.loaded = true;
+  Nody.profile = null;
+  if (user) {
+    try { Nody.profile = await Nody.ensureProfile(); }
+    catch (e) { console.warn('Không lấy được hồ sơ người dùng:', e); }
+  }
   broadcast();
 });
 
