@@ -20,8 +20,8 @@
       { href: 'match.html',      glyph: '🌸', name: 'Ghép đôi', desc: 'Hai cái tên, hai ngày sinh, một câu trả lời' }
     ]},
     { group: 'Nhẹ nhàng hơn', items: [
-      { href: 'dream.html',  glyph: '☁',  name: 'Giải mã giấc mơ', desc: 'Kể lại giấc mơ, Cún lật sổ tay biểu tượng' },
-      { href: 'wheel.html',  glyph: '🎡', name: 'Vòng quay Cún Nody', desc: 'Một lượt mỗi ngày, một lời nhắc dễ thương', tag: 'Miễn phí', free: true },
+      { href: 'dream.html',  glyph: '☁',  name: 'Giải mã giấc mơ', desc: 'Kể lại giấc mơ, Nody lật sổ tay biểu tượng' },
+      { href: 'wheel.html',  glyph: '🎡', name: 'Vòng quay Nody', desc: 'Một lượt mỗi ngày, một lời nhắc dễ thương', tag: 'Miễn phí', free: true },
       { href: 'letter.html', glyph: '💌', name: 'Thư gửi mai sau', desc: 'Viết cho chính bạn của một năm nữa' }
     ]}
   ];

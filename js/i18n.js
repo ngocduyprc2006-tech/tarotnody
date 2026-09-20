@@ -62,7 +62,7 @@
     'fx.off':   { vi: 'Hiệu ứng: Đã tắt (mượt hơn)', en: 'Effects: Off (smoother)', zh: '特效：已关闭（更流畅）', ko: '효과: 꺼짐 (더 부드러움)', ja: 'エフェクト：オフ（より軽快）' },
 
     /* ---------- chân trang ---------- */
-    'foot.slogan':      { vi: 'Một góc nhỏ để bạn ngồi xuống, thở một nhịp và tự hỏi mình đang cần gì. Cún Nody luận giải dịu dàng, không doạ ai bao giờ.',
+    'foot.slogan':      { vi: 'Một góc nhỏ để bạn ngồi xuống, thở một nhịp và tự hỏi mình đang cần gì. Nody luận giải dịu dàng, không doạ ai bao giờ.',
                            en: 'A quiet little corner to sit down, take a breath, and ask yourself what you truly need. Nody the pup reads gently — never to scare you.',
                            zh: '一个可以让你坐下来、深呼吸、问问自己需要什么的小角落。诺迪小狗的解读总是温柔的，从不吓唬人。',
                            ko: '잠시 앉아 숨을 고르고 지금 무엇이 필요한지 물어볼 수 있는 작은 공간입니다. 강아지 노디는 늘 부드럽게 풀이해줘요.',
@@ -78,7 +78,7 @@
 
     /* ---------- đăng nhập / đăng ký ---------- */
     'auth.welcomeBack': { vi: 'Chào bạn trở lại', en: 'Welcome back', zh: '欢迎回来', ko: '다시 오셨네요', ja: 'おかえりなさい' },
-    'auth.welcomeSub':  { vi: 'Đăng nhập để Cún giữ giúp bạn mọi lá bài đã rút.',
+    'auth.welcomeSub':  { vi: 'Đăng nhập để Nody giữ giúp bạn mọi lá bài đã rút.',
                            en: 'Log in so Nody can keep every card you have drawn.',
                            zh: '登录后诺迪会帮你保存抽过的每一张牌。',
                            ko: '로그인하면 뽑았던 카드를 노디가 모두 저장해 드려요.',
@@ -95,11 +95,19 @@
     'auth.password':    { vi: 'Mật khẩu', en: 'Password', zh: '密码', ko: '비밀번호', ja: 'パスワード' },
     'auth.forgot':      { vi: 'Quên mật khẩu?', en: 'Forgot password?', zh: '忘记密码？', ko: '비밀번호를 잊으셨나요?', ja: 'パスワードをお忘れですか？' },
     'auth.enterSpace':  { vi: 'Vào không gian của bạn', en: 'Enter your space', zh: '进入我的空间', ko: '내 공간으로 들어가기', ja: 'マイスペースへ' },
-    'auth.displayName': { vi: 'Bạn muốn Cún gọi bạn là gì?', en: 'What should Nody call you?', zh: '希望诺迪怎么称呼你？', ko: '노디가 뭐라고 부르면 될까요?', ja: 'ノディに呼んでほしい名前は？' },
+    'auth.displayName': { vi: 'Bạn muốn Nody gọi bạn là gì?', en: 'What should Nody call you?', zh: '希望诺迪怎么称呼你？', ko: '노디가 뭐라고 부르면 될까요?', ja: 'ノディに呼んでほしい名前は？' },
     'auth.createAcct':  { vi: 'Tạo tài khoản', en: 'Create account', zh: '创建账号', ko: '계정 만들기', ja: 'アカウントを作成' },
     'auth.or':          { vi: 'hoặc', en: 'or', zh: '或', ko: '또는', ja: 'または' },
     'auth.continueGoogle': { vi: 'Tiếp tục với Google', en: 'Continue with Google', zh: '使用 Google 继续', ko: 'Google로 계속하기', ja: 'Googleで続ける' },
     'auth.logout':      { vi: 'Đăng xuất', en: 'Log out', zh: '退出登录', ko: '로그아웃', ja: 'ログアウト' },
+    'auth.passwordPlaceholder': { vi: 'Tối thiểu 8 ký tự, có hoa + số + ký tự đặc biệt', en: 'At least 8 chars, incl. uppercase + number + symbol', zh: '至少8位，含大写字母+数字+特殊符号', ko: '8자 이상, 대문자+숫자+특수문자 포함', ja: '8文字以上、大文字＋数字＋記号を含む' },
+    'auth.confirmPassword': { vi: 'Nhập lại mật khẩu', en: 'Confirm password', zh: '确认密码', ko: '비밀번호 확인', ja: 'パスワード（確認）' },
+    'auth.confirmPasswordPlaceholder': { vi: 'Gõ lại y hệt mật khẩu ở trên', en: 'Type the same password again', zh: '再次输入与上方相同的密码', ko: '위와 동일하게 다시 입력', ja: '上と同じパスワードを再入力' },
+    'auth.passwordRule': { vi: 'Mật khẩu cần từ 8 ký tự, có ít nhất 1 chữ HOA, 1 số và 1 ký tự đặc biệt (!@#$…).', en: 'Password needs 8+ characters with 1 uppercase letter, 1 number and 1 special character (!@#$…).', zh: '密码需至少8位，包含1个大写字母、1个数字和1个特殊符号（!@#$…）。', ko: '비밀번호는 8자 이상, 대문자 1개·숫자 1개·특수문자(!@#$…) 1개를 포함해야 해요.', ja: 'パスワードは8文字以上で、大文字1つ・数字1つ・記号（!@#$…）1つを含めてください。' },
+    'auth.passwordMismatch': { vi: 'Hai lần nhập mật khẩu chưa khớp nhau, bạn xem lại nhé.', en: "The two passwords don't match — please check again.", zh: '两次输入的密码不一致，请再检查一次。', ko: '두 번 입력한 비밀번호가 서로 달라요. 다시 확인해 주세요.', ja: '2つのパスワードが一致していません。もう一度ご確認ください。' },
+    'auth.errMissing':  { vi: 'Còn thiếu một ô chưa điền.', en: "You've left a field empty.", zh: '还有一栏没有填写。', ko: '아직 채우지 않은 칸이 있어요.', ja: '未入力の項目があります。' },
+    'auth.creating':    { vi: 'Đang tạo tài khoản…', en: 'Creating your account…', zh: '正在创建账号…', ko: '계정을 만드는 중…', ja: 'アカウントを作成中…' },
+    'auth.createdToast': { vi: 'Xong rồi, chào ', en: 'All set, hi ', zh: '完成啦，你好，', ko: '완료됐어요, 안녕하세요 ', ja: '完了しました。こんにちは、' },
 
     /* ---------- chung ---------- */
     'common.submit':    { vi: 'Xác nhận', en: 'Confirm', zh: '确认', ko: '확인', ja: '確定' },
@@ -150,17 +158,17 @@
                                         zh: '与刚抽到的牌合影，选择神秘风格的相框，添加贴纸后即可下载或分享。',
                                         ko: '방금 뽑은 카드와 함께 사진을 찍고, 신비로운 프레임을 고르고, 스티커를 추가한 뒤 다운로드하거나 공유하세요.',
                                         ja: '引いたカードと一緒に写真を撮り、神秘的なフレームを選び、ステッカーを加えてダウンロード・共有できます。' },
-    'help.section.assistant.title': { vi: '6. Trợ lý Cún AI', en: '6. Nody AI Assistant', zh: '6. 诺迪 AI 助手', ko: '6. 노디 AI 어시스턴트', ja: '6. ノディ AI アシスタント' },
-    'help.section.assistant.body':  { vi: 'Bấm biểu tượng trò chuyện để hỏi Cún bất cứ điều gì về cách dùng web, ý nghĩa lá bài hay cách nạp tiền.',
+    'help.section.assistant.title': { vi: '6. Trợ lý Nody AI', en: '6. Nody AI Assistant', zh: '6. 诺迪 AI 助手', ko: '6. 노디 AI 어시스턴트', ja: '6. ノディ AI アシスタント' },
+    'help.section.assistant.body':  { vi: 'Bấm biểu tượng trò chuyện để hỏi Nody bất cứ điều gì về cách dùng web, ý nghĩa lá bài hay cách nạp tiền.',
                                        en: 'Tap the chat icon to ask Nody anything about using the site, card meanings, or how to top up.',
                                        zh: '点击聊天图标即可向诺迪询问关于网站使用、牌意或充值方式的任何问题。',
                                        ko: '채팅 아이콘을 눌러 사이트 이용법, 카드 의미, 충전 방법 등 무엇이든 노디에게 물어보세요.',
                                        ja: 'チャットアイコンをタップして、サイトの使い方・カードの意味・チャージ方法など何でもノディに聞いてみましょう。' },
 
     /* ---------- trợ lý AI ---------- */
-    'assist.title':     { vi: 'Trợ lý Cún Nody', en: 'Nody Assistant', zh: '诺迪助手', ko: '노디 어시스턴트', ja: 'ノディアシスタント' },
-    'assist.placeholder': { vi: 'Hỏi Cún điều gì đó…', en: 'Ask Nody something…', zh: '问问诺迪…', ko: '노디에게 물어보세요…', ja: 'ノディに聞いてみよう…' },
-    'assist.greeting':  { vi: 'Chào bạn 🐾 Mình là Cún Nody. Bạn muốn hỏi về cách dùng web, ý nghĩa lá bài, hay nạp gói?',
+    'assist.title':     { vi: 'Trợ lý Nody', en: 'Nody Assistant', zh: '诺迪助手', ko: '노디 어시스턴트', ja: 'ノディアシスタント' },
+    'assist.placeholder': { vi: 'Hỏi Nody điều gì đó…', en: 'Ask Nody something…', zh: '问问诺迪…', ko: '노디에게 물어보세요…', ja: 'ノディに聞いてみよう…' },
+    'assist.greeting':  { vi: 'Chào bạn 🐾 Mình là Nody. Bạn muốn hỏi về cách dùng web, ý nghĩa lá bài, hay nạp gói?',
                            en: "Hi 🐾 I'm Nody. Ask me about how the site works, card meanings, or top-ups.",
                            zh: '你好 🐾 我是诺迪。想问问网站怎么用、牌意，还是充值方式？',
                            ko: '안녕하세요 🐾 저는 노디예요. 사이트 이용법, 카드 의미, 충전에 대해 물어보세요.',
@@ -183,6 +191,8 @@
     'wallet.approved':  { vi: 'Đã duyệt', en: 'Approved', zh: '已通过', ko: '승인됨', ja: '承認済み' },
     'wallet.rejected':  { vi: 'Từ chối', en: 'Rejected', zh: '已拒绝', ko: '거절됨', ja: '却下' },
     'wallet.history':   { vi: 'Lịch sử nạp tiền', en: 'Top-up history', zh: '充值记录', ko: '충전 내역', ja: 'チャージ履歴' },
+    'wallet.qrHint':    { vi: 'Quét mã QR để chuyển khoản nhanh, hoặc chuyển thủ công theo thông tin bên dưới.', en: 'Scan the QR code for a quick transfer, or transfer manually using the details below.', zh: '扫描二维码快速转账，或按下方信息手动转账。', ko: 'QR코드를 스캔해 빠르게 송금하거나, 아래 정보로 직접 송금하세요.', ja: 'QRコードを読み取って送金するか、下記の情報で手動で振り込んでください。' },
+    'wallet.loginToTopup': { vi: 'Bạn cần đăng nhập trước để gửi yêu cầu nạp tiền.', en: 'Please log in first to submit a top-up request.', zh: '请先登录后再提交充值请求。', ko: '충전 요청을 보내려면 먼저 로그인해 주세요.', ja: 'チャージ申請を送るには先にログインしてください。' },
 
     /* ---------- admin ---------- */
     'admin.title':      { vi: 'Bảng quản trị', en: 'Admin Dashboard', zh: '管理后台', ko: '관리자 대시보드', ja: '管理ダッシュボード' },
@@ -203,7 +213,7 @@
     'admin.totalReadings': { vi: 'Tổng lượt xem bói', en: 'Total readings', zh: '占卜总次数', ko: '전체 리딩 수', ja: '総占い回数' },
 
     /* ---------- photobooth ---------- */
-    'photo.title':      { vi: 'Photobooth cùng Cún Nody', en: 'Photobooth with Nody', zh: 'Nody 拍照亭', ko: 'Nody 포토부스', ja: 'Nody フォトブース' },
+    'photo.title':      { vi: 'Photobooth cùng Nody', en: 'Photobooth with Nody', zh: 'Nody 拍照亭', ko: 'Nody 포토부스', ja: 'Nody フォトブース' },
     'photo.start':      { vi: 'Bật máy ảnh', en: 'Start camera', zh: '开启摄像头', ko: '카메라 켜기', ja: 'カメラを起動' },
     'photo.capture':    { vi: 'Chụp', en: 'Capture', zh: '拍照', ko: '촬영', ja: '撮影' },
     'photo.retake':     { vi: 'Chụp lại', en: 'Retake', zh: '重拍', ko: '다시 찍기', ja: '撮り直す' },

@@ -1,5 +1,5 @@
 /* ============================================================
-   wheel.js — Vòng quay Cún Nody
+   wheel.js — Vòng quay Nody
    Mỗi ngày một lượt quay miễn phí. Kết quả cố định theo ngày để
    không ai quay lại mãi cho tới khi ra ô mình thích.
    ============================================================ */

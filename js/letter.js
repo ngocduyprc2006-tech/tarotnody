@@ -1,7 +1,7 @@
 /* ============================================================
    letter.js — Hộp thư thời gian
    Viết thư cho chính mình ở tương lai. Thư nằm trong Firestore,
-   đến ngày hẹn mới mở được. Chưa tới hạn thì Cún giữ kín.
+   đến ngày hẹn mới mở được. Chưa tới hạn thì Nody giữ kín.
    ============================================================ */
 
 (function () {
@@ -37,7 +37,7 @@
       box.innerHTML = `
         <div class="empty">
           ${Sh.pupSVG()}
-          <p>Đăng nhập để Cún cất giúp bạn những lá thư này và nhắc bạn đúng hẹn.</p>
+          <p>Đăng nhập để Nody cất giúp bạn những lá thư này và nhắc bạn đúng hẹn.</p>
           <button class="btn btn-ghost btn-sm" id="btnLoginHere">Đăng nhập</button>
         </div>`;
       const b = $('btnLoginHere');
@@ -62,7 +62,7 @@
               <h4>Thư mở ngày ${prettyDate(r.openAt)}</h4>
               <div class="cards">${open
                 ? escapeHTML(r.body).slice(0, 400).replace(/\n/g, '<br>')
-                : 'Cún đang giữ kín. Còn ' + left + ' ngày nữa.'}</div>
+                : 'Nody đang giữ kín. Còn ' + left + ' ngày nữa.'}</div>
             </div>
             <button class="btn-quiet tiny" data-del="${r.id}">Xoá</button>
           </div>`;
@@ -94,13 +94,13 @@
     if (body.length < 20) return Sh.toast('Viết dài hơn một chút nhé, bạn của tương lai sẽ thích đọc.', true);
     if (!when) return Sh.toast('Bạn chọn ngày mở thư giúp mình.', true);
     if (daysLeft(when) < 1) return Sh.toast('Chọn một ngày trong tương lai nhé.', true);
-    if (!Sh.requireLogin('Đăng nhập để Cún giữ thư cho bạn.')) return;
+    if (!Sh.requireLogin('Đăng nhập để Nody giữ thư cho bạn.')) return;
 
     $('btnSendLetter').disabled = true;
     try {
       await window.Nody.saveLetter({ body, openAt: when });
       $('letterBody').value = '';
-      Sh.toast('Cún đã cất thư. Hẹn bạn ngày ' + prettyDate(when) + ' 💌');
+      Sh.toast('Nody đã cất thư. Hẹn bạn ngày ' + prettyDate(when) + ' 💌');
       loadList();
     } catch (e) {
       Sh.toast('Chưa gửi được. Kiểm tra kết nối rồi thử lại.', true);

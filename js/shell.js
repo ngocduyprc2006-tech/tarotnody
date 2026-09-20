@@ -31,12 +31,12 @@
   }
 
   /* ==========================================================
-     2. Cún Nody — linh vật, vẽ bằng SVG nên không cần file ảnh
+     2. Nody — linh vật, vẽ bằng SVG nên không cần file ảnh
      ========================================================== */
   function pupSVG(cls) {
     const id = 'm' + Math.random().toString(36).slice(2, 7);
     return `
-<svg class="pup ${cls || ''}" viewBox="0 0 64 64" role="img" aria-label="Cún Nody">
+<svg class="pup ${cls || ''}" viewBox="0 0 64 64" role="img" aria-label="Nody">
   <defs>
     <radialGradient id="${id}" cx="36%" cy="32%" r="70%">
       <stop offset="0%" stop-color="#fff6e2"/>
@@ -238,10 +238,12 @@
      6b. Nút bật/tắt hiệu ứng — Tự động ⇄ Bật ⇄ Tắt, nhớ theo máy
      ========================================================== */
   function fxIcon() {
+    // Chỉ 1 ký tự/emoji cho mỗi trạng thái — 2 emoji ghép lại sẽ tràn
+    // ra ngoài vòng tròn 38px của .icon-btn (đây chính là lỗi tràn cũ).
     const mode = window.NodyPerf ? window.NodyPerf.overrideMode : null;
-    if (mode === 'off') return '🚫✨';
+    if (mode === 'off') return '🌑';
     if (mode === 'on') return '✨';
-    return '🌗✨';
+    return '🌗';
   }
 
   function cycleFx() {
@@ -337,7 +339,7 @@
       <div class="wrap foot-grid">
         <div>
           <a class="brand" href="index.html">${pupSVG()}<span class="brand-name">Nody <b>Tarot</b></span></a>
-          <p class="soft" style="font-size:.9rem;margin-top:14px;max-width:34ch">${L('foot.slogan', 'Một góc nhỏ để bạn ngồi xuống, thở một nhịp và tự hỏi mình đang cần gì. Cún Nody luận giải dịu dàng, không doạ ai bao giờ.')}</p>
+          <p class="soft" style="font-size:.9rem;margin-top:14px;max-width:34ch">${L('foot.slogan', 'Một góc nhỏ để bạn ngồi xuống, thở một nhịp và tự hỏi mình đang cần gì. Nody luận giải dịu dàng, không doạ ai bao giờ.')}</p>
         </div>
         <div>
           <h4>${L('foot.group1', 'Bói bài &amp; con số')}</h4>
@@ -353,7 +355,7 @@
           <h4>${L('foot.group2', 'Nhẹ nhàng hơn')}</h4>
           <div class="foot-links">
             <a href="dream.html">${L('nav.dream', 'Giải mã giấc mơ')}</a>
-            <a href="wheel.html">${L('nav.wheel', 'Vòng quay Cún Nody')}</a>
+            <a href="wheel.html">${L('nav.wheel', 'Vòng quay Nody')}</a>
             <a href="letter.html">${L('nav.letter', 'Thư gửi mai sau')}</a>
             <a href="photobooth.html">${L('nav.photobooth', 'Photobooth')}</a>
             <a href="wallet.html">${L('nav.wallet', 'Nạp & Gói')}</a>
@@ -382,7 +384,7 @@
         <div class="auth-head">
           ${pupSVG()}
           <h3 id="authTitle">${L('auth.welcomeBack', 'Chào bạn trở lại')}</h3>
-          <p id="authSub">${L('auth.welcomeSub', 'Đăng nhập để Cún giữ giúp bạn mọi lá bài đã rút.')}</p>
+          <p id="authSub">${L('auth.welcomeSub', 'Đăng nhập để Nody giữ giúp bạn mọi lá bài đã rút.')}</p>
         </div>
 
         <div class="auth-tabs">
@@ -402,12 +404,15 @@
         </div>
 
         <div class="auth-pane" id="paneReg">
-          <div class="field"><label for="rgName">${L('auth.displayName', 'Bạn muốn Cún gọi bạn là gì?')}</label>
+          <div class="field"><label for="rgName">${L('auth.displayName', 'Bạn muốn Nody gọi bạn là gì?')}</label>
             <input class="input" type="text" id="rgName" autocomplete="name" placeholder="Tên hiển thị"></div>
           <div class="field"><label for="rgMail">${L('auth.email', 'Email')}</label>
             <input class="input" type="email" id="rgMail" autocomplete="email" placeholder="ban@email.com"></div>
           <div class="field"><label for="rgPass">${L('auth.password', 'Mật khẩu')}</label>
-            <input class="input" type="password" id="rgPass" autocomplete="new-password" placeholder="Ít nhất 6 ký tự"></div>
+            <input class="input" type="password" id="rgPass" autocomplete="new-password" placeholder="${L('auth.passwordPlaceholder', 'Tối thiểu 8 ký tự, có hoa + số + ký tự đặc biệt')}"></div>
+          <div class="field"><label for="rgPass2">${L('auth.confirmPassword', 'Nhập lại mật khẩu')}</label>
+            <input class="input" type="password" id="rgPass2" autocomplete="new-password" placeholder="${L('auth.confirmPasswordPlaceholder', 'Gõ lại y hệt mật khẩu ở trên')}"></div>
+          <p class="tiny mute" id="pwHint" style="margin:-6px 0 12px;line-height:1.5">${L('auth.passwordRule', 'Mật khẩu cần từ 8 ký tự, có ít nhất 1 chữ HOA, 1 số và 1 ký tự đặc biệt (!@#$…).')}</p>
           <button class="btn btn-moon btn-block" id="btnDoReg">${L('auth.createAcct', 'Tạo tài khoản')}</button>
         </div>
 
@@ -441,10 +446,25 @@
     document.getElementById('btnGoogle').onclick = doGoogle;
     document.getElementById('btnForgot').onclick = doForgot;
 
+    // Đổi màu gợi ý mật khẩu theo thời gian thực để người dùng biết
+    // ngay mình còn thiếu điều kiện nào, không cần bấm gửi mới biết sai.
+    const pwHintEl = document.getElementById('pwHint');
+    const updatePwHint = () => {
+      if (!pwHintEl) return;
+      const p1 = document.getElementById('rgPass').value;
+      const p2 = document.getElementById('rgPass2').value;
+      pwHintEl.classList.remove('ok', 'err');
+      if (!p1 && !p2) return;
+      if (passwordRuleOk(p1) && (!p2 || p1 === p2)) pwHintEl.classList.add('ok');
+      else pwHintEl.classList.add('err');
+    };
+    document.getElementById('rgPass').addEventListener('input', updatePwHint);
+    document.getElementById('rgPass2').addEventListener('input', updatePwHint);
+
     // Enter để gửi
     ['liPass', 'liMail'].forEach(id =>
       document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); }));
-    ['rgPass', 'rgMail', 'rgName'].forEach(id =>
+    ['rgPass', 'rgPass2', 'rgMail', 'rgName'].forEach(id =>
       document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); }));
   }
 
@@ -457,7 +477,7 @@
       tab === 'login' ? L('auth.welcomeBack', 'Chào bạn trở lại') : L('auth.newSpace', 'Tạo một góc riêng');
     document.getElementById('authSub').textContent =
       tab === 'login'
-        ? L('auth.welcomeSub', 'Đăng nhập để Cún giữ giúp bạn mọi lá bài đã rút.')
+        ? L('auth.welcomeSub', 'Đăng nhập để Nody giữ giúp bạn mọi lá bài đã rút.')
         : L('auth.newSpaceSub', 'Có tài khoản rồi thì lịch sử xem bói sẽ theo bạn qua mọi thiết bị.');
     msg('');
   }
@@ -511,18 +531,35 @@
     } catch (e) { msg(window.Nody.readError(e), 'err'); }
   }
 
+  /* Quy tắc mật khẩu: tối thiểu 8 ký tự, có ít nhất 1 chữ HOA,
+     1 chữ số và 1 ký tự đặc biệt — tránh mật khẩu quá đơn giản
+     hoặc đặt bậy bạ (chuỗi lặp, toàn số...). */
+  function passwordRuleOk(pass) {
+    if (!pass || pass.length < 8) return false;
+    if (!/[A-Z]/.test(pass)) return false;
+    if (!/[0-9]/.test(pass)) return false;
+    if (!/[!@#$%^&*()_\-+=\[\]{};:'",.<>/?\\|`~]/.test(pass)) return false;
+    if (/^(.)\1+$/.test(pass)) return false;          // toàn 1 ký tự lặp lại
+    if (/^(01234567|12345678|password|11111111)/i.test(pass)) return false;
+    return true;
+  }
+
   async function doRegister() {
     if (!needFirebase()) return;
     const name = document.getElementById('rgName').value.trim();
     const mail = document.getElementById('rgMail').value.trim();
     const pass = document.getElementById('rgPass').value;
-    if (!name || !mail || !pass) return msg('Còn thiếu một ô chưa điền.', 'err');
-    if (pass.length < 6) return msg('Mật khẩu cần ít nhất 6 ký tự.', 'err');
-    msg('Đang tạo tài khoản…');
+    const pass2 = document.getElementById('rgPass2').value;
+    if (!name || !mail || !pass || !pass2) return msg(L('auth.errMissing', 'Còn thiếu một ô chưa điền.'), 'err');
+    if (!passwordRuleOk(pass)) {
+      return msg(L('auth.passwordRule', 'Mật khẩu cần từ 8 ký tự, có ít nhất 1 chữ HOA, 1 số và 1 ký tự đặc biệt (!@#$…).'), 'err');
+    }
+    if (pass !== pass2) return msg(L('auth.passwordMismatch', 'Hai lần nhập mật khẩu chưa khớp nhau, bạn xem lại nhé.'), 'err');
+    msg(L('auth.creating', 'Đang tạo tài khoản…'));
     try {
       await window.Nody.register(name, mail, pass);
       closeAuth();
-      toast('Xong rồi, chào ' + name + ' 🐾');
+      toast(L('auth.createdToast', 'Xong rồi, chào ') + name + ' 🐾');
     } catch (e) { msg(window.Nody.readError(e), 'err'); }
   }
 
@@ -720,7 +757,7 @@
   }
 
   /* ==========================================================
-     12. Trợ lý Cún AI — hỏi đáp dựa trên luật, chạy offline
+     12. Trợ lý Nody AI — hỏi đáp dựa trên luật, chạy offline
      ------------------------------------------------------------
      Không gọi API ngoài (không cần khoá bí mật) nên luôn hoạt
      động. Muốn nối vào Claude/API thật: xem ghi chú trong README.
@@ -740,7 +777,7 @@
     fab.id = 'assistFab';
     fab.className = 'floating-fab assist-fab';
     fab.innerHTML = '💬';
-    fab.title = L('assist.title', 'Trợ lý Cún Nody');
+    fab.title = L('assist.title', 'Trợ lý Nody');
     document.body.appendChild(fab);
 
     const panel = document.createElement('div');
@@ -749,12 +786,12 @@
     panel.innerHTML = `
       <div class="assist-head">
         ${pupSVG()}
-        <b id="assistTitle">${L('assist.title', 'Trợ lý Cún Nody')}</b>
+        <b id="assistTitle">${L('assist.title', 'Trợ lý Nody')}</b>
         <button class="modal-x" id="assistClose">✕</button>
       </div>
       <div class="assist-log" id="assistLog"></div>
       <form class="assist-form" id="assistForm">
-        <input class="input" id="assistInput" data-i18n-placeholder="assist.placeholder" placeholder="${L('assist.placeholder', 'Hỏi Cún điều gì đó…')}" autocomplete="off">
+        <input class="input" id="assistInput" data-i18n-placeholder="assist.placeholder" placeholder="${L('assist.placeholder', 'Hỏi Nody điều gì đó…')}" autocomplete="off">
         <button class="btn btn-moon" type="submit">➤</button>
       </form>`;
     document.body.appendChild(panel);
@@ -793,7 +830,7 @@
     const log = document.getElementById('assistLog');
     if (!log) return;
     log.innerHTML = '';
-    addAssistLine(L('assist.greeting', "Chào bạn 🐾 Mình là Cún Nody."), 'bot');
+    addAssistLine(L('assist.greeting', "Chào bạn 🐾 Mình là Nody."), 'bot');
   }
 
   function answerAssistant(q) {
@@ -812,7 +849,7 @@
     /* Yêu cầu đăng nhập; trả về true nếu đã đăng nhập */
     requireLogin(why) {
       if (window.Nody && window.Nody.user) return true;
-      toast(why || 'Bạn đăng nhập trước nhé, để Cún giữ giúp kết quả.', true);
+      toast(why || 'Bạn đăng nhập trước nhé, để Nody giữ giúp kết quả.', true);
       openAuth('login');
       return false;
     },

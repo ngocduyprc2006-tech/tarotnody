@@ -3,8 +3,8 @@
 Web xem bói online cho dự án Firebase **nodytarot** — trải bài Tarot, lá bài hôm nay,
 thần số học, chiêm tinh, ghép đôi, giải mã giấc mơ, vòng quay may mắn, thư gửi mai sau,
 **photobooth**, **ví & gói thành viên**, **trang quản trị**, và giờ có thêm **5 ngôn ngữ**
-(Việt / Anh / Trung / Hàn / Nhật), **trợ lý Cún AI**, **nút hỗ trợ nổi kéo-thả được**.
-Linh vật là Cún Nody. Có đăng nhập/đăng ký và lưu lịch sử qua Firebase.
+(Việt / Anh / Trung / Hàn / Nhật), **trợ lý Nody AI**, **nút hỗ trợ nổi kéo-thả được**.
+Linh vật là Nody. Có đăng nhập/đăng ký và lưu lịch sử qua Firebase.
 
 ---
 
@@ -27,7 +27,7 @@ doanh nghiệp nào**:
    ~1.2 giây đầu để tự hạ hiệu ứng nếu máy đuối hơn dự đoán — xem thêm mục 9 bên dưới.
 4. **Nút hỗ trợ nổi 🐾** — kéo-thả đặt ở bất kỳ đâu (nhớ vị trí qua `localStorage`), bấm
    vào mở bảng hướng dẫn dùng web đầy đủ, dịch theo ngôn ngữ đang chọn.
-5. **Trợ lý Cún AI** — khung chat 💬 ở góc màn hình, trả lời theo luật (không cần server,
+5. **Trợ lý Nody AI** — khung chat 💬 ở góc màn hình, trả lời theo luật (không cần server,
    luôn chạy được). Đây **chưa phải** mô hình AI thật như ChatGPT/Claude — xem phần
    "Nâng lên AI thật" bên dưới nếu bạn muốn bước tiếp.
 6. **Photobooth** — bật camera, chọn khung viền, chụp, tự vẽ lá bài vừa rút gần nhất làm
@@ -79,7 +79,7 @@ Tarot/
 ├── horoscope.html            chiêm tinh
 ├── match.html                  ghép đôi
 ├── dream.html                    giải mã giấc mơ
-├── wheel.html                     vòng quay Cún Nody
+├── wheel.html                     vòng quay Nody
 ├── letter.html                     thư gửi mai sau
 ├── photobooth.html                   🆕 chụp ảnh cùng lá bài
 ├── wallet.html                         🆕 ví, gói thành viên, nạp tiền
@@ -235,7 +235,7 @@ gắn domain riêng thì cần thêm domain đó vào).
 - Ngôn ngữ trình duyệt lần đầu ghé được tự nhận diện; sau đó nhớ theo lựa chọn của người
   dùng qua `localStorage` (`nody.lang`).
 
-## Nâng "Trợ lý Cún AI" lên AI thật (Claude/GPT)
+## Nâng "Trợ lý Nody AI" lên AI thật (Claude/GPT)
 
 Trợ lý hiện tại (`answerAssistant()` trong `js/shell.js`) trả lời theo luật cố định —
 luôn chạy được, không cần khoá API. Muốn nối vào một mô hình AI thật:
@@ -275,7 +275,7 @@ luôn chạy được, không cần khoá API. Muốn nối vào một mô hình
 | Bộ lọc màu / khung ảnh Photobooth | `js/photobooth.js` (object `FILTER_CSS`) |
 | Hiệu ứng lật bài "5D/8D" | `css/upgrade.css`, mục "Lật bài 5D/8D" |
 | Chữ ở trang chủ | `index.html` |
-| Linh vật Cún Nody | hàm `pupSVG()` trong `js/shell.js` |
+| Linh vật Nody | hàm `pupSVG()` trong `js/shell.js` |
 
 ## Ghi chú về ảnh lá bài
 
@@ -295,7 +295,7 @@ hai trường `img` và `img2` trong `js/data/deck.js`.
 - **Chiêm tinh** — tra cung từ ngày sinh, ghép với pha trăng ra bản đọc trong ngày
 - **Ghép đôi** — điểm hợp từ ba lớp: hành của cung, số đường đời, duyên tên gọi
 - **Giải mã giấc mơ** — dò 23 biểu tượng thường gặp + 1 lá bài gợi ý
-- **Vòng quay Cún Nody** — một lượt miễn phí mỗi ngày
+- **Vòng quay Nody** — một lượt miễn phí mỗi ngày
 - **Thư gửi mai sau** — viết thư hẹn ngày mở, lưu trên Firestore
 - **Photobooth** — chụp ảnh cùng lá bài vừa rút, chọn khung, tải PNG về máy
 - **Ví & Nạp tiền** — xem gói, gửi yêu cầu nạp (chuyển khoản tay), lịch sử nạp tiền

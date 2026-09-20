@@ -108,7 +108,7 @@
   }
 
   function closing(n) {
-    if (n >= 7) return `Bạn đã ghé đây ${n} ngày liền. Cún nhớ mặt bạn rồi đó 🐾`;
+    if (n >= 7) return `Bạn đã ghé đây ${n} ngày liền. Nody nhớ mặt bạn rồi đó 🐾`;
     if (n >= 3) return `${n} ngày liên tiếp rồi. Một thói quen nhỏ đang thành hình.`;
     return 'Mai ghé lại nhé, lá bài sẽ đổi khi trời sáng.';
   }

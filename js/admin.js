@@ -49,12 +49,18 @@
     const host = document.getElementById('usersRows');
     try {
       const rows = await window.Nody.adminListUsers();
-      if (!rows.length) { host.innerHTML = `<tr><td colspan="5" class="mute">—</td></tr>`; return; }
+      if (!rows.length) { host.innerHTML = `<tr><td colspan="6" class="mute">—</td></tr>`; return; }
+      const PLANS = ['free', 'plus', 'pro'];
       host.innerHTML = rows.map(u => `
         <tr>
           <td>${esc(u.email)}</td>
           <td>${esc(u.name)}</td>
           <td>${esc(u.role || 'user')}</td>
+          <td>
+            <select class="input tiny js-plan" data-uid="${u.id}" style="padding:4px 8px;font-size:.82rem">
+              ${PLANS.map(p => `<option value="${p}" ${((u.plan || 'free') === p) ? 'selected' : ''}>${p}</option>`).join('')}
+            </select>
+          </td>
           <td>${fmtMoney(u.wallet)}</td>
           <td>
             ${u.role === 'admin'
@@ -64,14 +70,20 @@
         </tr>`).join('');
       host.querySelectorAll('.js-grant').forEach(b => b.onclick = () => setRole(b.dataset.uid, 'admin'));
       host.querySelectorAll('.js-revoke').forEach(b => b.onclick = () => setRole(b.dataset.uid, 'user'));
+      host.querySelectorAll('.js-plan').forEach(sel => sel.onchange = () => setPlan(sel.dataset.uid, sel.value));
     } catch (e) {
-      host.innerHTML = `<tr><td colspan="5" class="mute">Không tải được (kiểm tra Firestore Rules).</td></tr>`;
+      host.innerHTML = `<tr><td colspan="6" class="mute">Không tải được (kiểm tra Firestore Rules).</td></tr>`;
     }
   }
 
   async function setRole(uid, role) {
     try { await window.Nody.adminSetRole(uid, role); loadUsers(); }
     catch (e) { window.Shell.toast('Không đổi được vai trò.', true); }
+  }
+
+  async function setPlan(uid, plan) {
+    try { await window.Nody.adminSetPlan(uid, plan); window.Shell.toast('Đã cập nhật gói: ' + plan); }
+    catch (e) { window.Shell.toast('Không đổi được gói.', true); loadUsers(); }
   }
 
   async function loadTopups() {

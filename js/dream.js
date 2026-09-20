@@ -20,7 +20,7 @@
     if (symbols.length) {
       html += `<div class="chips">${symbols.map(s => `<span class="chip">${s.name}</span>`).join('')}
         ${mood ? `<span class="chip alt">cảm xúc: ${mood.name}</span>` : ''}</div>`;
-      html += `<p>Trong đoạn bạn kể, Cún nhận ra ${symbols.length === 1 ? 'một biểu tượng' : symbols.length + ' biểu tượng'} quen thuộc. Đọc từng cái nhé.</p>`;
+      html += `<p>Trong đoạn bạn kể, Nody nhận ra ${symbols.length === 1 ? 'một biểu tượng' : symbols.length + ' biểu tượng'} quen thuộc. Đọc từng cái nhé.</p>`;
 
       symbols.slice(0, 4).forEach(s => {
         html += `<h4>${s.name}</h4><p>${s.mean}</p>
@@ -69,7 +69,7 @@
       if (text.length < 10) return Sh.toast('Kể thêm một chút nữa nhé, ít nhất một câu.', true);
 
       $('dreamResult').classList.remove('hidden');
-      $('dreamBody').innerHTML = '<div class="thinking"><i></i><i></i><i></i> Cún đang lật sổ tay giấc mơ</div>';
+      $('dreamBody').innerHTML = '<div class="thinking"><i></i><i></i><i></i> Nody đang lật sổ tay giấc mơ</div>';
       $('dreamResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
       setTimeout(() => {

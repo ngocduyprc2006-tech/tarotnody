@@ -83,7 +83,7 @@ window.DreamBook = (function () {
   ];
 
   const GENERIC = {
-    mean: 'Giấc mơ này chưa khớp với biểu tượng nào trong sổ tay của Cún, nhưng điều đó không sao cả. ' +
+    mean: 'Giấc mơ này chưa khớp với biểu tượng nào trong sổ tay của Nody, nhưng điều đó không sao cả. ' +
           'Giấc mơ nói bằng ngôn ngữ riêng của mỗi người, và bạn là người dịch giỏi nhất.',
     ask: 'Trong giấc mơ đó, cảm xúc mạnh nhất bạn thấy là gì? Cảm xúc ấy gần đây xuất hiện lúc nào trong đời thật?'
   };

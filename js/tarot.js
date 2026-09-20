@@ -295,7 +295,7 @@
       'Đừng cố hiểu hết bài trong hôm nay. Chọn một dòng khiến bạn hơi nhói, rồi làm một việc nhỏ theo nó.',
       'Bài không bảo bạn phải làm gì. Nó chỉ nói ra điều bạn đã biết, để bạn khỏi phải một mình biết nữa.',
       'Nếu đọc xong thấy nhẹ đi một chút, vậy là đủ rồi. Phần còn lại cứ để ngày mai lo.',
-      'Cún Nody chỉ nhắc một điều: bạn đang xoay xở tốt hơn bạn tự chấm cho mình nhiều lắm.'
+      'Nody chỉ nhắc một điều: bạn đang xoay xở tốt hơn bạn tự chấm cho mình nhiều lắm.'
     ];
     const closing = closings[Math.floor(Math.random() * closings.length)];
 

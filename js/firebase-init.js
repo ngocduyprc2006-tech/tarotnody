@@ -186,22 +186,41 @@ const Nody = {
      ========================================================== */
   profile: null,
 
+  /* ---------- Tài khoản admin mặc định ----------
+     Email trong danh sách này LUÔN được đưa về role "admin" + gói
+     "pro" mỗi lần đăng nhập (tự sửa lại nếu ai đó lỡ đổi trong
+     Firestore). Đây là lớp tiện lợi phía trình duyệt — an toàn
+     THẬT SỰ vẫn phải nằm ở Firestore Security Rules (xem README),
+     nếu không thì bất kỳ ai cũng có thể tự sửa role của chính họ
+     bằng console trình duyệt. Sửa danh sách bên dưới nếu cần. */
+  ADMIN_EMAILS: ['ngocduyprc2006@nodytarot.com'],
+
   async ensureProfile() {
     if (!auth.currentUser) return null;
+    const email = auth.currentUser.email || '';
+    const isBootstrapAdmin = Nody.ADMIN_EMAILS.includes(email.toLowerCase());
     const ref = doc(db, 'users', auth.currentUser.uid);
     const snap = await getDoc(ref);
     if (!snap.exists()) {
       const data = {
-        email: auth.currentUser.email || '',
+        email,
         name: auth.currentUser.displayName || '',
-        role: 'user',
+        role: isBootstrapAdmin ? 'admin' : 'user',
+        plan: isBootstrapAdmin ? 'pro' : 'free',
         wallet: 0,
         createdAt: serverTimestamp()
       };
       await setDoc(ref, data);
       return { id: auth.currentUser.uid, ...data };
     }
-    return { id: snap.id, ...snap.data() };
+    const data = snap.data();
+    if (isBootstrapAdmin && (data.role !== 'admin' || data.plan !== 'pro')) {
+      await updateDoc(ref, { role: 'admin', plan: 'pro' });
+      data.role = 'admin';
+      data.plan = 'pro';
+    }
+    if (data.plan === undefined) data.plan = 'free';
+    return { id: snap.id, ...data };
   },
 
   async myProfile() {
@@ -261,6 +280,12 @@ const Nody = {
 
   async adminSetRole(uid, role) {
     await updateDoc(doc(db, 'users', uid), { role });
+  },
+
+  /* plan: 'free' | 'plus' | 'pro' — admin cấp gói tuỳ ý cho bất kỳ
+     tài khoản nào, không cần người đó phải nạp tiền qua topup. */
+  async adminSetPlan(uid, plan) {
+    await updateDoc(doc(db, 'users', uid), { plan });
   },
 
   async adminListTopups() {

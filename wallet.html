@@ -51,7 +51,18 @@
 
     <div class="panel" style="max-width:560px;margin:0 auto 34px;padding:22px;border:1px solid var(--line);border-radius:var(--r-lg)">
       <h3 data-i18n="wallet.method">Hình thức nạp</h3>
+
+      <div id="topupQRBox" style="display:flex;flex-direction:column;align-items:center;gap:8px;margin:6px 0 16px">
+        <!-- Dán link ảnh QR ngân hàng của bạn vào src bên dưới (hoặc thay id="topupQR" bằng ảnh <img> tĩnh). -->
+        <img id="topupQR" alt="QR chuyển khoản" src=""
+             style="width:180px;height:180px;object-fit:contain;border-radius:14px;border:1px solid var(--line);background:var(--panel)"
+             onerror="this.style.display='none';document.getElementById('topupQRFallback').style.display='grid'">
+        <div id="topupQRFallback" style="display:grid;place-items:center;width:180px;height:180px;border-radius:14px;border:1px dashed var(--line);background:var(--panel);font-size:2rem">🏦</div>
+        <p class="tiny mute" data-i18n="wallet.qrHint">Quét mã QR để chuyển khoản nhanh, hoặc chuyển thủ công theo thông tin bên dưới.</p>
+      </div>
+
       <p class="mute" id="bankInfo" style="font-size:.88rem;line-height:1.7"></p>
+      <p class="tiny" id="topupLoginNote" style="display:none;color:var(--moon);margin:-4px 0 14px" data-i18n="wallet.loginToTopup">Bạn cần đăng nhập trước để gửi yêu cầu nạp tiền.</p>
       <div class="field">
         <label id="lblAmount">Số tiền (đ)</label>
         <input class="input" type="number" id="topupAmount" min="10000" step="1000" placeholder="49000">

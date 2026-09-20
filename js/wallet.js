@@ -13,7 +13,7 @@
     vi: {
       free: ['3 lượt trải bài Tarot mỗi ngày', 'Lá bài hôm nay & Vòng quay', 'Thần số học, Chiêm tinh cơ bản'],
       plus: ['Trải bài không giới hạn', 'Luận giải sâu hơn cho mỗi lá', 'Không chờ quảng cáo', 'Photobooth khung cao cấp'],
-      vip: ['Mọi quyền lợi của Plus', 'Ưu tiên hỗ trợ từ Cún Nody', 'Xuất PDF lịch sử xem bói', 'Huy hiệu VIP trên hồ sơ']
+      vip: ['Mọi quyền lợi của Plus', 'Ưu tiên hỗ trợ từ Nody', 'Xuất PDF lịch sử xem bói', 'Huy hiệu VIP trên hồ sơ']
     },
     en: {
       free: ['3 tarot readings per day', 'Card of the Day & Lucky Wheel', 'Basic numerology & horoscope'],
@@ -38,7 +38,7 @@
   };
 
   const BANK_INFO = {
-    vi: 'Chuyển khoản tới: <b>Vietcombank — 0123 456 789 — NODY TAROT</b>. Nội dung ghi rõ email tài khoản của bạn. Sau khi chuyển, điền số tiền + ghi chú bên dưới rồi bấm Xác nhận — Cún sẽ xét duyệt trong vòng 24 giờ.',
+    vi: 'Chuyển khoản tới: <b>Vietcombank — 0123 456 789 — NODY TAROT</b>. Nội dung ghi rõ email tài khoản của bạn. Sau khi chuyển, điền số tiền + ghi chú bên dưới rồi bấm Xác nhận — Nody sẽ xét duyệt trong vòng 24 giờ.',
     en: 'Transfer to: <b>Vietcombank — 0123 456 789 — NODY TAROT</b>. Include your account email in the transfer note. After transferring, fill in the amount and note below, then submit — Nody will review it within 24 hours.',
     zh: '请转账至：<b>Vietcombank — 0123 456 789 — NODY TAROT</b>，备注请填写你的账号邮箱。转账后填写下方金额与备注并提交，诺迪会在24小时内审核。',
     ko: '다음 계좌로 송금하세요: <b>Vietcombank — 0123 456 789 — NODY TAROT</b>. 송금 메모에 계정 이메일을 적어주세요. 송금 후 아래에 금액과 메모를 입력하고 제출하면, 노디가 24시간 이내에 확인합니다.',
@@ -70,6 +70,18 @@
     const p = window.Nody.profile;
     const label = window.I18N ? window.I18N.t('wallet.balance') : 'Số dư hiện tại';
     line.innerHTML = `${label}: <b style="color:var(--moon)">${(p && p.wallet || 0).toLocaleString('vi-VN')}đ</b>`;
+  }
+
+  /* Bắt buộc đăng nhập mới nạp được: khoá sẵn các ô nhập + nút gửi,
+     kèm dòng nhắc, thay vì chỉ chặn lúc bấm gửi (đỡ bất ngờ cho người dùng). */
+  function updateLoginGate() {
+    const loggedIn = !!(window.Nody && window.Nody.user);
+    const note = document.getElementById('topupLoginNote');
+    const amount = document.getElementById('topupAmount');
+    const note2 = document.getElementById('topupNote');
+    const btn = document.getElementById('btnRequestTopup');
+    if (note) note.style.display = loggedIn ? 'none' : 'block';
+    [amount, note2, btn].forEach(el => { if (el) el.disabled = !loggedIn; });
   }
 
   async function loadTopups() {
@@ -114,14 +126,14 @@
 
     document.getElementById('btnRequestTopup').onclick = async () => {
       const msg = document.getElementById('topupMsg');
-      if (!window.Shell.requireLogin()) return;
+      if (!window.Shell.requireLogin(window.I18N ? window.I18N.t('wallet.loginToTopup') : undefined)) return;
       const amount = Number(document.getElementById('topupAmount').value);
       const note = document.getElementById('topupNote').value.trim();
       if (!amount || amount < 10000) { msg.textContent = 'Nhập số tiền hợp lệ (tối thiểu 10.000đ) nhé.'; return; }
       msg.textContent = '…';
       try {
         await window.Nody.requestTopup({ amount, method: 'bank', note });
-        msg.textContent = 'Đã gửi yêu cầu! Cún sẽ duyệt trong 24 giờ.';
+        msg.textContent = 'Đã gửi yêu cầu! Nody sẽ duyệt trong 24 giờ.';
         document.getElementById('topupNote').value = '';
         loadTopups();
       } catch (e) {
@@ -130,13 +142,14 @@
     };
   }
 
-  window.addEventListener('nody:auth', () => { renderBalance(); loadTopups(); });
+  window.addEventListener('nody:auth', () => { renderBalance(); loadTopups(); updateLoginGate(); });
   window.addEventListener('nody:lang', renderPlans);
 
   document.addEventListener('DOMContentLoaded', () => {
     renderPlans();
     renderBalance();
     loadTopups();
+    updateLoginGate();
     wire();
   });
 })();

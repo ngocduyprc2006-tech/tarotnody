@@ -21,7 +21,7 @@
   padding-block: 8px;
 }
 
-/* ---------- Logo + Cún ---------- */
+/* ---------- Logo + Nody ---------- */
 .brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .brand-name {
   font-family: 'Lora', serif;
@@ -75,8 +75,12 @@
   border: 1px solid var(--line);
   background: var(--panel);
   font-size: 1rem;
+  line-height: 1;
+  overflow: hidden;
+  white-space: nowrap;
   transition: transform var(--t-fast), border-color var(--t-fast);
 }
+.icon-btn > * { max-width: 100%; }
 .icon-btn:hover { transform: translateY(-2px); border-color: var(--moon); }
 
 .acct-btn {
@@ -278,6 +282,8 @@
 }
 .auth-msg.err { color: var(--blossom); }
 .auth-msg.ok  { color: var(--sage); }
+#pwHint.err { color: var(--blossom); }
+#pwHint.ok  { color: var(--sage); }
 
 /* ---------- Thông báo nhỏ ---------- */
 #toasts {

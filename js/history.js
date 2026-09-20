@@ -54,7 +54,7 @@
       </div>`;
 
     $('btnRename').onclick = async () => {
-      const v = prompt('Bạn muốn Cún gọi bạn là gì?', name);
+      const v = prompt('Bạn muốn Nody gọi bạn là gì?', name);
       if (!v || !v.trim()) return;
       try { await window.Nody.renameMe(v); Sh.toast('Đổi tên xong rồi 🐾'); }
       catch (e) { Sh.toast('Chưa đổi được tên.', true); }
