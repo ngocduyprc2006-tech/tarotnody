@@ -235,19 +235,25 @@
 
         <button class="nav-toggle" id="navToggle" aria-label="Mở danh mục" aria-expanded="false">☰</button>
 
-        <nav class="nav" id="nav">
-          ${MENU.map(i => `<a href="${i.href}"${i.href.toLowerCase() === here ? ' class="on"' : ''}>${L(i.key, i.label)}</a>`).join('')}
-        </nav>
+        <div class="nav-wrap">
+          <button class="scroll-arrow nav-arrow" id="navArrowL" aria-label="${L('head.scrollLeft', 'Cuộn trái')}">‹</button>
+          <nav class="nav" id="nav">
+            ${MENU.map(i => `<a href="${i.href}"${i.href.toLowerCase() === here ? ' class="on"' : ''}>${L(i.key, i.label)}</a>`).join('')}
+          </nav>
+          <button class="scroll-arrow nav-arrow" id="navArrowR" aria-label="${L('head.scrollRight', 'Cuộn phải')}">›</button>
+        </div>
 
-        <div class="head-tools">
-          ${langSwitcherHTML()}
-          <button class="icon-btn" id="fxBtn" title="${L('fx.auto', 'Hiệu ứng: Tự động')}">${fxIcon()}</button>
-          <button class="icon-btn" id="themeBtn" title="Đổi giao diện">☀️</button>
-          <span id="adminLinkSlot"></span>
-          <button class="acct-btn" id="acctBtn">
-            <span class="avatar" id="acctAvatar">?</span>
-            <span id="acctText">${L('head.login', 'Đăng nhập')}</span>
-          </button>
+        <div class="head-tools-wrap">
+          <div class="head-tools" id="headTools">
+            ${langSwitcherHTML()}
+            <button class="icon-btn" id="fxBtn" title="${L('fx.auto', 'Hiệu ứng: Tự động')}">${fxIcon()}</button>
+            <button class="icon-btn" id="themeBtn" title="Đổi giao diện">☀️</button>
+            <span id="adminLinkSlot"></span>
+            <button class="acct-btn" id="acctBtn">
+              <span class="avatar" id="acctAvatar">?</span>
+              <span id="acctText">${L('head.login', 'Đăng nhập')}</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -271,6 +277,8 @@
     };
 
     document.getElementById('fxBtn').onclick = cycleFx;
+
+    wireNavScroll();
 
     document.getElementById('acctBtn').onclick = () => {
       if (window.Nody && window.Nody.user) location.href = 'history.html';
@@ -333,6 +341,50 @@
       <img src="https://flagcdn.com/w80/${meta.cc}.png" alt=""
            onerror="this.parentElement.textContent='${meta.flag}'">
     </span>`;
+  }
+
+  /* Thanh menu chính có thể tràn trên màn hình vừa (chưa đủ hẹp để gập
+     thành nút ☰, nhưng cũng không đủ rộng để hiện hết link — ví dụ
+     "Vòng quay" bị cắt cụt ở mép phải). Thêm 2 nút mũi tên để bấm cuộn,
+     dành cho máy không vuốt ngang được. Chỉ hiện khi thật sự tràn, và
+     tự ẩn khi màn hình đủ rộng để thấy hết (hoặc khi menu đã gập thành
+     ☰ trên điện thoại — lúc đó .nav nằm trong hộp thả xuống, không cần
+     mũi tên nữa). */
+  function wireNavScroll() {
+    const box = document.getElementById('nav');
+    const l = document.getElementById('navArrowL');
+    const r = document.getElementById('navArrowR');
+    if (!box || !l || !r) return;
+
+    // Phòng trường hợp trình duyệt giữ lại vị trí cuộn cũ (từ trước khi
+    // đổi cỡ màn hình, hoặc từ lần dựng menu trước) khiến menu hiện ra
+    // đã bị cuộn lệch ngay từ đầu — luôn đưa về đầu mỗi lần vẽ lại menu.
+    box.scrollLeft = 0;
+
+    function collapsedToHamburger() {
+      return getComputedStyle(document.getElementById('navToggle')).display !== 'none';
+    }
+
+    function refresh() {
+      if (collapsedToHamburger()) { l.classList.remove('show'); r.classList.remove('show'); return; }
+      const overflow = box.scrollWidth > box.clientWidth + 2;
+      l.classList.toggle('show', overflow && box.scrollLeft > 4);
+      r.classList.toggle('show', overflow && box.scrollLeft < box.scrollWidth - box.clientWidth - 4);
+    }
+
+    l.onclick = () => box.scrollBy({ left: -130, behavior: 'smooth' });
+    r.onclick = () => box.scrollBy({ left: 130, behavior: 'smooth' });
+    box.addEventListener('scroll', refresh, { passive: true });
+    window.addEventListener('resize', refresh);
+    window.addEventListener('load', refresh);
+    // Web font tải xong có thể đổi độ rộng chữ (khiến menu vừa/không vừa
+    // khác với lúc đo đầu tiên) — đo lại lần nữa khi font đã sẵn sàng.
+    if (window.document.fonts && window.document.fonts.ready) {
+      window.document.fonts.ready.then(refresh).catch(() => {});
+    }
+    requestAnimationFrame(refresh);
+    setTimeout(refresh, 300);
+    setTimeout(refresh, 1200);
   }
 
   function langSwitcherHTML() {

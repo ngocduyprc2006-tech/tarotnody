@@ -500,6 +500,25 @@
       return `<li><b style="color:var(--moon)">${label}</b> — ${c.card.vi}: ${gist}.</li>`;
     }).join('');
 
+    // gom việc nên làm từ chính các lá đã rút (tối đa 3), để phần tổng
+    // quan không chỉ mô tả mà còn gợi hành động cụ thể, bám sát bộ bài
+    // của riêng lượt này thay vì nói chung chung.
+    const actionList = cards.slice(0, 3).map(c => {
+      const lg = lang();
+      const a = ((c.adviceAngle && (c.adviceAngle[lg] || c.adviceAngle.vi)) || '').replace('{keys}', c.card.keys);
+      return `<li><b style="color:var(--moon)">${c.card.vi}</b> — ${a}</li>`;
+    }).join('');
+
+    // liên hệ lá đầu và lá cuối, chỉ có ý nghĩa khi bài từ 3 lá trở lên
+    let arcNote = '';
+    if (cards.length >= 3) {
+      const first = cards[0], last = cards[cards.length - 1];
+      arcNote = T('synth.arc', {
+        firstLabel: sp.slots[0].label.toLowerCase(), firstCard: first.card.vi,
+        lastLabel: sp.slots[cards.length - 1].label.toLowerCase(), lastCard: last.card.vi
+      });
+    }
+
     // một lời dặn khép lại
     const closings = [
       T('synth.closing.0'), T('synth.closing.1'), T('synth.closing.2'), T('synth.closing.3')
@@ -513,6 +532,9 @@
       <p>${tone}</p>
       <h4>${T('synth.readChain')}</h4>
       <ul class="soft" style="padding-left:20px;line-height:1.85">${chain}</ul>
+      ${arcNote ? `<p>${arcNote}</p>` : ''}
+      <h4>${T('synth.actionList')}</h4>
+      <ul class="soft" style="padding-left:20px;line-height:1.85">${actionList}</ul>
       ${st.question ? `<h4>${T('synth.aboutQuestion')}</h4><p>${T('synth.youAsked', { q: escapeHTML(st.question) })} ${T('synth.closestAnswer', { card: cards[0].card.vi })} — ${(cards[0].reversed ? cards[0].card.rev : cards[0].card.up)}</p>` : ''}
       <blockquote>${closing}</blockquote>`;
 

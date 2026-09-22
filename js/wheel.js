@@ -68,10 +68,28 @@
     const target = 360 - (idx * step + step / 2);
     turns += instant ? 0 : 5;
     const deg = turns * 360 + target;
+    const dur = (window.NodyPerf && window.NodyPerf.low) ? 2.4 : 5.2;
 
     const wheel = $('wheel');
-    wheel.style.transition = instant ? 'none' : 'transform 4.6s cubic-bezier(.13,.78,.18,1)';
-    wheel.style.transform = `rotateX(16deg) rotate(${deg}deg)`;
+
+    if (instant) {
+      wheel.style.transition = 'none';
+      wheel.style.transform = `rotateX(16deg) rotate(${deg}deg)`;
+    } else {
+      // Ép trình duyệt "chốt" giá trị transform HIỆN TẠI trước khi gắn
+      // transition mới, rồi mới đổi sang giá trị đích ở khung hình kế
+      // tiếp — tránh kiểu giật/nhảy cỡ lớn giữa chừng khi trình duyệt
+      // gộp hai lần đổi style làm một. Đường cong dưới đây (easeOutQuint,
+      // rất hay dùng cho bánh xe quay) tăng tốc đều rồi giảm dần mượt
+      // trong suốt cả quá trình, không bị "khựng gần hết rồi vọt nhanh"
+      // như đường cong cũ.
+      wheel.style.transition = 'none';
+      void wheel.offsetWidth; // ép reflow, chốt trạng thái hiện tại
+      requestAnimationFrame(() => {
+        wheel.style.transition = `transform ${dur}s cubic-bezier(.16,.86,.22,1)`;
+        wheel.style.transform = `rotateX(16deg) rotate(${deg}deg)`;
+      });
+    }
 
     setTimeout(() => {
       const s = slice(idx);
@@ -88,7 +106,7 @@
       if (!instant) {
         Sh.log({ kind: 'wheel', title: T('nav.wheel') + ' · ' + s.label, summary: s.text });
       }
-    }, instant ? 60 : 4700);
+    }, instant ? 60 : dur * 1000 + 120);
   }
 
   function init() {

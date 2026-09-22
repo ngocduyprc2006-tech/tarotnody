@@ -101,7 +101,7 @@
     /* ---------- trải bài tarot ---------- */
     'tarot.errPickSpread': { vi: 'Bạn chọn một kiểu trải bài trước nhé.', en: 'Please choose a spread first.', zh: '请先选择一种牌阵。', ko: '먼저 스프레드를 선택해 주세요.', ja: '先にスプレッドを選んでください。' },
     'tarot.shuffleTitle':  { vi: 'Xáo bài rồi rút {n} lá', en: 'Shuffle, then draw {n} card(s)', zh: '洗牌后抽取{n}张', ko: '섞은 뒤 {n}장 뽑기', ja: 'シャッフルして{n}枚引く' },
-    'tarot.profile.toggle': { vi: 'Thêm ngày sinh để bài gắn với cung mệnh của bạn (không bắt buộc)', en: 'Add your birth date to tie the reading to your sign (optional)', zh: '添加出生日期，让这次占卜结合你的星座（可选）', ko: '생년월일을 추가하면 별자리와 연결된 리딩이 돼요 (선택 사항)', ja: '生年月日を追加すると、あなたの星座と結びついた占いになります（任意）' },
+    'tarot.profile.toggle': { vi: 'Xác nhận họ tên & ngày sinh để trải bài chính xác nhất (không bắt buộc)', en: 'Confirm your name & birth date for the most accurate reading (optional)', zh: '确认姓名与出生日期，让占卜更精准（可选）', ko: '이름과 생년월일을 확인하면 더 정확한 리딩이 돼요 (선택 사항)', ja: 'お名前と生年月日を確認すると、より正確な占いになります（任意）' },
     'tarot.profile.name': { vi: 'Tên của bạn', en: 'Your name', zh: '你的名字', ko: '이름', ja: 'お名前' },
     'tarot.profile.dob':  { vi: 'Ngày sinh', en: 'Date of birth', zh: '出生日期', ko: '생년월일', ja: '生年月日' },
     'tarot.profile.hint': { vi: 'Nody dùng ngày sinh để biết cung hoàng đạo và hành của bạn, rồi lồng vào lời luận giải mỗi lá — không lưu lại nếu bạn chưa đăng nhập.', en: "Nody uses your birth date to know your zodiac sign and element, then weaves it into each card's reading — not saved unless you're logged in.", zh: '诺迪会用出生日期得知你的星座与属性，并融入每张牌的解读——未登录时不会保存。', ko: '노디는 생년월일로 별자리와 원소를 파악해 각 카드 해석에 반영해요 — 로그인하지 않으면 저장되지 않아요.', ja: 'ノディは生年月日から星座と属性を知り、各カードの解釈に反映します。ログインしていなければ保存されません。' },
@@ -140,6 +140,8 @@
     'synth.closing.2':  { vi: 'Nếu đọc xong thấy nhẹ đi một chút, vậy là đủ rồi. Phần còn lại cứ để ngày mai lo.', en: "If you feel a little lighter after reading this, that's enough. Leave the rest for tomorrow.", zh: '如果读完后觉得轻松了一点，那就够了，剩下的交给明天。', ko: '다 읽고 나서 마음이 조금 가벼워졌다면 그걸로 충분해요. 나머지는 내일에게 맡기세요.', ja: '読み終えて少し軽くなったなら、それで十分。残りは明日に任せよう。' },
     'synth.closing.3':  { vi: 'Nody chỉ nhắc một điều: bạn đang xoay xở tốt hơn bạn tự chấm cho mình nhiều lắm.', en: "Nody just wants to remind you of one thing: you're handling this far better than you're giving yourself credit for.", zh: 'Nody 只想提醒一句：你处理得比自己给自己打的分数好得多。', ko: '노디는 한 가지만 말하고 싶어요: 당신은 스스로 매긴 점수보다 훨씬 더 잘 해내고 있어요.', ja: 'ノディはひとつだけ伝えたい。あなたは自分に付けている点数よりずっとうまくやれている。' },
     'synth.savedToast': { vi: 'Đã cất vào lịch sử của bạn 🌙', en: 'Saved to your history 🌙', zh: '已保存到你的历史记录 🌙', ko: '히스토리에 저장했어요 🌙', ja: '履歴に保存しました 🌙' },
+    'synth.arc': { vi: 'Từ lá {firstLabel} ({firstCard}) tới lá {lastLabel} ({lastCard}), bài đang kể một hành trình có điểm bắt đầu và điểm đến rõ ràng — không phải một mớ sự kiện rời rạc.', en: 'From the {firstLabel} card ({firstCard}) to the {lastLabel} card ({lastCard}), this spread traces a journey with a clear start and destination — not a pile of unrelated events.', zh: '从"{firstLabel}"（{firstCard}）到"{lastLabel}"（{lastCard}），这次牌阵讲的是一段有始有终的旅程，而不是一堆零散的事。', ko: '"{firstLabel}"({firstCard}) 카드에서 "{lastLabel}"({lastCard}) 카드까지, 이 카드는 뚜렷한 시작과 도착지가 있는 하나의 여정을 말하고 있어요 — 흩어진 사건들의 나열이 아니에요.', ja: '「{firstLabel}」（{firstCard}）から「{lastLabel}」（{lastCard}）まで、このリーディングは始まりと終わりがはっきりした一つの旅を語っている。バラバラな出来事の寄せ集めではない。' },
+    'synth.actionList': { vi: 'Ba việc nên làm, gọi thẳng từ các lá vừa rút', en: 'Three things to do, straight from the cards you drew', zh: '三件该做的事，直接来自你刚抽的牌', ko: '방금 뽑은 카드에서 바로 나온, 해볼 일 세 가지', ja: '引いたカードから直接導かれる、やるべき3つのこと' },
 
     /* ---------- giải mã giấc mơ ---------- */
     'dream.mood':      { vi: 'cảm xúc', en: 'mood', zh: '情绪', ko: '감정', ja: '感情' },
@@ -317,6 +319,8 @@
     'auth.or':          { vi: 'hoặc', en: 'or', zh: '或', ko: '또는', ja: 'または' },
     'auth.continueGoogle': { vi: 'Tiếp tục với Google', en: 'Continue with Google', zh: '使用 Google 继续', ko: 'Google로 계속하기', ja: 'Googleで続ける' },
     'auth.logout':      { vi: 'Đăng xuất', en: 'Log out', zh: '退出登录', ko: '로그아웃', ja: 'ログアウト' },
+    'head.scrollLeft':  { vi: 'Cuộn trái', en: 'Scroll left', zh: '向左滚动', ko: '왼쪽으로 스크롤', ja: '左にスクロール' },
+    'head.scrollRight': { vi: 'Cuộn phải', en: 'Scroll right', zh: '向右滚动', ko: '오른쪽으로 스크롤', ja: '右にスクロール' },
     'auth.passwordPlaceholder': { vi: 'Tối thiểu 8 ký tự, có hoa + số + ký tự đặc biệt', en: 'At least 8 chars, incl. uppercase + number + symbol', zh: '至少8位，含大写字母+数字+特殊符号', ko: '8자 이상, 대문자+숫자+특수문자 포함', ja: '8文字以上、大文字＋数字＋記号を含む' },
     'auth.confirmPassword': { vi: 'Nhập lại mật khẩu', en: 'Confirm password', zh: '确认密码', ko: '비밀번호 확인', ja: 'パスワード（確認）' },
     'auth.confirmPasswordPlaceholder': { vi: 'Gõ lại y hệt mật khẩu ở trên', en: 'Type the same password again', zh: '再次输入与上方相同的密码', ko: '위와 동일하게 다시 입력', ja: '上と同じパスワードを再入力' },
