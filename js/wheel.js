@@ -8,51 +8,39 @@
   'use strict';
   const Sh = window.Shell;
   const $ = (id) => document.getElementById(id);
+  const T = (k, v) => (window.I18N ? window.I18N.t(k, v) : k);
 
-  const SLICES = [
-    { label: 'Nghỉ đi', color: '#3d5aa8',
-      text: 'Hôm nay vũ trụ cho phép bạn không cố gắng. Làm ít lại một nửa, và đừng thấy có lỗi.' },
-    { label: 'Nói ra', color: '#5fb4ec',
-      text: 'Có một câu bạn giữ trong lòng lâu rồi. Hôm nay là ngày đẹp để nói nó ra, nhẹ nhàng thôi.' },
-    { label: 'Bắt đầu', color: '#8b9bf6',
-      text: 'Việc bạn hoãn mãi ấy — mở nó ra mười lăm phút thôi. Không cần xong, chỉ cần mở.' },
-    { label: 'Gặp người', color: '#6fe0d6',
-      text: 'Nhắn cho một người bạn nghĩ tới sáng nay. Cuộc trò chuyện đó sẽ dễ chịu hơn bạn tưởng.' },
-    { label: 'Dọn gọn', color: '#6fd0a8',
-      text: 'Dọn một góc nhỏ. Bàn làm việc, ví tiền, hay danh sách việc — gọn ngoài thì nhẹ trong.' },
-    { label: 'Tin mình', color: '#7a8fd8',
-      text: 'Linh cảm sáng nay của bạn đúng đấy. Đừng hỏi thêm người thứ ba nữa.' },
-    { label: 'Chậm lại', color: '#3480c4',
-      text: 'Bạn đang đi nhanh hơn sức mình. Bớt một việc trong danh sách hôm nay đi.' },
-    { label: 'Tự thưởng', color: '#4fc3d9',
-      text: 'Mua cho mình một thứ nhỏ, hoặc ngủ thêm nửa tiếng. Bạn xứng đáng, thật đấy.' }
-  ];
+  const COLORS = ['#3d5aa8', '#5fb4ec', '#8b9bf6', '#6fe0d6', '#6fd0a8', '#7a8fd8', '#3480c4', '#4fc3d9'];
+  const KEYS = ['rest', 'speak', 'start', 'meet', 'tidy', 'trust', 'slow', 'treat'];
+
+  function slice(i) {
+    return { label: T('wheel.' + KEYS[i] + '.label'), color: COLORS[i], text: T('wheel.' + KEYS[i] + '.text') };
+  }
+  const N = KEYS.length;
 
   let spinning = false;
   let turns = 0;
 
   function paint() {
     const wheel = $('wheel');
-    const n = SLICES.length;
-    const step = 360 / n;
+    const step = 360 / N;
 
     // vẽ các múi bằng conic-gradient cho gọn, nhãn đặt chồng lên
-    const stops = SLICES.map((s, i) =>
-      `${s.color} ${i * step}deg ${(i + 1) * step}deg`).join(', ');
+    const stops = COLORS.map((c, i) => `${c} ${i * step}deg ${(i + 1) * step}deg`).join(', ');
     wheel.style.background = `conic-gradient(${stops})`;
 
     wheel.querySelectorAll('.wheel-label').forEach(e => e.remove());
     // bán kính đặt nhãn tính theo kích thước thật của vòng quay, không cố định px,
     // để trên màn hình nhỏ nhãn vẫn nằm đúng giữa mỗi múi
     const radius = (wheel.offsetWidth || 340) * 0.335;
-    SLICES.forEach((s, i) => {
+    for (let i = 0; i < N; i++) {
       const el = document.createElement('span');
       el.className = 'wheel-label';
-      el.textContent = s.label;
+      el.textContent = T('wheel.' + KEYS[i] + '.label');
       const mid = i * step + step / 2;
       el.style.transform = `rotate(${mid - 90}deg) translate(${radius}px, -7px)`;
       wheel.appendChild(el);
-    });
+    }
   }
 
   function spin() {
@@ -61,10 +49,10 @@
     const day = Sh.today();
     const used = Sh.store.get('wheelDay', null);
     const rnd = Sh.seeded('wheel·' + day + '·' + (Sh.store.get('guest', 'x')));
-    const idx = Math.floor(rnd() * SLICES.length);
+    const idx = Math.floor(rnd() * N);
 
     if (used === day) {
-      Sh.toast('Hôm nay bạn quay rồi. Mai ghé lại nhé 🐾');
+      Sh.toast(T('wheel.alreadySpun'));
       landOn(idx, true);
       return;
     }
@@ -76,7 +64,7 @@
   }
 
   function landOn(idx, instant) {
-    const step = 360 / SLICES.length;
+    const step = 360 / N;
     const target = 360 - (idx * step + step / 2);
     turns += instant ? 0 : 5;
     const deg = turns * 360 + target;
@@ -86,19 +74,19 @@
     wheel.style.transform = `rotateX(16deg) rotate(${deg}deg)`;
 
     setTimeout(() => {
-      const s = SLICES[idx];
+      const s = slice(idx);
       $('wheelBody').innerHTML = `
         <div class="chips" style="justify-content:center">
           <span class="chip">${s.label}</span>
         </div>
         <p class="center" style="font-size:1.02rem">${s.text}</p>
-        <blockquote>Một lời nhắc nhỏ vẫn đổi được cả một ngày. Mai vòng quay sẽ đổi ô khác.</blockquote>`;
+        <blockquote>${T('wheel.disclaimer')}</blockquote>`;
       $('wheelResult').classList.remove('hidden');
       spinning = false;
       $('btnSpin').disabled = false;
 
       if (!instant) {
-        Sh.log({ kind: 'wheel', title: 'Vòng quay · ' + s.label, summary: s.text });
+        Sh.log({ kind: 'wheel', title: T('nav.wheel') + ' · ' + s.label, summary: s.text });
       }
     }, instant ? 60 : 4700);
   }
@@ -108,6 +96,20 @@
     paint();
     $('btnSpin').onclick = spin;
     window.addEventListener('nody:theme', paint);
+    window.addEventListener('nody:lang', () => {
+      paint();
+      if (!$('wheelResult').classList.contains('hidden')) {
+        // vẽ lại nhãn kết quả cuối cùng bằng ngôn ngữ mới, không quay lại
+        const day = Sh.today();
+        const rnd = Sh.seeded('wheel·' + day + '·' + (Sh.store.get('guest', 'x')));
+        const idx = Math.floor(rnd() * N);
+        const s = slice(idx);
+        $('wheelBody').innerHTML = `
+          <div class="chips" style="justify-content:center"><span class="chip">${s.label}</span></div>
+          <p class="center" style="font-size:1.02rem">${s.text}</p>
+          <blockquote>${T('wheel.disclaimer')}</blockquote>`;
+      }
+    });
 
     let t;
     window.addEventListener('resize', () => {

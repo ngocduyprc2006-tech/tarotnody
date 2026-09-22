@@ -8,16 +8,21 @@
   'use strict';
   const Sh = window.Shell;
   const $ = (id) => document.getElementById(id);
+  const T = (k, v) => (window.I18N ? window.I18N.t(k, v) : k);
+  const LOCALE = { vi: 'vi-VN', en: 'en-US', zh: 'zh-CN', ko: 'ko-KR', ja: 'ja-JP' };
+  const locale = () => LOCALE[(window.I18N && window.I18N.get()) || 'vi'] || 'vi-VN';
 
-  const KIND = {
-    tarot:      { icon: '🃏', name: 'Trải bài' },
-    daily:      { icon: '🌙', name: 'Lá hôm nay' },
-    numerology: { icon: '✦',  name: 'Thần số học' },
-    horoscope:  { icon: '♒',  name: 'Chiêm tinh' },
-    match:      { icon: '🌸', name: 'Ghép đôi' },
-    dream:      { icon: '☁',  name: 'Giấc mơ' },
-    wheel:      { icon: '🎡', name: 'Vòng quay' }
-  };
+  function KIND() {
+    return {
+      tarot:      { icon: '🃏', name: T('nav.tarot') },
+      daily:      { icon: '🌙', name: T('nav.daily') },
+      numerology: { icon: '✦',  name: T('nav.numerology') },
+      horoscope:  { icon: '♒',  name: T('nav.horoscope') },
+      match:      { icon: '🌸', name: T('nav.match') },
+      dream:      { icon: '☁',  name: T('nav.dream') },
+      wheel:      { icon: '🎡', name: T('nav.wheel') }
+    };
+  }
 
   let rows = [];
   let filter = 'all';
@@ -29,9 +34,9 @@
       box.innerHTML = `
         <div class="empty">
           ${Sh.pupSVG()}
-          <h3 style="margin-bottom:8px">Chưa có ai đăng nhập</h3>
-          <p>Đăng nhập để xem lại mọi lá bài bạn từng rút, trên bất kỳ máy nào.</p>
-          <button class="btn btn-moon" id="btnLoginHere" style="margin-top:14px">Đăng nhập hoặc tạo tài khoản</button>
+          <h3 style="margin-bottom:8px">${T('hist.noOne')}</h3>
+          <p>${T('hist.loginToView')}</p>
+          <button class="btn btn-moon" id="btnLoginHere" style="margin-top:14px">${T('hist.loginOrSignup')}</button>
         </div>`;
       $('btnLoginHere').onclick = () => Sh.openAuth('login');
       $('logBox').innerHTML = '';
@@ -39,30 +44,30 @@
       return;
     }
 
-    const name = user.displayName || (user.email || '').split('@')[0] || 'Bạn';
+    const name = user.displayName || (user.email || '').split('@')[0] || T('hist.you');
     box.innerHTML = `
       <div class="profile-head">
         <span class="avatar">${name.charAt(0).toUpperCase()}</span>
         <div style="flex:1;min-width:180px">
           <h2>${escapeHTML(name)}</h2>
-          <div class="mail">${escapeHTML(user.email || 'đăng nhập bằng Google')}</div>
+          <div class="mail">${escapeHTML(user.email || T('hist.loggedViaGoogle'))}</div>
         </div>
         <div style="display:flex;gap:9px;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-sm" id="btnRename">Đổi tên hiển thị</button>
-          <button class="btn btn-ghost btn-sm" id="btnLogout">Đăng xuất</button>
+          <button class="btn btn-ghost btn-sm" id="btnRename">${T('hist.rename')}</button>
+          <button class="btn btn-ghost btn-sm" id="btnLogout">${T('auth.logout')}</button>
         </div>
       </div>`;
 
     $('btnRename').onclick = async () => {
-      const v = prompt('Bạn muốn Nody gọi bạn là gì?', name);
+      const v = prompt(T('hist.renamePrompt'), name);
       if (!v || !v.trim()) return;
-      try { await window.Nody.renameMe(v); Sh.toast('Đổi tên xong rồi 🐾'); }
-      catch (e) { Sh.toast('Chưa đổi được tên.', true); }
+      try { await window.Nody.renameMe(v); Sh.toast(T('hist.renamed')); }
+      catch (e) { Sh.toast(T('hist.renameFail'), true); }
     };
 
     $('btnLogout').onclick = async () => {
       await window.Nody.logout();
-      Sh.toast('Đã đăng xuất. Hẹn gặp lại bạn 🌙');
+      Sh.toast(T('hist.loggedOut'));
     };
 
     $('filterBar').classList.remove('hidden');
@@ -72,36 +77,34 @@
   /* ---------- Lịch sử ---------- */
   async function loadLog() {
     const box = $('logBox');
-    box.innerHTML = '<div class="thinking"><i></i><i></i><i></i> Đang lần giở lại</div>';
+    box.innerHTML = `<div class="thinking"><i></i><i></i><i></i> ${T('hist.loading')}</div>`;
     try {
       rows = await window.Nody.myReadings();
       paintLog();
     } catch (e) {
       console.warn(e);
-      box.innerHTML = `<div class="empty">
-        <p>Chưa đọc được lịch sử. Thường là do quy tắc bảo mật Firestore chưa cho phép đọc.
-        Bạn mở README xem phần “Quy tắc Firestore” nhé.</p></div>`;
+      box.innerHTML = `<div class="empty"><p>${T('hist.loadFail')}</p></div>`;
     }
   }
 
   function paintLog() {
     const box = $('logBox');
     const list = filter === 'all' ? rows : rows.filter(r => (r.kind || 'tarot') === filter);
+    const K = KIND();
 
-    $('logCount').textContent = rows.length
-      ? `${rows.length} lượt đã lưu` : '';
+    $('logCount').textContent = rows.length ? T('hist.savedCount', { n: rows.length }) : '';
 
     if (!list.length) {
       box.innerHTML = `<div class="empty">${Sh.pupSVG()}
-        <p>${rows.length ? 'Chưa có lượt nào thuộc mục này.' : 'Chưa có gì ở đây. Rút một lá rồi quay lại xem nhé.'}</p>
-        <a class="btn btn-moon btn-sm" href="tarot.html" style="margin-top:12px">Trải bài ngay</a></div>`;
+        <p>${rows.length ? T('hist.emptyFilter') : T('hist.emptyAll')}</p>
+        <a class="btn btn-moon btn-sm" href="tarot.html" style="margin-top:12px">${T('hist.spreadNow')}</a></div>`;
       return;
     }
 
     box.innerHTML = list.map(r => {
-      const k = KIND[r.kind || 'tarot'] || KIND.tarot;
+      const k = K[r.kind || 'tarot'] || K.tarot;
       const cards = (r.drawnCards || [])
-        .map(c => (c.vi || c.name) + (c.isReversed ? ' (ngược)' : ''))
+        .map(c => (c.vi || c.name) + (c.isReversed ? ' (' + T('read.reversedShort') + ')' : ''))
         .join(' · ');
       return `
         <div class="log-item">
@@ -114,20 +117,20 @@
           </div>
           <div style="text-align:right">
             <div class="when">${fmt(r.when)}</div>
-            <button class="btn-quiet tiny" data-del="${r.id}">Xoá</button>
+            <button class="btn-quiet tiny" data-del="${r.id}">${T('common.delete')}</button>
           </div>
         </div>`;
     }).join('');
 
     box.querySelectorAll('[data-del]').forEach(b => {
       b.onclick = async () => {
-        if (!confirm('Xoá lượt này khỏi lịch sử?')) return;
+        if (!confirm(T('hist.confirmDelete'))) return;
         try {
           await window.Nody.deleteReading(b.dataset.del);
           rows = rows.filter(r => r.id !== b.dataset.del);
           paintLog();
-          Sh.toast('Đã xoá.');
-        } catch (e) { Sh.toast('Chưa xoá được.', true); }
+          Sh.toast(T('letter.deleted'));
+        } catch (e) { Sh.toast(T('hist.deleteFail'), true); }
       };
     });
   }
@@ -135,24 +138,24 @@
   function fmt(d) {
     if (!d || d.getTime() === 0) return '';
     const diff = (Date.now() - d) / 86400000;
-    if (diff < 1) return 'hôm nay';
-    if (diff < 2) return 'hôm qua';
-    if (diff < 7) return Math.floor(diff) + ' ngày trước';
-    return d.toLocaleDateString('vi-VN', { day: 'numeric', month: 'numeric', year: 'numeric' });
+    if (diff < 1) return T('hist.today');
+    if (diff < 2) return T('hist.yesterday');
+    if (diff < 7) return T('hist.daysAgo', { n: Math.floor(diff) });
+    return d.toLocaleDateString(locale(), { day: 'numeric', month: 'numeric', year: 'numeric' });
   }
 
   function escapeHTML(s) {
     return String(s).replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
   }
 
-  function init() {
-    if (!$('profileBox')) return;
-
+  function paintFilterBar() {
+    const K = KIND();
     $('filterBar').innerHTML =
-      `<button class="chip" data-f="all">Tất cả</button>` +
-      Object.keys(KIND).map(k => `<button class="chip" data-f="${k}">${KIND[k].icon} ${KIND[k].name}</button>`).join('');
+      `<button class="chip" data-f="all">${T('hist.all')}</button>` +
+      Object.keys(K).map(k => `<button class="chip" data-f="${k}">${K[k].icon} ${K[k].name}</button>`).join('');
 
     $('filterBar').querySelectorAll('[data-f]').forEach(b => {
+      if (b.dataset.f === filter) b.style.borderColor = 'var(--moon)';
       b.onclick = () => {
         filter = b.dataset.f;
         $('filterBar').querySelectorAll('[data-f]').forEach(x =>
@@ -160,16 +163,25 @@
         paintLog();
       };
     });
+  }
+
+  function init() {
+    if (!$('profileBox')) return;
+
+    paintFilterBar();
 
     paintProfile(window.Nody && window.Nody.user);
     window.addEventListener('nody:auth', (e) => paintProfile(e.detail));
+    window.addEventListener('nody:lang', () => {
+      paintFilterBar();
+      if (window.Nody && window.Nody.user) { paintProfile(window.Nody.user); }
+    });
 
     // Firebase có thể chưa tải xong ở thời điểm này
     setTimeout(() => {
       if (!window.Nody) {
         $('profileBox').innerHTML = `<div class="empty">${Sh.pupSVG()}
-          <p>Chưa kết nối được Firebase. Nếu bạn đang mở web bằng cách nháy đúp vào file,
-          hãy chạy <b>firebase serve</b> hoặc mở qua http:// để dùng phần tài khoản.</p></div>`;
+          <p>${T('hist.noFirebase')}</p></div>`;
       }
     }, 2500);
   }

@@ -6,8 +6,16 @@
 
 (function () {
   'use strict';
-  const L = window.Lore, Sh = window.Shell;
+  const L = window.Lore, Sh = window.Shell, LI = window.LoreI18N;
   const $ = (id) => document.getElementById(id);
+  const T = (k, v) => (window.I18N ? window.I18N.t(k, v) : k);
+  const lang = () => (window.I18N ? window.I18N.get() : 'vi');
+
+  function signName(z) {
+    const n = LI && LI.zodiac[z.id] && LI.zodiac[z.id].name;
+    return (n && n[lang()]) || z.vi;
+  }
+  function elName(el) { return T('horo.el.' + el); }
 
   /* Hành nào hợp hành nào */
   const ELEM_FIT = {
@@ -53,11 +61,11 @@
   }
 
   function verdict(n) {
-    if (n >= 88) return ['Hợp lạ thường', 'Hai bạn khớp nhau ở tầng sâu, kiểu ngồi im cạnh nhau cũng không thấy ngượng. Cái cần giữ là đừng lấy sự hợp này làm lý do để ngừng cố gắng.'];
-    if (n >= 76) return ['Rất hợp', 'Nền tảng tốt và hai bạn bù cho nhau khá đẹp. Có vài chỗ lệch nhưng đều thuộc loại nói ra là gỡ được.'];
-    if (n >= 62) return ['Hợp, cần chăm', 'Duyên có thật, hợp có thật, nhưng mối này sống được nhờ giao tiếp chứ không nhờ may mắn. Chịu khó nói thì đi xa.'];
-    if (n >= 48) return ['Khác nhau nhiều', 'Hai bạn nhìn đời bằng hai kiểu khác hẳn. Không phải không được, chỉ là cần nhiều kiên nhẫn và ít kỳ vọng "người kia phải hiểu mình".'];
-    return ['Rất khác nhau', 'Chỉ số thấp không có nghĩa là không thể. Nó chỉ nói rằng nếu chọn nhau, hai bạn sẽ phải chọn một cách rất có ý thức, mỗi ngày.'];
+    if (n >= 88) return [T('match.v0.title'), T('match.v0.text')];
+    if (n >= 76) return [T('match.v1.title'), T('match.v1.text')];
+    if (n >= 62) return [T('match.v2.title'), T('match.v2.text')];
+    if (n >= 48) return [T('match.v3.title'), T('match.v3.text')];
+    return [T('match.v4.title'), T('match.v4.text')];
   }
 
   function render(r) {
@@ -78,27 +86,26 @@
       <div class="center"><h3>${title}</h3><p>${text}</p></div>
 
       <div class="chips" style="justify-content:center;margin-top:18px">
-        <span class="chip">${r.za.sym} ${r.a.name} · ${r.za.vi}</span>
-        <span class="chip alt">${r.zb.sym} ${r.b.name} · ${r.zb.vi}</span>
+        <span class="chip">${r.za.sym} ${r.a.name} · ${signName(r.za)}</span>
+        <span class="chip alt">${r.zb.sym} ${r.b.name} · ${signName(r.zb)}</span>
       </div>
 
       <div class="stat-grid">
-        <div class="stat"><div class="n">${r.elem}%</div><div class="k">Hành ${r.za.el} × ${r.zb.el}</div></div>
-        <div class="stat"><div class="n">${r.nums}%</div><div class="k">Số ${r.la} × ${r.lb}</div></div>
-        <div class="stat"><div class="n">${r.fate}%</div><div class="k">Duyên tên gọi</div></div>
+        <div class="stat"><div class="n">${r.elem}%</div><div class="k">${T('horo.element')} ${elName(r.za.el)} × ${elName(r.zb.el)}</div></div>
+        <div class="stat"><div class="n">${r.nums}%</div><div class="k">${T('num.number')} ${r.la} × ${r.lb}</div></div>
+        <div class="stat"><div class="n">${r.fate}%</div><div class="k">${T('match.nameFate')}</div></div>
       </div>
 
-      <h4>Hai bạn mạnh ở đâu</h4>
+      <h4>${T('match.strongWhere')}</h4>
       <p>${strength(r)}</p>
 
-      <h4>Chỗ dễ va nhất</h4>
+      <h4>${T('match.frictionWhere')}</h4>
       <p>${friction(r)}</p>
 
-      <h4>Một việc nên làm tuần này</h4>
+      <h4>${T('match.weekTask')}</h4>
       <p>${advice(r)}</p>
 
-      <blockquote>Không có cặp nào hợp sẵn 100%. Điểm số chỉ nói hai bạn xuất phát từ đâu,
-      còn đi được bao xa thì do hai người chọn.</blockquote>`;
+      <blockquote>${T('match.disclaimer')}</blockquote>`;
 
     $('matchResult').classList.remove('hidden');
     setTimeout(() => {
@@ -109,36 +116,26 @@
 
     Sh.log({
       kind: 'match',
-      title: `Ghép đôi · ${r.a.name} & ${r.b.name}`,
-      summary: `${r.total}% — ${title}. ${r.za.vi} (${r.za.el}) × ${r.zb.vi} (${r.zb.el}), đường đời ${r.la} × ${r.lb}.`
+      title: T('nav.match') + ` · ${r.a.name} & ${r.b.name}`,
+      summary: `${r.total}% — ${title}. ${signName(r.za)} (${elName(r.za.el)}) × ${signName(r.zb)} (${elName(r.zb.el)}), ${T('num.lifePathShort')} ${r.la} × ${r.lb}.`
     });
   }
 
   function strength(r) {
-    if (r.za.el === r.zb.el)
-      return `Cùng hành ${r.za.el} nên hai bạn hiểu nhau gần như không cần giải thích. Nhịp sống, tốc độ, cách phản ứng đều na ná — cái này rất quý.`;
-    if (r.elem >= 85)
-      return `Hành ${r.za.el} và hành ${r.zb.el} nuôi nhau. Người này làm người kia sáng lên mà không phải cố.`;
-    if (r.nums >= 85)
-      return `Số đường đời ${r.la} và ${r.lb} là một cặp bổ khuyết đẹp: chỗ người này thiếu thì người kia có sẵn.`;
-    return `${r.a.name} mang chất ${r.za.el.toLowerCase()}, ${r.b.name} mang chất ${r.zb.el.toLowerCase()}. Khác nhau nhưng chính khác nhau mới làm hai bạn thấy đối phương thú vị.`;
+    if (r.za.el === r.zb.el) return T('match.strength.sameEl', { el: elName(r.za.el) });
+    if (r.elem >= 85) return T('match.strength.feedEl', { elA: elName(r.za.el), elB: elName(r.zb.el) });
+    if (r.nums >= 85) return T('match.strength.numComplement', { la: r.la, lb: r.lb });
+    return T('match.strength.different', { a: r.a.name, elA: elName(r.za.el).toLowerCase(), b: r.b.name, elB: elName(r.zb.el).toLowerCase() });
   }
 
   function friction(r) {
-    if (r.elem < 60)
-      return `Hành ${r.za.el} và ${r.zb.el} vốn đi khác tốc độ. Người muốn quyết nhanh, người cần ngẫm lâu — và cả hai đều nghĩ mình đúng. Thoả thuận trước một khung thời gian cho các quyết định lớn sẽ đỡ nhiều.`;
-    if (Math.abs(L.reduce(r.la) - L.reduce(r.lb)) >= 5)
-      return `Hai con số đường đời cách nhau khá xa nên ưu tiên trong đời cũng khác. Đừng cố thuyết phục nhau đổi ưu tiên, hãy chia lịch để cả hai đều được sống theo ưu tiên của mình.`;
-    return `Chỗ dễ va nhất là khi cả hai cùng mệt. Lúc đó hai bạn có xu hướng im lặng chờ người kia mở lời trước — và thế là im cả tuần.`;
+    if (r.elem < 60) return T('match.friction.elemGap', { elA: elName(r.za.el), elB: elName(r.zb.el) });
+    if (Math.abs(L.reduce(r.la) - L.reduce(r.lb)) >= 5) return T('match.friction.numGap');
+    return T('match.friction.bothTired');
   }
 
   function advice(r) {
-    const list = [
-      'Hỏi nhau một câu hai bạn chưa từng hỏi: "Dạo này cái gì làm bạn mệt nhất mà mình không biết?"',
-      'Dành một buổi không điện thoại. Không cần đi đâu sang, ngồi ăn với nhau là đủ.',
-      'Mỗi người viết ra ba điều biết ơn về người kia rồi đọc cho nhau nghe. Ngượng thì ngượng, nhưng hiệu nghiệm.',
-      'Nói trước một ranh giới nhỏ của mình, thay vì đợi bị lấn rồi mới giận.'
-    ];
+    const list = [T('match.advice.0'), T('match.advice.1'), T('match.advice.2'), T('match.advice.3')];
     const rnd = Sh.seeded(L.deaccent(r.a.name + r.b.name));
     return list[Math.floor(rnd() * list.length)];
   }
@@ -148,8 +145,8 @@
     $('btnMatch').onclick = () => {
       const a = { name: $('mA').value.trim(), dob: $('mADob').value };
       const b = { name: $('mB').value.trim(), dob: $('mBDob').value };
-      if (!a.name || !b.name) return Sh.toast('Cần tên của cả hai người.', true);
-      if (!a.dob || !b.dob)   return Sh.toast('Cần ngày sinh của cả hai người.', true);
+      if (!a.name || !b.name) return Sh.toast(T('match.errName'), true);
+      if (!a.dob || !b.dob)   return Sh.toast(T('match.errDob'), true);
       render(run(a, b));
     };
   }

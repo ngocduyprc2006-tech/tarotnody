@@ -13,7 +13,7 @@
 .deck-stage {
   position: relative;
   height: 330px;
-  margin: 30px 0 10px;
+  margin: 30px 0 34px;
   perspective: 1400px;
   perspective-origin: 50% 40%;
 }
@@ -35,10 +35,17 @@
   cursor: pointer;
   transition: transform .42s var(--ease), opacity .42s var(--ease), filter .2s;
 }
-@media (max-width: 620px) { .fan-card { width: 62px; height: 106px; margin-left: -31px; } .deck-stage { height: 280px; } }
+@media (max-width: 620px) { .fan-card { width: 62px; height: 106px; margin-left: -31px; } .deck-stage { height: 280px; margin-bottom: 30px; } }
 
+/* Di chuột vào để "phát sáng" gợi ý có thể bấm rút — máy khoẻ có thêm
+   quầng sáng mềm quanh lá; máy yếu (html[data-perf="low"]) chỉ tăng độ
+   sáng đơn giản, không đổ bóng blur cho đỡ tốn khung hình. */
 .fan-card:hover { filter: brightness(1.18); }
+html:not([data-perf="low"]) .fan-card:hover {
+  filter: brightness(1.22) drop-shadow(0 0 14px color-mix(in srgb, var(--moon) 65%, transparent));
+}
 .fan-card.taken { opacity: 0; pointer-events: none; }
+.fan-card.drawing { pointer-events: none; z-index: 60 !important; }
 
 .card-back {
   position: absolute; inset: 0;

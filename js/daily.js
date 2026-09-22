@@ -8,6 +8,7 @@
   'use strict';
   const D = window.DeckData, Sh = window.Shell;
   const $ = (id) => document.getElementById(id);
+  const T = (k, v) => (window.I18N ? window.I18N.t(k, v) : k);
 
   let picked = null;
 
@@ -63,31 +64,31 @@
       $('dailyBody').innerHTML = `
         <div class="chips">
           <span class="chip">${d.card.vi}</span>
-          <span class="chip alt">${d.reversed ? 'nằm ngược' : 'nằm xuôi'}</span>
+          <span class="chip alt">${d.reversed ? T('daily.rev') : T('daily.up')}</span>
           <span class="chip">${d.card.keys}</span>
         </div>
         <h3>${d.card.vi}</h3>
         <p class="tiny mute" style="margin-top:-8px">${d.card.name}</p>
         <p>${text}</p>
-        <h4>Một việc nhỏ cho hôm nay</h4>
+        <h4>${T('daily.taskTitle')}</h4>
         <p>${todayTask(d)}</p>
         <blockquote>${closing(n)}</blockquote>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
-          <button class="btn btn-ghost btn-sm" id="btnCopy">Chép thông điệp</button>
-          <a class="btn btn-moon btn-sm" href="tarot.html">Trải bài đầy đủ</a>
+          <button class="btn btn-ghost btn-sm" id="btnCopy">${T('daily.copy')}</button>
+          <a class="btn btn-moon btn-sm" href="tarot.html">${T('daily.fullSpread')}</a>
         </div>`;
       $('dailyResult').classList.remove('hidden');
 
       $('btnCopy').onclick = () => {
-        const txt = `Lá bài hôm nay của mình: ${d.card.vi} (${d.reversed ? 'ngược' : 'xuôi'})\n${text}\n— Nody Tarot`;
+        const txt = T('daily.copyText', { name: d.card.vi, dir: d.reversed ? T('read.reversedShort') : T('read.uprightShort'), text });
         navigator.clipboard?.writeText(txt)
-          .then(() => Sh.toast('Đã chép, bạn dán đi đâu cũng được 🌙'))
-          .catch(() => Sh.toast('Trình duyệt không cho chép. Bạn bôi đen rồi copy tay nhé.', true));
+          .then(() => Sh.toast(T('daily.copied')))
+          .catch(() => Sh.toast(T('daily.copyFail'), true));
       };
 
       Sh.log({
         kind: 'daily',
-        title: 'Lá bài ngày ' + d.day,
+        title: T('daily.logTitle', { day: d.day }),
         summary: d.card.vi + ' — ' + text,
         drawnCards: [{ name: d.card.name, vi: d.card.vi, isReversed: d.reversed }]
       });
@@ -96,37 +97,38 @@
 
   function todayTask(d) {
     const tasks = {
-      wands:     'Làm một việc bạn đã hoãn ba lần. Chỉ mười lăm phút thôi, không cần xong.',
-      cups:      'Nhắn cho một người bạn nghĩ tới hôm nay. Không cần lý do gì cả.',
-      swords:    'Viết ra ba dòng về điều đang làm bạn rối. Viết tay càng tốt.',
-      pentacles: 'Dọn một góc nhỏ: bàn làm việc, ví tiền, hoặc màn hình điện thoại.'
+      wands:     T('daily.task.wands'),
+      cups:      T('daily.task.cups'),
+      swords:    T('daily.task.swords'),
+      pentacles: T('daily.task.pentacles')
     };
     if (d.card.suit) return tasks[d.card.suit];
-    return d.reversed
-      ? 'Hôm nay xin phép làm ít lại một chút. Bỏ một việc khỏi danh sách và đừng áy náy.'
-      : 'Chọn một việc quan trọng nhất hôm nay rồi làm nó trước tiên, trước khi mở tin nhắn.';
+    return d.reversed ? T('daily.task.majorRev') : T('daily.task.majorUp');
   }
 
   function closing(n) {
-    if (n >= 7) return `Bạn đã ghé đây ${n} ngày liền. Nody nhớ mặt bạn rồi đó 🐾`;
-    if (n >= 3) return `${n} ngày liên tiếp rồi. Một thói quen nhỏ đang thành hình.`;
-    return 'Mai ghé lại nhé, lá bài sẽ đổi khi trời sáng.';
+    if (n >= 7) return T('daily.closing.week', { n });
+    if (n >= 3) return T('daily.closing.some', { n });
+    return T('daily.closing.first');
   }
 
-  function init() {
-    if (!$('dailyCard')) return;
-    picked = pickToday();
-    paintStreak();
-
+  function paintCard() {
     $('dailyCard').innerHTML = `
       <div class="face rear">${Sh.sigil(picked.day.length * 7 + picked.card.seed, 'var(--moon)')}</div>
       <div class="face front">
         ${D.imgTag(picked.card, picked.reversed ? 'upside' : '')}
         <div class="card-strip">
           <div class="nm">${picked.card.vi}</div>
-          <div class="or${picked.reversed ? ' rev' : ''}">${picked.reversed ? 'ngược' : 'xuôi'}</div>
+          <div class="or${picked.reversed ? ' rev' : ''}">${picked.reversed ? T('read.reversedShort') : T('read.uprightShort')}</div>
         </div>
       </div>`;
+  }
+
+  function init() {
+    if (!$('dailyCard')) return;
+    picked = pickToday();
+    paintStreak();
+    paintCard();
 
     $('dailyCard').onclick = reveal;
     $('btnReveal').onclick = reveal;
@@ -135,6 +137,11 @@
     const seen = Sh.store.get('dailySeen', null);
     if (seen === picked.day) setTimeout(reveal, 400);
     Sh.store.set('dailySeen', picked.day);
+
+    window.addEventListener('nody:lang', () => {
+      if (!$('dailyCard').classList.contains('turned')) paintCard();
+      else reveal.calledOnce = true; // đã lật rồi thì để nguyên nội dung phiên hiện tại
+    });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

@@ -8,12 +8,17 @@
   'use strict';
   const Sh = window.Shell;
   const $ = (id) => document.getElementById(id);
+  const T = (k, v) => (window.I18N ? window.I18N.t(k, v) : k);
+  const LOCALE = { vi: 'vi-VN', en: 'en-US', zh: 'zh-CN', ko: 'ko-KR', ja: 'ja-JP' };
+  const locale = () => LOCALE[(window.I18N && window.I18N.get()) || 'vi'] || 'vi-VN';
 
-  const QUICK = [
-    { d: 30,  label: 'một tháng nữa' },
-    { d: 100, label: '100 ngày nữa' },
-    { d: 365, label: 'một năm nữa' }
-  ];
+  function QUICK() {
+    return [
+      { d: 30,  label: T('letter.q30') },
+      { d: 100, label: T('letter.q100') },
+      { d: 365, label: T('letter.q365') }
+    ];
+  }
 
   function iso(daysFromNow) {
     const d = new Date();
@@ -22,7 +27,7 @@
   }
 
   function prettyDate(s) {
-    try { return new Date(s).toLocaleDateString('vi-VN', { day: 'numeric', month: 'numeric', year: 'numeric' }); }
+    try { return new Date(s).toLocaleDateString(locale(), { day: 'numeric', month: 'numeric', year: 'numeric' }); }
     catch (e) { return s; }
   }
 
@@ -37,19 +42,19 @@
       box.innerHTML = `
         <div class="empty">
           ${Sh.pupSVG()}
-          <p>Đăng nhập để Nody cất giúp bạn những lá thư này và nhắc bạn đúng hẹn.</p>
-          <button class="btn btn-ghost btn-sm" id="btnLoginHere">Đăng nhập</button>
+          <p>${T('letter.loginHint')}</p>
+          <button class="btn btn-ghost btn-sm" id="btnLoginHere">${T('auth.login')}</button>
         </div>`;
       const b = $('btnLoginHere');
       if (b) b.onclick = () => Sh.openAuth('login');
       return;
     }
 
-    box.innerHTML = '<div class="thinking"><i></i><i></i><i></i> Đang mở hộp thư</div>';
+    box.innerHTML = `<div class="thinking"><i></i><i></i><i></i> ${T('letter.opening')}</div>`;
     try {
       const rows = await window.Nody.myLetters();
       if (!rows.length) {
-        box.innerHTML = `<div class="empty">${Sh.pupSVG()}<p>Hộp thư còn trống. Viết lá đầu tiên ở trên nhé.</p></div>`;
+        box.innerHTML = `<div class="empty">${Sh.pupSVG()}<p>${T('letter.empty')}</p></div>`;
         return;
       }
       box.innerHTML = rows.map(r => {
@@ -59,25 +64,24 @@
           <div class="log-item">
             <div class="log-kind">${open ? '💌' : '🔒'}</div>
             <div>
-              <h4>Thư mở ngày ${prettyDate(r.openAt)}</h4>
+              <h4>${T('letter.opensOn', { date: prettyDate(r.openAt) })}</h4>
               <div class="cards">${open
                 ? escapeHTML(r.body).slice(0, 400).replace(/\n/g, '<br>')
-                : 'Nody đang giữ kín. Còn ' + left + ' ngày nữa.'}</div>
+                : T('letter.stillSealed', { n: left })}</div>
             </div>
-            <button class="btn-quiet tiny" data-del="${r.id}">Xoá</button>
+            <button class="btn-quiet tiny" data-del="${r.id}">${T('common.delete')}</button>
           </div>`;
       }).join('');
 
       box.querySelectorAll('[data-del]').forEach(b => {
         b.onclick = async () => {
-          if (!confirm('Xoá lá thư này? Không lấy lại được đâu.')) return;
-          try { await window.Nody.deleteLetter(b.dataset.del); Sh.toast('Đã xoá.'); loadList(); }
-          catch (e) { Sh.toast('Chưa xoá được. Thử lại giúp mình.', true); }
+          if (!confirm(T('letter.confirmDelete'))) return;
+          try { await window.Nody.deleteLetter(b.dataset.del); Sh.toast(T('letter.deleted')); loadList(); }
+          catch (e) { Sh.toast(T('letter.deleteFail'), true); }
         };
       });
     } catch (e) {
-      box.innerHTML = `<div class="empty"><p>Chưa đọc được hộp thư. Có thể quy tắc Firestore đang chặn.
-        Bạn xem mục hướng dẫn trong README nhé.</p></div>`;
+      box.innerHTML = `<div class="empty"><p>${T('letter.loadFail')}</p></div>`;
       console.warn(e);
     }
   }
@@ -91,22 +95,30 @@
     const body = $('letterBody').value.trim();
     const when = $('letterDate').value;
 
-    if (body.length < 20) return Sh.toast('Viết dài hơn một chút nhé, bạn của tương lai sẽ thích đọc.', true);
-    if (!when) return Sh.toast('Bạn chọn ngày mở thư giúp mình.', true);
-    if (daysLeft(when) < 1) return Sh.toast('Chọn một ngày trong tương lai nhé.', true);
-    if (!Sh.requireLogin('Đăng nhập để Nody giữ thư cho bạn.')) return;
+    if (body.length < 20) return Sh.toast(T('letter.errShort'), true);
+    if (!when) return Sh.toast(T('letter.errNoDate'), true);
+    if (daysLeft(when) < 1) return Sh.toast(T('letter.errPastDate'), true);
+    if (!Sh.requireLogin(T('letter.needLogin'))) return;
 
     $('btnSendLetter').disabled = true;
     try {
       await window.Nody.saveLetter({ body, openAt: when });
       $('letterBody').value = '';
-      Sh.toast('Nody đã cất thư. Hẹn bạn ngày ' + prettyDate(when) + ' 💌');
+      Sh.toast(T('letter.sent', { date: prettyDate(when) }));
       loadList();
     } catch (e) {
-      Sh.toast('Chưa gửi được. Kiểm tra kết nối rồi thử lại.', true);
+      Sh.toast(T('letter.sendFail'), true);
       console.warn(e);
     }
     $('btnSendLetter').disabled = false;
+  }
+
+  function paintQuick() {
+    $('quickDates').innerHTML = QUICK()
+      .map(q => `<button class="chip" data-days="${q.d}">${q.label}</button>`).join('');
+    $('quickDates').querySelectorAll('[data-days]').forEach(b => {
+      b.onclick = () => { $('letterDate').value = iso(+b.dataset.days); };
+    });
   }
 
   function init() {
@@ -115,16 +127,12 @@
     $('letterDate').min = iso(1);
     $('letterDate').value = iso(100);
 
-    $('quickDates').innerHTML = QUICK
-      .map(q => `<button class="chip" data-days="${q.d}">${q.label}</button>`).join('');
-    $('quickDates').querySelectorAll('[data-days]').forEach(b => {
-      b.onclick = () => { $('letterDate').value = iso(+b.dataset.days); };
-    });
-
+    paintQuick();
     $('btnSendLetter').onclick = send;
 
     loadList();
     window.addEventListener('nody:auth', loadList);
+    window.addEventListener('nody:lang', () => { paintQuick(); loadList(); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

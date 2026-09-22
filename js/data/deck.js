@@ -91,6 +91,15 @@ window.DeckData = (function () {
   const RANKS = ['Ace', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight',
                  'Nine', 'Ten', 'Page', 'Knight', 'Queen', 'King'];
 
+  /* Mã ảnh thật trên sacred-texts.com cho từng bậc — KHÔNG phải số thứ tự
+     đơn giản. Lá Át dùng "ac", các lá số 2-10 dùng đúng số có 0 đứng trước,
+     còn bốn lá chân dung dùng chữ viết tắt riêng (pa/kn/qu/ki). Trước đây
+     code này tự đánh số 01-14 cho mọi bậc nên lá Át và 4 lá chân dung của
+     CẢ 4 CHẤT (tổng 20 lá) bị sai tên file ảnh → hiện nền trắng, không có
+     hình. Mảng dưới đây khớp đúng với tên file thật trên server nguồn. */
+  const RANK_FILE = ['ac', '02', '03', '04', '05', '06', '07', '08',
+                      '09', '10', 'pa', 'kn', 'qu', 'ki'];
+
   const RANK_VI = ['Át', 'Hai', 'Ba', 'Bốn', 'Năm', 'Sáu', 'Bảy', 'Tám',
                    'Chín', 'Mười', 'Thị Đồng', 'Hiệp Sĩ', 'Hoàng Hậu', 'Đức Vua'];
 
@@ -189,7 +198,7 @@ window.DeckData = (function () {
     SUITS.forEach((s, si) => {
       RANKS.forEach((r, ri) => {
         const line = SUIT_LINES[s.key][ri];
-        const file = s.key.slice(0, 2) + String(ri + 1).padStart(2, '0') + '.jpg';
+        const file = s.key.slice(0, 2) + RANK_FILE[ri] + '.jpg';
         deck.push({
           id: s.key + '-' + (ri + 1),
           name: r + ' of ' + s.name,

@@ -102,7 +102,16 @@
     if (age < 0) age += 29.530588853;
     const frac = age / 29.530588853;
 
-    const names = [
+    const lg = (window.I18N && window.I18N.get()) || 'vi';
+    const names = (MOON_PHASES[lg] || MOON_PHASES.vi);
+    const idx = Math.floor(frac * 8 + 0.5) % 8;
+    return { age, frac, name: names[idx][0], advice: names[idx][1], index: idx };
+  }
+
+  /* Bản dịch 8 pha trăng — dùng chung cho mọi trang gọi moonPhase().
+     Thiếu ngôn ngữ nào thì rơi về tiếng Việt, không bao giờ để trống. */
+  const MOON_PHASES = {
+    vi: [
       ['Trăng non', 'Một khởi đầu vừa nhen. Hợp để đặt ý định, chưa cần vội làm.'],
       ['Trăng lưỡi liềm đầu', 'Ý định bắt đầu có hình. Ghi ra điều bạn muốn giữ.'],
       ['Trăng bán nguyệt đầu', 'Lúc phải chọn. Bỏ bớt một việc để việc còn lại thở được.'],
@@ -111,10 +120,48 @@
       ['Trăng khuyết cuối', 'Đã đủ đầy, giờ là lúc chia lại và biết ơn.'],
       ['Trăng bán nguyệt cuối', 'Buông một điều đã hết duyên. Nhẹ hơn thì đi xa hơn.'],
       ['Trăng tàn', 'Khoảng lặng trước vòng mới. Nghỉ thật sự cũng là làm việc.']
-    ];
-    const idx = Math.floor(frac * 8 + 0.5) % 8;
-    return { age, frac, name: names[idx][0], advice: names[idx][1], index: idx };
-  }
+    ],
+    en: [
+      ['New Moon', 'A beginning just lit. Good for setting an intention, no rush to act yet.'],
+      ['Waxing Crescent', 'The intention starts taking shape. Write down what you want to keep.'],
+      ['First Quarter', 'A moment to choose. Drop one thing so the rest can breathe.'],
+      ['Waxing Gibbous', 'Everything is growing. A little more patience.'],
+      ['Full Moon', 'What was hidden comes into view. Good for looking straight and speaking honestly.'],
+      ['Waning Gibbous', 'You already have enough — time to share and give thanks.'],
+      ['Last Quarter', 'Let go of something whose season has passed. Lighter travels farther.'],
+      ['Waning Crescent', 'A quiet pause before the new cycle. Real rest is also work.']
+    ],
+    zh: [
+      ['新月', '一个刚点亮的开始，适合许愿立意，还不急着行动。'],
+      ['娥眉月', '想法开始成形，把想留住的东西写下来。'],
+      ['上弦月', '该做选择了，放下一件事，让其余的能喘口气。'],
+      ['盈凸月', '一切都在成长，再多一点耐心。'],
+      ['满月', '藏着的东西显现出来，适合直视与坦诚表达。'],
+      ['亏凸月', '已经足够圆满，是分享与感恩的时候。'],
+      ['下弦月', '放下一段已尽的缘分，轻一点才能走更远。'],
+      ['残月', '新周期前的安静停顿，好好休息也是一种功课。']
+    ],
+    ko: [
+      ['삭 (신월)', '이제 막 켜진 시작이에요. 의도를 세우기 좋아요, 아직 서두를 필요는 없어요.'],
+      ['초승달', '생각이 형태를 갖추기 시작해요. 지키고 싶은 걸 적어 두세요.'],
+      ['상현달', '선택해야 할 때예요. 한 가지를 내려놓아야 나머지가 숨 쉴 수 있어요.'],
+      ['상현망간달', '모든 게 자라나는 중이에요. 조금만 더 참을성을.'],
+      ['보름달', '가려져 있던 게 드러나요. 똑바로 보고 솔직히 말하기 좋아요.'],
+      ['하현망간달', '이미 충분히 찼어요, 이제 나누고 감사할 시간이에요.'],
+      ['하현달', '인연이 다한 걸 놓아주세요. 가벼워야 더 멀리 가요.'],
+      ['그믐달', '새 주기 전의 고요한 멈춤. 제대로 쉬는 것도 일이에요.']
+    ],
+    ja: [
+      ['新月', 'ちょうど灯った始まり。意図を立てるのに向いていて、急いで動く必要はまだない。'],
+      ['三日月', '意図が形になり始める。残しておきたいことを書き留めて。'],
+      ['上弦の月', '選ぶべき時。ひとつ手放せば、残りが息をつける。'],
+      ['十三夜月', 'すべてが育っている最中。もう少しだけ辛抱を。'],
+      ['満月', '隠れていたものが見えてくる。まっすぐ見て、正直に話すのに向いている。'],
+      ['寝待月', 'もう十分に満ちた。分かち合い、感謝する時。'],
+      ['下弦の月', '縁が尽きたものを手放して。軽いほど遠くまで行ける。'],
+      ['有明月', '新しい周期の前の静かな間。本当に休むこともまた仕事。']
+    ]
+  };
 
   /* ==========================================================
      5. Giao diện sáng / tối (nhớ lựa chọn của bạn)

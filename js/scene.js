@@ -129,11 +129,19 @@
     }
     function kick() { if (!running && !paused) { running = true; requestAnimationFrame(loop); } }
 
-    window.addEventListener('mousemove', (e) => {
-      tx = (e.clientX / window.innerWidth - .5) * 2;
-      ty = (e.clientY / window.innerHeight - .5) * 2;
-      kick();
-    }, { passive: true });
+    // CHỈ nghiêng theo con trỏ chuột thật (desktop có chuột). Trên điện
+    // thoại — kể cả khi giả lập bằng F12 → Toggle device toolbar — thao
+    // tác "kéo" để cuộn trang vẫn phát ra sự kiện mousemove, khiến nền
+    // trời bị xê dịch xấu xí trong lúc cuộn. Dùng gyroscope riêng cho
+    // điện thoại thật (deviceorientation bên dưới), không dùng chung.
+    const hasRealMouse = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (hasRealMouse) {
+      window.addEventListener('mousemove', (e) => {
+        tx = (e.clientX / window.innerWidth - .5) * 2;
+        ty = (e.clientY / window.innerHeight - .5) * 2;
+        kick();
+      }, { passive: true });
+    }
 
     window.addEventListener('deviceorientation', (e) => {
       if (e.gamma == null) return;

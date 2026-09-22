@@ -60,6 +60,20 @@
           <textarea class="textarea" id="questionInput"
             placeholder="Ví dụ: Mình có nên nhận lời đề nghị công việc kia không?"></textarea>
         </div>
+        <details style="margin-top:14px">
+          <summary class="tiny" style="cursor:pointer;color:var(--moon)" data-i18n="tarot.profile.toggle">Thêm ngày sinh để bài gắn với cung mệnh của bạn (không bắt buộc)</summary>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+            <div class="field" style="flex:1;min-width:160px">
+              <label for="profileName" data-i18n="tarot.profile.name">Tên của bạn</label>
+              <input class="input" type="text" id="profileName" placeholder="VD: Minh Anh">
+            </div>
+            <div class="field" style="flex:1;min-width:160px">
+              <label for="profileDob" data-i18n="tarot.profile.dob">Ngày sinh</label>
+              <input class="input" type="date" id="profileDob">
+            </div>
+          </div>
+          <p class="tiny mute" data-i18n="tarot.profile.hint">Nody dùng ngày sinh để biết cung hoàng đạo và hành của bạn, rồi lồng vào lời luận giải mỗi lá — không lưu lại nếu bạn chưa đăng nhập.</p>
+        </details>
       </div>
 
       <div class="center" style="margin-top:22px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
@@ -139,6 +153,8 @@
 <script src="js/data/deck-i18n.js"></script>
 <script src="js/data/deck-localize.js"></script>
 <script src="js/data/spreads.js"></script>
+<script src="js/data/lore.js"></script>
+<script src="js/data/lore-i18n.js"></script>
 <script src="js/tarot.js"></script>
 </body>
 </html>
