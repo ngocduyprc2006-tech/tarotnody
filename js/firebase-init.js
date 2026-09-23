@@ -57,7 +57,6 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 const googleProvider = new GoogleAuthProvider();
-// Bổ sung: Luôn hiển thị bảng chọn tài khoản Google thay vì tự động login nick cũ
 googleProvider.setCustomParameters({ prompt: 'select_account' });
 
 /* ---------- Dịch mã lỗi Firebase sang tiếng Việt dễ hiểu ---------- */
@@ -77,8 +76,13 @@ const ERRORS = {
   'auth/operation-not-allowed': 'Cách đăng nhập này chưa được bật trong Firebase Console.'
 };
 
-// Đã loại bỏ e?.code thay bằng e && e.code
-const readError = (e) => ERRORS[e && e.code] || 'Có trục trặc nhỏ. Bạn thử lại giúp mình nhé.';
+// Viết tường minh bằng if để trình duyệt/format code không bị lỗi
+const readError = (e) => {
+  if (e && e.code && ERRORS[e.code]) {
+    return ERRORS[e.code];
+  }
+  return 'Có trục trặc nhỏ. Bạn thử lại giúp mình nhé.';
+};
 
 /* ============================================================
    API công khai
@@ -91,7 +95,9 @@ const Nody = {
   /* ---------- Tài khoản ---------- */
   async register(name, email, pass) {
     const cred = await createUserWithEmailAndPassword(auth, email.trim(), pass);
-    if (name) await updateProfile(cred.user, { displayName: name.trim() });
+    if (name) {
+      await updateProfile(cred.user, { displayName: name.trim() });
+    }
     return cred.user;
   },
 
@@ -120,11 +126,15 @@ const Nody = {
 
   readError,
 
-  /* ---------- Lưu một lượt xem ----------
-     kind: 'tarot' | 'daily' | 'numerology' | 'horoscope' | 'match' | 'dream' | 'wheel'
-  */
+  /* ---------- Lưu một lượt xem ---------- */
   async saveReading(data) {
     if (!auth.currentUser) return null;
+
+    let safeCards = [];
+    if (Array.isArray(data.drawnCards)) {
+      safeCards = data.drawnCards;
+    }
+
     const payload = {
       userId: auth.currentUser.uid,
       userEmail: auth.currentUser.email || '',
@@ -134,18 +144,14 @@ const Nody = {
       question: data.question || '',
       spread: data.spread || '',
       summary: (data.summary || '').slice(0, 1200),
-      drawnCards: Array.isArray(data.drawnCards) ? data.drawnCards : [],
+      drawnCards: safeCards,
       createdAt: serverTimestamp()
     };
     const ref = await addDoc(collection(db, 'readings'), payload);
     return ref.id;
   },
 
-  /* ---------- Đọc lịch sử ----------
-     Chỉ lọc theo userId rồi sắp xếp ở phía trình duyệt.
-     Làm vậy để KHÔNG cần tạo composite index trong Firestore —
-     tránh lỗi "The query requires an index".
-  */
+  /* ---------- Đọc lịch sử ---------- */
   async myReadings() {
     if (!auth.currentUser) return [];
     const snap = await getDocs(
@@ -154,11 +160,14 @@ const Nody = {
     const rows = [];
     snap.forEach(d => {
       const v = d.data();
+      let safeTime = new Date(0);
+      if (v.createdAt && v.createdAt.toDate) {
+        safeTime = v.createdAt.toDate();
+      }
       rows.push({
         id: d.id,
         ...v,
-        // Đã loại bỏ v.createdAt?.toDate
-        when: (v.createdAt && v.createdAt.toDate) ? v.createdAt.toDate() : new Date(0)
+        when: safeTime
       });
     });
     rows.sort((a, b) => b.when - a.when);
@@ -199,22 +208,12 @@ const Nody = {
   },
 
   /* ==========================================================
-     Hồ sơ người dùng — vai trò (role) & số dư ví (wallet)
-     Doc users/{uid} được tự tạo lần đăng nhập đầu tiên.
-     Muốn cấp quyền admin cho ai: vào Firebase Console → Firestore
-     → users → chọn đúng người → sửa role thành "admin" (thủ công
-     lần đầu; sau đó có thể phong qua trang Admin ngay trên web).
+     Hồ sơ người dùng
      ========================================================== */
   profile: null,
 
-  /* ---------- Tài khoản admin mặc định ----------
-     Email trong danh sách này LUÔN được đưa về role "admin" + gói
-     "pro" mỗi lần đăng nhập (tự sửa lại nếu ai đó lỡ đổi trong
-     Firestore). Đây là lớp tiện lợi phía trình duyệt — an toàn
-     THẬT SỰ vẫn phải nằm ở Firestore Security Rules (xem README),
-     nếu không thì bất kỳ ai cũng có thể tự sửa role của chính họ
-     bằng console trình duyệt. Sửa danh sách bên dưới nếu cần. */
-  ADMIN_EMAILS: ['ngocduyprc2006@nodytarot.com'],
+  // Đã thay đổi email admin theo yêu cầu của bạn
+  ADMIN_EMAILS: ['ngocduyprc2006@gmail.com'],
 
   async ensureProfile() {
     if (!auth.currentUser) return null;
@@ -222,36 +221,56 @@ const Nody = {
     const isBootstrapAdmin = Nody.ADMIN_EMAILS.includes(email.toLowerCase());
     const ref = doc(db, 'users', auth.currentUser.uid);
     const snap = await getDoc(ref);
+
+    let finalRole = 'user';
+    let finalPlan = 'free';
+
+    if (isBootstrapAdmin) {
+      finalRole = 'admin';
+      finalPlan = 'pro';
+    }
+
     if (!snap.exists()) {
       const data = {
         email,
         name: auth.currentUser.displayName || '',
-        role: isBootstrapAdmin ? 'admin' : 'user',
-        plan: isBootstrapAdmin ? 'pro' : 'free',
+        role: finalRole,
+        plan: finalPlan,
         wallet: 0,
         createdAt: serverTimestamp()
       };
       await setDoc(ref, data);
       return { id: auth.currentUser.uid, ...data };
     }
+
     const data = snap.data();
-    if (isBootstrapAdmin && (data.role !== 'admin' || data.plan !== 'pro')) {
-      await updateDoc(ref, { role: 'admin', plan: 'pro' });
-      data.role = 'admin';
-      data.plan = 'pro';
+    if (isBootstrapAdmin) {
+      if (data.role !== 'admin' || data.plan !== 'pro') {
+        await updateDoc(ref, { role: 'admin', plan: 'pro' });
+        data.role = 'admin';
+        data.plan = 'pro';
+      }
     }
-    if (data.plan === undefined) data.plan = 'free';
+    if (data.plan === undefined) {
+      data.plan = 'free';
+    }
     return { id: snap.id, ...data };
   },
 
   async myProfile() {
     if (!auth.currentUser) return null;
     const snap = await getDoc(doc(db, 'users', auth.currentUser.uid));
-    return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+    if (snap.exists()) {
+      return { id: snap.id, ...snap.data() };
+    }
+    return null;
   },
 
   isAdmin() {
-    return !!(Nody.profile && Nody.profile.role === 'admin');
+    if (Nody.profile && Nody.profile.role === 'admin') {
+      return true;
+    }
+    return false;
   },
 
   async renameProfile(name) {
@@ -259,10 +278,7 @@ const Nody = {
     await updateDoc(doc(db, 'users', auth.currentUser.uid), { name });
   },
 
-  /* ---------- Nạp tiền / gói thành viên ----------
-     Không có cổng thanh toán thật (Momo/VNPay/Stripe) trong bản này
-     — người dùng gửi yêu cầu (chuyển khoản tay), admin duyệt thủ công
-     trong trang Admin, số dư ví được cộng tự động khi duyệt. */
+  /* ---------- Nạp tiền / gói thành viên ---------- */
   async requestTopup({ amount, method, note }) {
     if (!auth.currentUser) throw new Error('chưa đăng nhập');
     const ref = await addDoc(collection(db, 'topups'), {
@@ -282,20 +298,21 @@ const Nody = {
     const snap = await getDocs(query(collection(db, 'topups'), where('userId', '==', auth.currentUser.uid)));
     const rows = [];
     snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
-    // Đã loại bỏ toán tử optional chaining
+
     rows.sort((a, b) => {
-      const timeB = (b.createdAt && b.createdAt.toMillis) ? b.createdAt.toMillis() : 0;
-      const timeA = (a.createdAt && a.createdAt.toMillis) ? a.createdAt.toMillis() : 0;
+      let timeB = 0;
+      if (b.createdAt && b.createdAt.toMillis) timeB = b.createdAt.toMillis();
+
+      let timeA = 0;
+      if (a.createdAt && a.createdAt.toMillis) timeA = a.createdAt.toMillis();
+
       return timeB - timeA;
     });
     return rows;
   },
 
   /* ==========================================================
-     Vùng dành cho Admin — trang admin.html tự kiểm tra isAdmin()
-     trước khi gọi các hàm này. An toàn thật sự phải đến từ
-     Firestore Security Rules (xem README) chứ không phải code
-     phía trình duyệt — hãy nhớ bật rules trước khi công khai web.
+     Vùng dành cho Admin
      ========================================================== */
   async adminListUsers() {
     const snap = await getDocs(collection(db, 'users'));
@@ -308,8 +325,6 @@ const Nody = {
     await updateDoc(doc(db, 'users', uid), { role });
   },
 
-  /* plan: 'free' | 'plus' | 'pro' — admin cấp gói tuỳ ý cho bất kỳ
-     tài khoản nào, không cần người đó phải nạp tiền qua topup. */
   async adminSetPlan(uid, plan) {
     await updateDoc(doc(db, 'users', uid), { plan });
   },
@@ -318,10 +333,14 @@ const Nody = {
     const snap = await getDocs(collection(db, 'topups'));
     const rows = [];
     snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
-    // Đã loại bỏ toán tử optional chaining
+
     rows.sort((a, b) => {
-      const timeB = (b.createdAt && b.createdAt.toMillis) ? b.createdAt.toMillis() : 0;
-      const timeA = (a.createdAt && a.createdAt.toMillis) ? a.createdAt.toMillis() : 0;
+      let timeB = 0;
+      if (b.createdAt && b.createdAt.toMillis) timeB = b.createdAt.toMillis();
+
+      let timeA = 0;
+      if (a.createdAt && a.createdAt.toMillis) timeA = a.createdAt.toMillis();
+
       return timeB - timeA;
     });
     return rows;
@@ -331,7 +350,12 @@ const Nody = {
     await updateDoc(doc(db, 'topups', topup.id), { status: 'approved', decidedAt: serverTimestamp() });
     const uref = doc(db, 'users', topup.userId);
     const usnap = await getDoc(uref);
-    const cur = usnap.exists() ? (usnap.data().wallet || 0) : 0;
+
+    let cur = 0;
+    if (usnap.exists()) {
+      cur = usnap.data().wallet || 0;
+    }
+
     await updateDoc(uref, { wallet: cur + (Number(topup.amount) || 0) });
   },
 
@@ -343,10 +367,14 @@ const Nody = {
     const snap = await getDocs(collection(db, 'readings'));
     const rows = [];
     snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
-    // Đã loại bỏ toán tử optional chaining
+
     rows.sort((a, b) => {
-      const timeB = (b.createdAt && b.createdAt.toMillis) ? b.createdAt.toMillis() : 0;
-      const timeA = (a.createdAt && a.createdAt.toMillis) ? a.createdAt.toMillis() : 0;
+      let timeB = 0;
+      if (b.createdAt && b.createdAt.toMillis) timeB = b.createdAt.toMillis();
+
+      let timeA = 0;
+      if (a.createdAt && a.createdAt.toMillis) timeA = a.createdAt.toMillis();
+
       return timeB - timeA;
     });
     return rows.slice(0, 200);
@@ -370,7 +398,11 @@ onAuthStateChanged(auth, async (user) => {
   Nody.loaded = true;
   Nody.profile = null;
   if (user) {
-    try { Nody.profile = await Nody.ensureProfile(); } catch (e) { console.warn('Không lấy được hồ sơ người dùng:', e); }
+    try {
+      Nody.profile = await Nody.ensureProfile();
+    } catch (e) {
+      console.warn('Không lấy được hồ sơ người dùng:', e);
+    }
   }
   broadcast();
 });
