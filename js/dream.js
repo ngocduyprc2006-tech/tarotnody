@@ -50,12 +50,15 @@
     return { html, symbols, mood, card, reversed };
   }
 
-  function init() {
-    if (!$('btnDream')) return;
-
-    // gợi ý vài biểu tượng cho người chưa biết viết gì
-    $('dreamHints').innerHTML = B.SYMBOLS.slice(0, 12)
-      .map(s => `<button class="chip" data-hint="${s.key[0]}">${s.name}</button>`).join('');
+  function paintHints() {
+    // gợi ý vài biểu tượng cho người chưa biết viết gì — lấy đúng từ
+    // khoá + tên theo NGÔN NGỮ đang bật, vì key giờ khác nhau theo
+    // từng ngôn ngữ (không còn là mảng chung một thứ tiếng như trước).
+    $('dreamHints').innerHTML = B.SYMBOLS.slice(0, 12).map(raw => {
+      const s = B.localize(raw);
+      const k = B.keysFor(raw)[0] || '';
+      return `<button class="chip" data-hint="${k}">${s.name}</button>`;
+    }).join('');
     $('dreamHints').querySelectorAll('[data-hint]').forEach(b => {
       b.onclick = () => {
         const ta = $('dreamText');
@@ -63,6 +66,13 @@
         ta.focus();
       };
     });
+  }
+
+  function init() {
+    if (!$('btnDream')) return;
+
+    paintHints();
+    window.addEventListener('nody:lang', paintHints);
 
     $('btnDream').onclick = () => {
       const text = $('dreamText').value.trim();

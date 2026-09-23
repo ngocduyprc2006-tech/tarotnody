@@ -407,6 +407,16 @@
       ? `<p class="tiny mute" style="margin-top:10px">${T('read.profileTie', { sign: profile.signName, el: T('horo.el.' + profile.el) })}</p>`
       : '';
 
+    // Mở đầu bằng một câu "giải luôn tại chỗ", nối từ khoá của lá vào vị
+    // trí nó đang nằm trong bàn trải — để cảm giác là Nody đang GIẢI
+    // NGHĨA cho bạn ngay lúc đó, chứ không phải liệt kê để bạn tự mò.
+    const keyList = d.card.keys.split('·').map(s => s.trim()).filter(Boolean);
+    const keyPhrase = keyList.length >= 2
+      ? keyList.slice(0, -1).join(', ') + (lg === 'vi' ? ' và ' : lg === 'en' ? ' and ' : lg === 'zh' ? '和' : lg === 'ko' ? '와 ' : 'と') + keyList[keyList.length - 1]
+      : (keyList[0] || '');
+    const opening = T('read.opening', { label: label.toLowerCase(), keys: keyPhrase });
+    const why = T('read.why', { keys: keyPhrase });
+
     $('detailBody').innerHTML = `
       <div class="detail-top">
         <div class="detail-img">${D.imgTag(d.card, d.reversed ? 'upside' : '')}</div>
@@ -419,7 +429,10 @@
       </div>
       <div class="chips"><span class="chip">${d.card.keys}</span></div>
       <div class="detail-body">
+        <p class="poem">${opening}</p>
         <p>${d.reversed ? d.card.rev : d.card.up}</p>
+        <h4>${T('read.why.title')}</h4>
+        <p>${why}</p>
         <h4>${T('read.forTopic', { topic: topicName.toLowerCase() })}</h4>
         <p>${d.reversed ? voice.rev : voice.up}</p>
         <h4>${T('read.inLove')}</h4>
@@ -462,6 +475,11 @@
     if (suitInfo && topN > 1) chips.push(`<span class="chip">Nhiều lá ${suitInfo.vi} · hành ${suitInfo.el}</span>`);
     if (majors) chips.push(`<span class="chip">${majors} lá Ẩn Chính</span>`);
     chips.push(`<span class="chip alt">${revs} lá ngược</span>`);
+
+    // câu mở "giải luôn" cho phần tổng quan — cùng tinh thần với bảng
+    // chi tiết từng lá: nói thẳng đây là Nody đang ráp các lá lại,
+    // không phải liệt kê để người đọc tự suy diễn.
+    const openingSynth = T('synth.opening', { n: cards.length, spread: sp.name.toLowerCase() });
 
     // mạch năng lượng
     let flow;
@@ -527,6 +545,7 @@
 
     $('synthBody').innerHTML = `
       <div class="chips">${chips.join('')}</div>
+      <p class="poem">${openingSynth}</p>
       <p>${flow}</p>
       <h4>${T('synth.leaning')}</h4>
       <p>${tone}</p>

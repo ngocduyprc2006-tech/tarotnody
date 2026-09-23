@@ -1,0 +1,101 @@
+/* ============================================================
+   firestore.rules — Luật bảo mật cho Nody Tarot
+   ------------------------------------------------------------
+   ĐÂY LÀ FILE QUAN TRỌNG NHẤT CHO BẢO MẬT CỦA WEB.
+   JavaScript chạy trong trình duyệt của người dùng KHÔNG BAO GIỜ
+   là nơi an toàn để kiểm tra quyền — ai cũng có thể mở F12, sửa
+   biến, hoặc gọi thẳng Firestore SDK để đọc/ghi bất cứ gì. Luật ở
+   đây mới là hàng rào THẬT, chạy trên máy chủ của Google, không ai
+   sửa được từ trình duyệt.
+
+   CÁCH DÙNG: dán toàn bộ nội dung file này vào
+   Firebase Console → Firestore Database → Rules → Publish.
+   Hoặc nếu dùng Firebase CLI: `firebase deploy --only firestore:rules`
+   (cần thêm mục "firestore" trỏ tới file này trong firebase.json).
+
+   Không có luật này (hoặc để ở chế độ mặc định "test mode"), TOÀN
+   BỘ dữ liệu — ví tiền, vai trò admin, lịch sử bói của mọi người —
+   có thể bị bất kỳ ai đọc/sửa chỉ bằng vài dòng lệnh trong Console
+   trình duyệt (View → DevTools → Console), kể cả khi họ không phải
+   là bạn hay là admin.
+   ============================================================ */
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+
+    function isAdmin() {
+      return signedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Giới hạn cỡ dữ liệu người dùng tự nhập, tránh ai đó cố ghi
+    // một document khổng lồ để làm tốn dung lượng / tiền của bạn.
+    function reasonableTextSize() {
+      return request.resource.data.size() < 30;
+    }
+
+    /* ---------- Lịch sử xem bói ---------- */
+    match /readings/{docId} {
+      allow read, delete: if signedIn() && request.auth.uid == resource.data.userId;
+      allow create: if signedIn()
+        && request.auth.uid == request.resource.data.userId
+        && reasonableTextSize();
+      allow update: if false; // lịch sử là bất biến — không ai được sửa lại sau khi lưu
+      allow read: if isAdmin();
+    }
+
+    /* ---------- Thư gửi tương lai ---------- */
+    match /letters/{docId} {
+      allow read, delete: if signedIn() && request.auth.uid == resource.data.userId;
+      allow create: if signedIn()
+        && request.auth.uid == request.resource.data.userId
+        && reasonableTextSize();
+      allow update: if false;
+      allow read: if isAdmin();
+    }
+
+    /* ---------- Hồ sơ người dùng (vai trò, gói, ví) ---------- */
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow create: if signedIn() && request.auth.uid == uid
+        // Khi tự tạo hồ sơ lần đầu, không được tự cho mình role admin
+        // hay gói pro, không được tự cộng sẵn tiền vào ví.
+        && request.resource.data.role == 'user'
+        && request.resource.data.get('plan', 'free') in ['free']
+        && request.resource.data.get('wallet', 0) == 0;
+      // Người dùng thường được sửa hồ sơ của mình (đổi tên...) nhưng
+      // KHÔNG được tự đổi role / plan / wallet của chính mình — ba
+      // trường đó chỉ admin mới sửa được. Đây là hàng rào chặn việc
+      // tự phong admin hoặc tự cộng tiền qua console trình duyệt.
+      allow update: if isAdmin() ||
+        (signedIn() && request.auth.uid == uid &&
+         request.resource.data.role == resource.data.role &&
+         request.resource.data.get('plan', 'free') == resource.data.get('plan', 'free') &&
+         request.resource.data.wallet == resource.data.wallet);
+    }
+
+    /* ---------- Yêu cầu nạp tiền ---------- */
+    match /topups/{docId} {
+      allow create: if signedIn()
+        && request.auth.uid == request.resource.data.userId
+        && request.resource.data.status == 'pending' // không tự tạo đơn đã "approved"
+        && request.resource.data.amount is number
+        && request.resource.data.amount > 0
+        && request.resource.data.amount <= 50000000; // chặn số tiền phi lý
+      allow read: if signedIn() && (request.auth.uid == resource.data.userId || isAdmin());
+      allow update: if isAdmin(); // chỉ admin mới được duyệt/từ chối
+      allow delete: if false;
+    }
+
+    // Mặc định: chặn hết mọi collection khác chưa khai báo ở trên,
+    // để không collection nào "lọt lưới" nếu sau này bạn thêm mới mà
+    // quên viết luật riêng.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

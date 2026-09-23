@@ -249,11 +249,11 @@
             <button class="icon-btn" id="fxBtn" title="${L('fx.auto', 'Hiệu ứng: Tự động')}">${fxIcon()}</button>
             <button class="icon-btn" id="themeBtn" title="Đổi giao diện">☀️</button>
             <span id="adminLinkSlot"></span>
-            <button class="acct-btn" id="acctBtn">
-              <span class="avatar" id="acctAvatar">?</span>
-              <span id="acctText">${L('head.login', 'Đăng nhập')}</span>
-            </button>
           </div>
+          <button class="acct-btn" id="acctBtn">
+            <span class="avatar" id="acctAvatar">?</span>
+            <span id="acctText">${L('head.login', 'Đăng nhập')}</span>
+          </button>
         </div>
       </div>
 

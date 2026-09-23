@@ -170,7 +170,19 @@ Có thêm hai collection mới:
 
 ### Luật Firestore cần có (bắt buộc trước khi công khai web thật)
 
-Vào Firebase Console → Firestore Database → Rules, dán luật sau:
+Luật đầy đủ giờ nằm sẵn trong file **`firestore.rules`** ở thư mục gốc (không cần
+gõ lại tay). Hai cách dùng:
+
+**Cách 1 — dán tay (nhanh nhất):** mở file `firestore.rules`, copy toàn bộ, dán vào
+Firebase Console → Firestore Database → Rules → **Publish**.
+
+**Cách 2 — deploy bằng Firebase CLI:**
+```bash
+firebase deploy --only firestore:rules
+```
+(file `firebase.json` đã trỏ sẵn tới `firestore.rules`, không cần cấu hình thêm)
+
+Nội dung rules để làm gì — xem lại bên dưới nếu muốn hiểu, còn không thì cứ dán là được:
 
 ```
 rules_version = '2';

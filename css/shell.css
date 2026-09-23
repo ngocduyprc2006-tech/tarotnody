@@ -71,21 +71,19 @@
 /* nút mở menu trên điện thoại */
 .nav-toggle { display: none; }
 
-/* Khay công cụ bên phải (đổi ngôn ngữ / hiệu ứng / giao diện / tài khoản)
-   — cho phép TỰ CUỘN NGANG thay vì bị bóp méo thành hình bầu dục khi
-   không đủ chỗ trên màn hình hẹp (đây chính là lỗi "nút 3 gạch bị lỗi"
-   trước đây: nav-toggle/icon-btn bị flex ép hẹp lại vì thiếu
-   flex-shrink:0). Khay này không cần nút mũi tên — chỉ vài icon nhỏ,
-   vuốt ngang là đủ; mũi tên dành riêng cho thanh menu chính bên dưới,
-   nơi tên các trang dài hơn và dễ bị cắt cụt hơn (xem .nav-arrow). */
-.head-tools-wrap { display: flex; align-items: center; min-width: 0; }
+/* Khay công cụ bên phải (đổi ngôn ngữ / hiệu ứng / giao diện / tài khoản).
+   LUÔN đứng yên, không co/không cuộn — chỉ có vài nút quan trọng nên
+   phải luôn hiện đủ và luôn bấm được. Các icon bên trong giữ đúng
+   hình tròn nhờ flex-shrink:0 (trước đây thiếu dòng này khiến nút ☰
+   và các icon-btn bị bóp méo thành hình bầu dục khi thiếu chỗ — đã
+   sửa). Nếu có lúc nào không đủ chỗ, phần phải nhường/co lại là
+   .nav-wrap bên trái (đã có sẵn cơ chế cuộn ngang + mũi tên riêng),
+   không phải khay này. */
+.head-tools-wrap { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .head-tools {
   display: flex; align-items: center; gap: 8px; margin-left: 10px;
-  overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;
-  scroll-behavior: smooth;
-  min-width: 0;
+  flex-shrink: 0;
 }
-.head-tools::-webkit-scrollbar { display: none; }
 .nav-toggle, .icon-btn, .acct-btn, .avatar { flex-shrink: 0; }
 
 .scroll-arrow {
