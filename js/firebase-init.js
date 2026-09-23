@@ -13,8 +13,8 @@
    cả web vẫn chạy — chỉ phần đăng nhập & lưu lịch sử là tạm nghỉ.
    ============================================================ */
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
   getAuth,
   onAuthStateChanged,
@@ -26,7 +26,6 @@ import {
   sendPasswordResetEmail,
   updateProfile
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
 import {
   getFirestore,
   collection,
@@ -77,7 +76,9 @@ const ERRORS = {
   'auth/unauthorized-domain': 'Tên miền này chưa được bật trong Firebase Authentication.',
   'auth/operation-not-allowed': 'Cách đăng nhập này chưa được bật trong Firebase Console.'
 };
-const readError = (e) => ERRORS[e ? .code] || 'Có trục trặc nhỏ. Bạn thử lại giúp mình nhé.';
+
+// Đã loại bỏ e?.code thay bằng e && e.code
+const readError = (e) => ERRORS[e && e.code] || 'Có trục trặc nhỏ. Bạn thử lại giúp mình nhé.';
 
 /* ============================================================
    API công khai
@@ -156,8 +157,9 @@ const Nody = {
       rows.push({
         id: d.id,
         ...v,
-        when: v.createdAt ? .toDate ? v.createdAt.toDate() : new Date(0)
-            });
+        // Đã loại bỏ v.createdAt?.toDate
+        when: (v.createdAt && v.createdAt.toDate) ? v.createdAt.toDate() : new Date(0)
+      });
     });
     rows.sort((a, b) => b.when - a.when);
     return rows;
@@ -280,7 +282,12 @@ const Nody = {
     const snap = await getDocs(query(collection(db, 'topups'), where('userId', '==', auth.currentUser.uid)));
     const rows = [];
     snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
-    rows.sort((a, b) => (b.createdAt ? .toMillis ? .() || 0) - (a.createdAt ? .toMillis ? .() || 0));
+    // Đã loại bỏ toán tử optional chaining
+    rows.sort((a, b) => {
+      const timeB = (b.createdAt && b.createdAt.toMillis) ? b.createdAt.toMillis() : 0;
+      const timeA = (a.createdAt && a.createdAt.toMillis) ? a.createdAt.toMillis() : 0;
+      return timeB - timeA;
+    });
     return rows;
   },
 
@@ -311,7 +318,12 @@ const Nody = {
     const snap = await getDocs(collection(db, 'topups'));
     const rows = [];
     snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
-    rows.sort((a, b) => (b.createdAt ? .toMillis ? .() || 0) - (a.createdAt ? .toMillis ? .() || 0));
+    // Đã loại bỏ toán tử optional chaining
+    rows.sort((a, b) => {
+      const timeB = (b.createdAt && b.createdAt.toMillis) ? b.createdAt.toMillis() : 0;
+      const timeA = (a.createdAt && a.createdAt.toMillis) ? a.createdAt.toMillis() : 0;
+      return timeB - timeA;
+    });
     return rows;
   },
 
@@ -331,7 +343,12 @@ const Nody = {
     const snap = await getDocs(collection(db, 'readings'));
     const rows = [];
     snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
-    rows.sort((a, b) => (b.createdAt ? .toMillis ? .() || 0) - (a.createdAt ? .toMillis ? .() || 0));
+    // Đã loại bỏ toán tử optional chaining
+    rows.sort((a, b) => {
+      const timeB = (b.createdAt && b.createdAt.toMillis) ? b.createdAt.toMillis() : 0;
+      const timeA = (a.createdAt && a.createdAt.toMillis) ? a.createdAt.toMillis() : 0;
+      return timeB - timeA;
+    });
     return rows.slice(0, 200);
   },
 
