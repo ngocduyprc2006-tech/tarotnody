@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script src="js/perf.js"></script>
-<title>Chiêm tinh & cung hoàng đạo hôm nay — Nody Tarot</title>
+<title data-i18n="horo.pageTitle">Chiêm tinh & cung hoàng đạo hôm nay — Nody Tarot</title>
 <meta name="description" content="Tra cung hoàng đạo từ ngày sinh và xem thời tiết tâm trạng hôm nay theo pha trăng.">
 <meta name="theme-color" content="#0a0714">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,20 +25,20 @@
   <header id="site-head"></header>
   <main class="wrap section">
     <div class="section-head center">
-      <h2>Cung hoàng đạo và hôm nay của bạn</h2>
-      <p>Chiêm tinh mô tả thời tiết chứ không quyết định bạn đi đâu. Xem để mang ô
+      <h2 data-i18n="horo.title">Cung hoàng đạo và hôm nay của bạn</h2>
+      <p data-i18n="horo.desc">Chiêm tinh mô tả thời tiết chứ không quyết định bạn đi đâu. Xem để mang ô
          cho đúng, vậy thôi.</p>
     </div>
 
     <div class="narrow panel lit" style="margin-bottom:34px">
       <div class="field">
-        <label for="signDob">Nhập ngày sinh để Nody tra cung giúp bạn</label>
+        <label for="signDob" data-i18n="horo.dobLabel">Nhập ngày sinh để Nody tra cung giúp bạn</label>
         <input class="input" type="date" id="signDob">
       </div>
-      <button class="btn btn-moon btn-block" id="btnFindSign">Tra cung của tôi</button>
+      <button class="btn btn-moon btn-block" id="btnFindSign" data-i18n="horo.findSign">Tra cung của tôi</button>
     </div>
 
-    <h3 class="group-title center">Hoặc chọn thẳng cung bạn biết</h3>
+    <h3 class="group-title center" data-i18n="horo.orPick">Hoặc chọn thẳng cung bạn biết</h3>
     <div class="tool-grid" id="signGrid"></div>
 
     <div class="narrow result hidden" id="signResult">

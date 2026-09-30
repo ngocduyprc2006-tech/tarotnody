@@ -5,6 +5,12 @@
    hỏi) theo id, tra bởi dreams.js khi ngôn ngữ khác 'vi'.
    ============================================================ */
 window.DreamI18N = {
+  generic: {
+    en: { mean: "This dream doesn't match any symbol in Nody's notebook yet, and that's perfectly fine. Dreams speak in each person's own language, and you are the best translator.", ask: 'In that dream, what was the strongest feeling you had? When did that same feeling show up recently in real life?' },
+    zh: { mean: '这个梦暂时没有对上诺迪笔记本里的任何意象，但这完全没关系。梦用每个人自己的语言说话，而你是最好的翻译。', ask: '在那个梦里，你感受最强烈的情绪是什么？最近现实中这种情绪是什么时候出现的？' },
+    ko: { mean: '이 꿈은 아직 노디의 노트에 있는 어떤 상징과도 맞지 않지만, 그래도 전혀 괜찮아요. 꿈은 사람마다 자기만의 언어로 말하고, 당신이 가장 좋은 번역가예요.', ask: '그 꿈에서 가장 강하게 느낀 감정은 무엇이었나요? 그 감정이 최근 현실에서는 언제 나타났나요?' },
+    ja: { mean: 'この夢はまだノディのノートのどの象徴とも一致しないが、それでまったく構わない。夢は人それぞれ自分だけの言葉で語り、あなたが一番の翻訳者。', ask: 'その夢で一番強く感じた感情は何だった？その感情は最近、現実のいつ現れた？' }
+  },
   falling: {
     en: { name: 'Falling', mean: "Falling dreams often show up when real life has a place where you feel out of control, or you're straining to hold something too heavy.", ask: 'What have you been gripping with all your strength lately?' },
     zh: { name: '坠落', mean: '坠落的梦常在现实中你感到失控，或正咬牙撑着一件太重的事时出现。', ask: '最近你在用尽全力抓住什么？' },

@@ -167,12 +167,11 @@ window.LoreI18N = (function () {
           ja: ['マスターナンバー33 — 優しい教師', 'ただそこにいるだけで人を癒す。その癒しを自分自身にも。'] }
   };
 
+  /* Tên + ghi chú vai trò của 5 chỉ số — mỗi ngôn ngữ dùng CÙNG một cấu
+     trúc: <lang> = tên theo vai trò, <lang>Note = ghi chú theo vai trò. */
   const numRoles = {
-    life:   { en: 'Life Path',      note: 'the main lesson of your whole life' },
-    soul:   { en: "Soul Urge",      note: "what you truly long for" },
-    person: { en: 'Personality',    note: 'the impression others get from you' },
-    expr:   { en: 'Expression',     note: 'the ability you bring into the world' },
-    birth:  { en: 'Birth Day',      note: 'your innate gift' },
+    en: { life: 'Life Path', soul: 'Soul Urge', person: 'Personality', expr: 'Expression', birth: 'Birth Day' },
+    enNote: { life: 'the main lesson of your whole life', soul: 'what you truly long for', person: 'the impression others get from you', expr: 'the ability you bring into the world', birth: 'your innate gift' },
     zh: { life: '生命之路', soul: '灵魂渴望', person: '人格', expr: '天赋使命', birth: '出生日' },
     zhNote: { life: '你一生的主要课题', soul: '你真正渴望的东西', person: '别人对你的印象', expr: '你带到世上的能力', birth: '你与生俱来的礼物' },
     ko: { life: '생명수', soul: '영혼 갈망', person: '인격', expr: '사명', birth: '탄생일' },

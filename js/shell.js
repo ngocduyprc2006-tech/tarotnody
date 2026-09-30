@@ -247,7 +247,7 @@
           <div class="head-tools" id="headTools">
             ${langSwitcherHTML()}
             <button class="icon-btn" id="fxBtn" title="${L('fx.auto', 'Hiệu ứng: Tự động')}">${fxIcon()}</button>
-            <button class="icon-btn" id="themeBtn" title="Đổi giao diện">☀️</button>
+            <button class="icon-btn" id="themeBtn" title="${L('head.themeToggle', 'Đổi giao diện')}">☀️</button>
             <span id="adminLinkSlot"></span>
           </div>
           <button class="acct-btn" id="acctBtn">
@@ -492,26 +492,25 @@
         </div>
 
         <div class="auth-pane on" id="paneLogin">
-          <div class="field"><label for="liMail">${L('auth.email', 'Email')}</label>
-            <input class="input" type="email" id="liMail" autocomplete="email" placeholder="ban@email.com"></div>
+          <div class="field"><label for="liUser">${L('auth.username', 'Tên đăng nhập')}</label>
+            <input class="input" type="text" id="liUser" autocomplete="username" placeholder="${L('auth.usernamePlaceholder', 'vd: minhanh98')}"></div>
           <div class="field"><label for="liPass">${L('auth.password', 'Mật khẩu')}</label>
             <input class="input" type="password" id="liPass" autocomplete="current-password" placeholder="••••••"></div>
-          <div style="text-align:right;margin:-6px 0 14px">
-            <button class="link-btn tiny" id="btnForgot">${L('auth.forgot', 'Quên mật khẩu?')}</button>
-          </div>
           <button class="btn btn-moon btn-block" id="btnDoLogin">${L('auth.enterSpace', 'Vào không gian của bạn')}</button>
         </div>
 
         <div class="auth-pane" id="paneReg">
           <div class="field"><label for="rgName">${L('auth.displayName', 'Bạn muốn Nody gọi bạn là gì?')}</label>
             <input class="input" type="text" id="rgName" autocomplete="name" placeholder="Tên hiển thị"></div>
-          <div class="field"><label for="rgMail">${L('auth.email', 'Email')}</label>
-            <input class="input" type="email" id="rgMail" autocomplete="email" placeholder="ban@email.com"></div>
+          <div class="field"><label for="rgUser">${L('auth.username', 'Tên đăng nhập')}</label>
+            <input class="input" type="text" id="rgUser" autocomplete="username" placeholder="${L('auth.usernamePlaceholder', 'vd: minhanh98')}"></div>
+          <p class="tiny mute" id="userHint" style="margin:-6px 0 12px;line-height:1.5">${L('auth.usernameRule', 'Từ 3–20 ký tự: chữ, số hoặc dấu gạch dưới, không dấu cách.')}</p>
           <div class="field"><label for="rgPass">${L('auth.password', 'Mật khẩu')}</label>
             <input class="input" type="password" id="rgPass" autocomplete="new-password" placeholder="${L('auth.passwordPlaceholder', 'Tối thiểu 8 ký tự, có hoa + số + ký tự đặc biệt')}"></div>
           <div class="field"><label for="rgPass2">${L('auth.confirmPassword', 'Nhập lại mật khẩu')}</label>
             <input class="input" type="password" id="rgPass2" autocomplete="new-password" placeholder="${L('auth.confirmPasswordPlaceholder', 'Gõ lại y hệt mật khẩu ở trên')}"></div>
           <p class="tiny mute" id="pwHint" style="margin:-6px 0 12px;line-height:1.5">${L('auth.passwordRule', 'Mật khẩu cần từ 8 ký tự, có ít nhất 1 chữ HOA, 1 số và 1 ký tự đặc biệt (!@#$…).')}</p>
+          <p class="tiny mute" style="margin:-6px 0 14px;line-height:1.5">${L('auth.noRecoveryNote', 'Tài khoản kiểu này không đăng ký bằng email nên không tự đặt lại mật khẩu qua email được — bạn nhớ mật khẩu kỹ, hoặc dùng nút Google bên dưới để có thể khôi phục qua Google.')}</p>
           <button class="btn btn-moon btn-block" id="btnDoReg">${L('auth.createAcct', 'Tạo tài khoản')}</button>
         </div>
 
@@ -543,7 +542,6 @@
     document.getElementById('btnDoLogin').onclick = doLogin;
     document.getElementById('btnDoReg').onclick = doRegister;
     document.getElementById('btnGoogle').onclick = doGoogle;
-    document.getElementById('btnForgot').onclick = doForgot;
 
     // Đổi màu gợi ý mật khẩu theo thời gian thực để người dùng biết
     // ngay mình còn thiếu điều kiện nào, không cần bấm gửi mới biết sai.
@@ -560,10 +558,18 @@
     document.getElementById('rgPass').addEventListener('input', updatePwHint);
     document.getElementById('rgPass2').addEventListener('input', updatePwHint);
 
+    const userHintEl = document.getElementById('userHint');
+    document.getElementById('rgUser').addEventListener('input', (e) => {
+      if (!userHintEl) return;
+      userHintEl.classList.remove('ok', 'err');
+      if (!e.target.value) return;
+      userHintEl.classList.add(usernameRuleOk(e.target.value.trim()) ? 'ok' : 'err');
+    });
+
     // Enter để gửi
-    ['liPass', 'liMail'].forEach(id =>
+    ['liPass', 'liUser'].forEach(id =>
       document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); }));
-    ['rgPass', 'rgPass2', 'rgMail', 'rgName'].forEach(id =>
+    ['rgPass', 'rgPass2', 'rgUser', 'rgName'].forEach(id =>
       document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); }));
   }
 
@@ -598,7 +604,7 @@
         'hãy chạy <b>firebase serve</b> hoặc mở qua địa chỉ http:// để đăng nhập được.';
     } else { note.textContent = ''; }
     setTimeout(() => {
-      const f = document.getElementById(tab === 'reg' ? 'rgName' : 'liMail');
+      const f = document.getElementById(tab === 'reg' ? 'rgName' : 'liUser');
       if (f && window.innerWidth > 760) f.focus();
     }, 220);
   }
@@ -619,15 +625,22 @@
 
   async function doLogin() {
     if (!needFirebase()) return;
-    const mail = document.getElementById('liMail').value.trim();
+    const user = document.getElementById('liUser').value.trim();
     const pass = document.getElementById('liPass').value;
-    if (!mail || !pass) return msg('Bạn nhập email và mật khẩu giúp mình nhé.', 'err');
-    msg('Đang mở cửa…');
+    if (!user || !pass) return msg(L('auth.errMissingUserPass', 'Bạn nhập tên đăng nhập và mật khẩu giúp mình nhé.'), 'err');
+    msg(L('auth.opening', 'Đang mở cửa…'));
     try {
-      await window.Nody.login(mail, pass);
+      await window.Nody.login(user, pass);
       closeAuth();
-      toast('Chào bạn trở lại 🌙');
+      toast(L('auth.welcomeBackToast', 'Chào bạn trở lại 🌙'));
     } catch (e) { msg(window.Nody.readError(e), 'err'); }
+  }
+
+  /* Tên đăng nhập: 3–20 ký tự, chữ/số/gạch dưới, không dấu cách —
+     để ghép thành email nội bộ hợp lệ (xem usernameToEmail phía
+     firebase-init.js) và tránh trùng ký tự đặc biệt gây lỗi. */
+  function usernameRuleOk(u) {
+    return /^[a-zA-Z0-9_]{3,20}$/.test(u || '');
   }
 
   /* Quy tắc mật khẩu: tối thiểu 8 ký tự, có ít nhất 1 chữ HOA,
@@ -646,17 +659,20 @@
   async function doRegister() {
     if (!needFirebase()) return;
     const name = document.getElementById('rgName').value.trim();
-    const mail = document.getElementById('rgMail').value.trim();
+    const user = document.getElementById('rgUser').value.trim();
     const pass = document.getElementById('rgPass').value;
     const pass2 = document.getElementById('rgPass2').value;
-    if (!name || !mail || !pass || !pass2) return msg(L('auth.errMissing', 'Còn thiếu một ô chưa điền.'), 'err');
+    if (!name || !user || !pass || !pass2) return msg(L('auth.errMissing', 'Còn thiếu một ô chưa điền.'), 'err');
+    if (!usernameRuleOk(user)) {
+      return msg(L('auth.usernameRule', 'Từ 3–20 ký tự: chữ, số hoặc dấu gạch dưới, không dấu cách.'), 'err');
+    }
     if (!passwordRuleOk(pass)) {
       return msg(L('auth.passwordRule', 'Mật khẩu cần từ 8 ký tự, có ít nhất 1 chữ HOA, 1 số và 1 ký tự đặc biệt (!@#$…).'), 'err');
     }
     if (pass !== pass2) return msg(L('auth.passwordMismatch', 'Hai lần nhập mật khẩu chưa khớp nhau, bạn xem lại nhé.'), 'err');
     msg(L('auth.creating', 'Đang tạo tài khoản…'));
     try {
-      await window.Nody.register(name, mail, pass);
+      await window.Nody.register(name, user, pass);
       closeAuth();
       toast(L('auth.createdToast', 'Xong rồi, chào ') + name + ' 🐾');
     } catch (e) { msg(window.Nody.readError(e), 'err'); }
@@ -664,21 +680,11 @@
 
   async function doGoogle() {
     if (!needFirebase()) return;
-    msg('Đang mở cửa sổ Google…');
+    msg(L('auth.openingGoogle', 'Đang mở cửa sổ Google…'));
     try {
       await window.Nody.loginGoogle();
       closeAuth();
-      toast('Đăng nhập xong 🌙');
-    } catch (e) { msg(window.Nody.readError(e), 'err'); }
-  }
-
-  async function doForgot() {
-    if (!needFirebase()) return;
-    const mail = document.getElementById('liMail').value.trim();
-    if (!mail) return msg('Nhập email vào ô trên rồi bấm lại giúp mình.', 'err');
-    try {
-      await window.Nody.resetPassword(mail);
-      msg('Đã gửi link đặt lại mật khẩu vào email của bạn.', 'ok');
+      toast(L('auth.loginDoneToast', 'Đăng nhập xong 🌙'));
     } catch (e) { msg(window.Nody.readError(e), 'err'); }
   }
 
@@ -948,14 +954,41 @@
     /* Yêu cầu đăng nhập; trả về true nếu đã đăng nhập */
     requireLogin(why) {
       if (window.Nody && window.Nody.user) return true;
-      toast(why || 'Bạn đăng nhập trước nhé, để Nody giữ giúp kết quả.', true);
+      toast(why || (window.I18N ? window.I18N.t('common.needLogin') : 'Bạn đăng nhập trước nhé, để Nody giữ giúp kết quả.'), true);
       openAuth('login');
       return false;
+    },
+
+    /* Chặn bấm-liên-tục cho các thao tác tạo dữ liệu (gửi thư, nạp
+       tiền...). Đây CHỈ là lớp chống spam vô tình (double-click, bấm
+       lia lịa) ở phía trình duyệt — không phải hàng rào bảo mật thật
+       (ai mở Console vẫn gọi thẳng được). Rào chắn THẬT nằm ở Firestore
+       Rules + Firebase App Check (xem SECURITY.md). Trả về true nếu
+       được phép làm tiếp, false kèm toast nếu còn đang trong thời gian
+       chờ. */
+    cooldown(key, seconds) {
+      const k = 'cd_' + key;
+      const last = +(localStorage.getItem(k) || 0);
+      const now = Date.now();
+      const waitMs = seconds * 1000 - (now - last);
+      if (waitMs > 0) {
+        const s = Math.ceil(waitMs / 1000);
+        toast((window.I18N ? window.I18N.t('common.tooFast', { s }) : `Bạn thao tác hơi nhanh, chờ ${s} giây nữa nhé.`), true);
+        return false;
+      }
+      localStorage.setItem(k, String(now));
+      return true;
     },
 
     /* Lưu một lượt xem — im lặng bỏ qua nếu chưa đăng nhập */
     async log(data) {
       if (!window.Nody || !window.Nody.user) return;
+      // chặn spam ghi liên tục vào Firestore — tối đa 1 lượt lưu mỗi 2 giây,
+      // không hiện toast báo lỗi ở đây vì log() chạy ngầm, không nên làm
+      // phiền luồng đọc bài của người dùng chỉ vì họ bấm hơi nhanh.
+      const k = 'cd_log', last = +(localStorage.getItem(k) || 0), now = Date.now();
+      if (now - last < 2000) return;
+      localStorage.setItem(k, String(now));
       try { await window.Nody.saveReading(data); } catch (e) { console.warn('Không lưu được:', e); }
     },
 

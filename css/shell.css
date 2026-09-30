@@ -319,6 +319,8 @@
 .auth-msg.ok  { color: var(--sage); }
 #pwHint.err { color: var(--blossom); }
 #pwHint.ok  { color: var(--sage); }
+#userHint.err { color: var(--blossom); }
+#userHint.ok  { color: var(--sage); }
 
 /* ---------- Thông báo nhỏ ---------- */
 #toasts {

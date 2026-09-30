@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script src="js/perf.js"></script>
-<title>Trải bài Tarot online — Nody Tarot</title>
+<title data-i18n="tarot.pageTitle">Trải bài Tarot online — Nody Tarot</title>
 <meta name="description" content="Trải bài Tarot đầy đủ 78 lá với 6 kiểu trải: một lá, ba lá, hai ngả, tình cảm, công việc và Thập tự Celtic. Luận giải tiếng Việt dịu dàng.">
 <meta name="theme-color" content="#0a0714">
 
@@ -29,17 +29,17 @@
   <main class="wrap section">
 
     <div class="steps">
-      <span class="step on"><b>1</b>Chủ đề</span>
-      <span class="step"><b>2</b>Kiểu trải</span>
-      <span class="step"><b>3</b>Rút bài</span>
-      <span class="step"><b>4</b>Luận giải</span>
+      <span class="step on"><b>1</b><span data-i18n="tarot.stepTopic">Chủ đề</span></span>
+      <span class="step"><b>2</b><span data-i18n="tarot.stepSpread">Kiểu trải</span></span>
+      <span class="step"><b>3</b><span data-i18n="tarot.stepDraw">Rút bài</span></span>
+      <span class="step"><b>4</b><span data-i18n="tarot.stepRead">Luận giải</span></span>
     </div>
 
     <!-- ============ Bước 1 ============ -->
     <section class="stage on" id="stage-topic">
       <div class="section-head center">
-        <h2>Hôm nay bạn muốn hỏi về chuyện gì?</h2>
-        <p>Chọn một chủ đề để Nody biết nên nói với bạn bằng giọng nào. Chưa rõ cũng không sao.</p>
+        <h2 data-i18n="tarot.step1.title">Hôm nay bạn muốn hỏi về chuyện gì?</h2>
+        <p data-i18n="tarot.step1.desc">Chọn một chủ đề để Nody biết nên nói với bạn bằng giọng nào. Chưa rõ cũng không sao.</p>
       </div>
       <div class="tool-grid" id="topicGrid"></div>
     </section>
@@ -47,8 +47,8 @@
     <!-- ============ Bước 2 ============ -->
     <section class="stage" id="stage-spread">
       <div class="section-head center">
-        <h2>Chọn kiểu trải bài</h2>
-        <p>Bạn đang hỏi về <b id="spreadTopic" style="color:var(--moon)"></b>.
+        <h2 data-i18n="tarot.step2.title">Chọn kiểu trải bài</h2>
+        <p data-i18n-html="tarot.step2.desc">Bạn đang hỏi về <b id="spreadTopic" style="color:var(--moon)"></b>.
            Càng nhiều lá thì càng nhiều góc nhìn, nhưng một lá cũng đủ cho một câu hỏi gọn.</p>
       </div>
 
@@ -56,8 +56,8 @@
 
       <div class="narrow" style="margin-top:34px">
         <div class="field">
-          <label for="questionInput">Điều bạn muốn hỏi — không bắt buộc, nhưng viết ra thì bài sẽ trúng hơn</label>
-          <textarea class="textarea" id="questionInput"
+          <label for="questionInput" data-i18n="tarot.questionLabel">Điều bạn muốn hỏi — không bắt buộc, nhưng viết ra thì bài sẽ trúng hơn</label>
+          <textarea class="textarea" id="questionInput" data-i18n-placeholder="tarot.questionPlaceholder"
             placeholder="Ví dụ: Mình có nên nhận lời đề nghị công việc kia không?"></textarea>
         </div>
         <details style="margin-top:14px" open>
@@ -77,8 +77,8 @@
       </div>
 
       <div class="center" style="margin-top:22px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-        <button class="btn btn-ghost" id="btnBackTopic">Quay lại</button>
-        <button class="btn btn-moon" id="btnToDeck">Tới bộ bài</button>
+        <button class="btn btn-ghost" id="btnBackTopic" data-i18n="common.back">Quay lại</button>
+        <button class="btn btn-moon" id="btnToDeck" data-i18n="tarot.toDeck">Tới bộ bài</button>
       </div>
     </section>
 
@@ -90,7 +90,7 @@
       </div>
 
       <div class="center" style="display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap">
-        <button class="btn btn-ghost btn-sm" id="btnShuffle">Xáo lại bộ bài</button>
+        <button class="btn btn-ghost btn-sm" id="btnShuffle" data-i18n="tarot.reshuffle">Xáo lại bộ bài</button>
         <span class="label-sm" id="drawCount"></span>
       </div>
 
@@ -99,7 +99,7 @@
       </div>
 
       <div class="center">
-        <button class="btn-quiet" id="btnBackSpread">Đổi kiểu trải</button>
+        <button class="btn-quiet" id="btnBackSpread" data-i18n="tarot.changeSpread">Đổi kiểu trải</button>
       </div>
     </section>
 
@@ -108,27 +108,27 @@
       <div class="section-head center">
         <h2 id="readTitle"></h2>
         <p class="poem" id="readQuestion"></p>
-        <p class="tiny mute">Chạm vào lá để lật. Chạm lần nữa để đọc kỹ từng lá.</p>
+        <p class="tiny mute" data-i18n="tarot.tapToFlip">Chạm vào lá để lật. Chạm lần nữa để đọc kỹ từng lá.</p>
       </div>
 
       <div class="table" id="table"></div>
 
       <div class="center" style="margin:10px 0 26px">
-        <button class="btn btn-ghost btn-sm" id="btnRevealAll">Lật hết các lá</button>
+        <button class="btn btn-ghost btn-sm" id="btnRevealAll" data-i18n="tarot.revealAll">Lật hết các lá</button>
       </div>
 
       <div class="center">
-        <button class="btn btn-moon hidden" id="btnSynth">Đọc bản luận giải tổng</button>
+        <button class="btn btn-moon hidden" id="btnSynth" data-i18n="tarot.readSynth">Đọc bản luận giải tổng</button>
       </div>
 
       <div class="narrow result hidden" id="synth">
-        <h3 class="center">Các lá nói gì khi đứng cạnh nhau</h3>
+        <h3 class="center" data-i18n="tarot.synthTitle">Các lá nói gì khi đứng cạnh nhau</h3>
         <div id="synthBody"></div>
       </div>
 
       <div class="center" style="margin-top:34px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-        <button class="btn btn-ghost" id="btnOtherSpread">Thử kiểu trải khác</button>
-        <button class="btn btn-moon" id="btnAgain">Trải một lượt mới</button>
+        <button class="btn btn-ghost" id="btnOtherSpread" data-i18n="tarot.tryOtherSpread">Thử kiểu trải khác</button>
+        <button class="btn btn-moon" id="btnAgain" data-i18n="tarot.newReading">Trải một lượt mới</button>
       </div>
     </section>
 
@@ -139,7 +139,7 @@
 
 <!-- Bảng chi tiết một lá -->
 <div class="modal" id="detailModal">
-  <div class="modal-box wide" role="dialog" aria-modal="true" aria-label="Chi tiết lá bài">
+  <div class="modal-box wide" role="dialog" aria-modal="true" aria-label="Chi tiết lá bài" data-i18n-aria="tarot.cardDetailAria">
     <button class="modal-x" data-close>✕</button>
     <div id="detailBody"></div>
   </div>
@@ -152,6 +152,7 @@
 <script src="js/data/deck.js"></script>
 <script src="js/data/deck-i18n.js"></script>
 <script src="js/data/deck-localize.js"></script>
+<script src="js/data/spreads-i18n.js"></script>
 <script src="js/data/spreads.js"></script>
 <script src="js/data/lore.js"></script>
 <script src="js/data/lore-i18n.js"></script>

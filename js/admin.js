@@ -8,10 +8,14 @@
    ========================================================== */
 (function () {
   'use strict';
+  const T = (k, v) => (window.I18N ? window.I18N.t(k, v) : k);
+  const LOCALE = { vi: 'vi-VN', en: 'en-US', zh: 'zh-CN', ko: 'ko-KR', ja: 'ja-JP' };
+  const locale = () => LOCALE[(window.I18N && window.I18N.get()) || 'vi'] || 'vi-VN';
 
-  function fmtMoney(n) { return (n || 0).toLocaleString('vi-VN') + 'đ'; }
-  function fmtWhen(ts) { return ts?.toDate ? ts.toDate().toLocaleString('vi-VN') : '—'; }
+  function fmtMoney(n) { return (n || 0).toLocaleString(locale()) + 'đ'; }
+  function fmtWhen(ts) { return ts?.toDate ? ts.toDate().toLocaleString(locale()) : '—'; }
   function esc(s) { return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+  function statusLabel(s) { return T('admin.status.' + s) || s; }
 
   let checked = false;
 
@@ -26,8 +30,6 @@
     document.getElementById('adminBody').classList.remove('hidden');
     if (!checked) { checked = true; loadOverview(); }
   }
-
-  function fmtWhen2(ts) { return fmtWhen(ts); }
 
   async function loadOverview() {
     try {
@@ -64,26 +66,26 @@
           <td>${fmtMoney(u.wallet)}</td>
           <td>
             ${u.role === 'admin'
-              ? `<button class="btn btn-ghost tiny js-revoke" data-uid="${u.id}">Thu hồi admin</button>`
-              : `<button class="btn btn-ghost tiny js-grant" data-uid="${u.id}">Cấp admin</button>`}
+              ? `<button class="btn btn-ghost tiny js-revoke" data-uid="${u.id}">${T('admin.revokeAdmin')}</button>`
+              : `<button class="btn btn-ghost tiny js-grant" data-uid="${u.id}">${T('admin.makeAdmin')}</button>`}
           </td>
         </tr>`).join('');
       host.querySelectorAll('.js-grant').forEach(b => b.onclick = () => setRole(b.dataset.uid, 'admin'));
       host.querySelectorAll('.js-revoke').forEach(b => b.onclick = () => setRole(b.dataset.uid, 'user'));
       host.querySelectorAll('.js-plan').forEach(sel => sel.onchange = () => setPlan(sel.dataset.uid, sel.value));
     } catch (e) {
-      host.innerHTML = `<tr><td colspan="6" class="mute">Không tải được (kiểm tra Firestore Rules).</td></tr>`;
+      host.innerHTML = `<tr><td colspan="6" class="mute">${T('admin.loadFail')}</td></tr>`;
     }
   }
 
   async function setRole(uid, role) {
     try { await window.Nody.adminSetRole(uid, role); loadUsers(); }
-    catch (e) { window.Shell.toast('Không đổi được vai trò.', true); }
+    catch (e) { window.Shell.toast(T('admin.roleChangeFail'), true); }
   }
 
   async function setPlan(uid, plan) {
-    try { await window.Nody.adminSetPlan(uid, plan); window.Shell.toast('Đã cập nhật gói: ' + plan); }
-    catch (e) { window.Shell.toast('Không đổi được gói.', true); loadUsers(); }
+    try { await window.Nody.adminSetPlan(uid, plan); window.Shell.toast(T('admin.planUpdated', { plan })); }
+    catch (e) { window.Shell.toast(T('admin.planChangeFail'), true); loadUsers(); }
   }
 
   async function loadTopups() {
@@ -97,11 +99,11 @@
           <td>${esc(r.userEmail)}</td>
           <td>${fmtMoney(r.amount)}</td>
           <td>${esc(r.note)}</td>
-          <td><span class="status-pill ${r.status}">${esc(r.status)}</span></td>
+          <td><span class="status-pill ${r.status}">${esc(statusLabel(r.status))}</span></td>
           <td>
             ${r.status === 'pending'
-              ? `<button class="btn btn-moon tiny js-approve" data-id="${r.id}">Duyệt</button>
-                 <button class="btn btn-ghost tiny js-reject" data-id="${r.id}">Từ chối</button>`
+              ? `<button class="btn btn-moon tiny js-approve" data-id="${r.id}">${T('admin.approve')}</button>
+                 <button class="btn btn-ghost tiny js-reject" data-id="${r.id}">${T('admin.reject')}</button>`
               : '—'}
           </td>
         </tr>`).join('');
@@ -109,17 +111,17 @@
         b.onclick = async () => {
           const row = rows.find(r => r.id === b.dataset.id);
           try { await window.Nody.adminApproveTopup(row); loadTopups(); loadUsers(); }
-          catch (e) { window.Shell.toast('Không duyệt được.', true); }
+          catch (e) { window.Shell.toast(T('admin.approveFail'), true); }
         };
       });
       host.querySelectorAll('.js-reject').forEach(b => {
         b.onclick = async () => {
           try { await window.Nody.adminRejectTopup(b.dataset.id); loadTopups(); }
-          catch (e) { window.Shell.toast('Không từ chối được.', true); }
+          catch (e) { window.Shell.toast(T('admin.rejectFail'), true); }
         };
       });
     } catch (e) {
-      host.innerHTML = `<tr><td colspan="6" class="mute">Không tải được (kiểm tra Firestore Rules).</td></tr>`;
+      host.innerHTML = `<tr><td colspan="6" class="mute">${T('admin.loadFail')}</td></tr>`;
     }
   }
 
@@ -137,7 +139,7 @@
           <td>${esc((r.summary || '').slice(0, 80))}</td>
         </tr>`).join('');
     } catch (e) {
-      host.innerHTML = `<tr><td colspan="5" class="mute">Không tải được.</td></tr>`;
+      host.innerHTML = `<tr><td colspan="5" class="mute">${T('admin.loadFail')}</td></tr>`;
     }
   }
 
@@ -150,15 +152,20 @@
         <tr>
           <td>${esc(r.email)}</td>
           <td>${esc(r.openAt)}</td>
-          <td>${r.opened ? '✓' : '—'}</td>
+          <td>${r.opened ? T('admin.yes') : T('admin.no')}</td>
           <td>${esc((r.body || '').slice(0, 80))}</td>
         </tr>`).join('');
     } catch (e) {
-      host.innerHTML = `<tr><td colspan="4" class="mute">Không tải được.</td></tr>`;
+      host.innerHTML = `<tr><td colspan="4" class="mute">${T('admin.loadFail')}</td></tr>`;
     }
   }
 
   const LOADERS = { overview: loadOverview, users: loadUsers, topups: loadTopups, readings: loadReadings, letters: loadLetters };
+
+  function activeTab() {
+    const on = document.querySelector('#adminTabs [data-tab].on');
+    return on ? on.dataset.tab : 'overview';
+  }
 
   function wireTabs() {
     document.querySelectorAll('#adminTabs [data-tab]').forEach(btn => {
@@ -173,5 +180,13 @@
   }
 
   window.addEventListener('nody:auth', gate);
+  // Đổi ngôn ngữ xong thì tải lại đúng tab đang mở, để bảng dữ liệu
+  // (trạng thái, nút Duyệt/Từ chối...) hiện đúng ngôn ngữ mới ngay,
+  // không cần bấm tab khác rồi bấm lại mới thấy đổi.
+  window.addEventListener('nody:lang', () => {
+    if (!document.getElementById('adminBody').classList.contains('hidden')) {
+      (LOADERS[activeTab()] || loadOverview)();
+    }
+  });
   document.addEventListener('DOMContentLoaded', () => { wireTabs(); gate(); });
 })();

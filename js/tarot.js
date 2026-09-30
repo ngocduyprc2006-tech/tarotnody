@@ -110,6 +110,14 @@
     ]
   };
 
+  /* Tên chất / hành / lĩnh vực của chất bài theo ngôn ngữ đang bật
+     (tra từ DeckI18N.suits; thiếu thì rơi về bản tiếng Việt trong deck.js). */
+  function suitLocal(s) {
+    const lg = lang();
+    const t = lg !== 'vi' && window.DeckI18N && window.DeckI18N.suits[s.key] && window.DeckI18N.suits[s.key][lg];
+    return t ? { name: t.name, el: t.el, domain: t.domain } : { name: s.vi, el: s.el, domain: s.domain };
+  }
+
   function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
   function elBucket(card) {
     if (!card.suit) return 'major';
@@ -209,7 +217,7 @@
           .map((_, i) => `<i style="height:${14 + (i % 3) * 7}px"></i>`).join('')}</span>
         <h3>${sp.name}</h3>
         <p>${sp.desc}</p>
-        <span class="n">${sp.count} lá</span>
+        <span class="n">${T('tarot.cardCount', { n: sp.count })}</span>
       </button>`).join('');
 
     $('spreadList').querySelectorAll('[data-spread]').forEach(b => {
@@ -472,9 +480,10 @@
     chips.push(`<span class="chip">${topicName}</span>`);
     chips.push(`<span class="chip alt">${sp.name}</span>`);
     if (st.profile) chips.push(`<span class="chip">${st.profile.signName} · ${T('horo.el.' + st.profile.el)}</span>`);
-    if (suitInfo && topN > 1) chips.push(`<span class="chip">Nhiều lá ${suitInfo.vi} · hành ${suitInfo.el}</span>`);
-    if (majors) chips.push(`<span class="chip">${majors} lá Ẩn Chính</span>`);
-    chips.push(`<span class="chip alt">${revs} lá ngược</span>`);
+    const suitL = suitInfo ? suitLocal(suitInfo) : null;
+    if (suitL && topN > 1) chips.push(`<span class="chip">${T('synth.chip.suitMany', { suit: suitL.name, el: suitL.el })}</span>`);
+    if (majors) chips.push(`<span class="chip">${T('synth.chip.majors', { n: majors })}</span>`);
+    chips.push(`<span class="chip alt">${T('synth.chip.reversed', { n: revs })}</span>`);
 
     // câu mở "giải luôn" cho phần tổng quan — cùng tinh thần với bảng
     // chi tiết từng lá: nói thẳng đây là Nody đang ráp các lá lại,
@@ -491,8 +500,8 @@
       flow = T('synth.flow.mixed');
     }
 
-    if (suitInfo && topN > 1) {
-      flow += ' ' + T('synth.flow.suitRepeat', { suit: suitInfo.vi, n: topN, domain: suitInfo.domain });
+    if (suitL && topN > 1) {
+      flow += ' ' + T('synth.flow.suitRepeat', { suit: suitL.name, n: topN, domain: suitL.domain });
     }
     if (st.profile) {
       flow += ` ${T('read.profileTieLong', { sign: st.profile.signName, el: T('horo.el.' + st.profile.el).toLowerCase() })}`;
@@ -630,6 +639,29 @@
         const turned = Array.from(document.querySelectorAll('.flip')).map(f => f.classList.contains('turned'));
         buildTable(S.spread(st.spread));
         document.querySelectorAll('.flip').forEach((f, i) => { if (turned[i]) f.classList.add('turned'); });
+      }
+    });
+
+    // Đổi ngôn ngữ: I18N.apply() (chạy trong shell.js trước dòng này) vẽ
+    // lại innerHTML của #spreadTopic theo data-i18n-html, xoá mất tên chủ
+    // đề đã điền — điền lại ngay đây. Nếu đang ở bàn đọc bài thì cũng vẽ
+    // lại toàn bộ để phần luận giải theo đúng ngôn ngữ mới.
+    window.addEventListener('nody:lang', () => {
+      // Dựng lại các lưới do JS vẽ (chủ đề, kiểu trải) và tiêu đề bước rút bài
+      // để mọi thứ đang hiển thị đổi sang ngôn ngữ mới ngay, không cần tải lại.
+      buildTopics();
+      if ($('stage-spread').classList.contains('on') || st.spread) buildSpreads();
+      if ($('stage-deck').classList.contains('on') && st.spread) {
+        const spd = S.spread(st.spread);
+        $('deckTitle').textContent = T('tarot.shuffleTitle', { n: spd.count });
+        paintProgress(spd);
+      }
+      if (st.topic && $('spreadTopic')) $('spreadTopic').textContent = S.topic(st.topic).name.toLowerCase();
+      if ($('stage-read').classList.contains('on') && st.drawn.length) {
+        const turned = Array.from(document.querySelectorAll('.flip')).map(f => f.classList.contains('turned'));
+        buildTable(S.spread(st.spread));
+        document.querySelectorAll('.flip').forEach((f, i) => { if (turned[i]) f.classList.add('turned'); });
+        if (!$('synth').classList.contains('hidden')) synthesise();
       }
     });
   }

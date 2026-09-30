@@ -99,6 +99,7 @@
     if (!when) return Sh.toast(T('letter.errNoDate'), true);
     if (daysLeft(when) < 1) return Sh.toast(T('letter.errPastDate'), true);
     if (!Sh.requireLogin(T('letter.needLogin'))) return;
+    if (!Sh.cooldown('letter-send', 8)) return;
 
     $('btnSendLetter').disabled = true;
     try {

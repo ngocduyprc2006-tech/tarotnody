@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script src="js/perf.js"></script>
-<title>Photobooth cùng Nody | Nody Tarot</title>
+<title data-i18n="photo.pageTitle">Photobooth cùng Nody | Nody Tarot</title>
 <meta name="description" content="Chụp ảnh cùng lá bài vừa rút, chọn khung viền huyền bí rồi tải về hoặc chia sẻ.">
 <meta name="theme-color" content="#0a0714">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,7 +24,7 @@
   <main class="wrap section">
     <div class="section-head center">
       <h2 data-i18n="photo.title">Photobooth cùng Nody</h2>
-      <p class="mute">Chụp một tấm cùng lá bài của bạn, chọn khung, rồi tải về hoặc chia sẻ.</p>
+      <p class="mute" data-i18n="photo.desc">Chụp một tấm cùng lá bài của bạn, chọn khung, rồi tải về hoặc chia sẻ.</p>
     </div>
 
     <div class="booth-stage" id="boothStage">
@@ -57,7 +57,7 @@
       <a class="btn btn-ghost hidden" id="btnDownload" data-i18n="photo.download" download="nody-tarot-photobooth.png">Tải ảnh về</a>
     </div>
     <label class="tiny mute center" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px">
-      <input type="checkbox" id="boothTimer"> Đếm ngược 3 giây trước khi chụp
+      <input type="checkbox" id="boothTimer"> <span data-i18n="photo.timer">Đếm ngược 3 giây trước khi chụp</span>
     </label>
     <p class="tiny mute center" id="boothMsg" style="margin-top:6px"></p>
   </main>

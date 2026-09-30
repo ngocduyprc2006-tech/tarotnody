@@ -77,6 +77,7 @@
     $('btnDream').onclick = () => {
       const text = $('dreamText').value.trim();
       if (text.length < 10) return Sh.toast(T('dream.errShort'), true);
+      if (!Sh.cooldown('dream-submit', 3)) return;
 
       $('dreamResult').classList.remove('hidden');
       $('dreamBody').innerHTML = `<div class="thinking"><i></i><i></i><i></i> ${T('dream.thinking')}</div>`;

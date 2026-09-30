@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script src="js/perf.js"></script>
-<title>Bói ghép đôi theo tên và ngày sinh — Nody Tarot</title>
+<title data-i18n="match.pageTitle">Bói ghép đôi theo tên và ngày sinh — Nody Tarot</title>
 <meta name="description" content="Tính độ hợp của hai người từ cung hoàng đạo, số đường đời và duyên tên gọi.">
 <meta name="theme-color" content="#0a0714">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,8 +25,8 @@
   <header id="site-head"></header>
   <main class="wrap section">
     <div class="section-head center">
-      <h2>Hai người có hợp nhau không?</h2>
-      <p>Điểm số được ghép từ ba lớp: hành của hai cung, số đường đời, và một chút
+      <h2 data-i18n="match.title">Hai người có hợp nhau không?</h2>
+      <p data-i18n="match.desc">Điểm số được ghép từ ba lớp: hành của hai cung, số đường đời, và một chút
          duyên nằm trong chính hai cái tên.</p>
     </div>
 
@@ -34,27 +34,27 @@
       <div class="pair-grid">
         <div>
           <div class="field">
-            <label for="mA">Người thứ nhất</label>
-            <input class="input" type="text" id="mA" placeholder="Tên của bạn">
+            <label for="mA" data-i18n="match.person1">Người thứ nhất</label>
+            <input class="input" type="text" id="mA" data-i18n-placeholder="match.yourName" placeholder="Tên của bạn">
           </div>
           <div class="field">
-            <label for="mADob">Ngày sinh</label>
+            <label for="mADob" data-i18n="match.dob">Ngày sinh</label>
             <input class="input" type="date" id="mADob">
           </div>
         </div>
         <div class="pair-heart">🌸</div>
         <div>
           <div class="field">
-            <label for="mB">Người thứ hai</label>
-            <input class="input" type="text" id="mB" placeholder="Tên người ấy">
+            <label for="mB" data-i18n="match.person2">Người thứ hai</label>
+            <input class="input" type="text" id="mB" data-i18n-placeholder="match.theirName" placeholder="Tên người ấy">
           </div>
           <div class="field">
-            <label for="mBDob">Ngày sinh</label>
+            <label for="mBDob" data-i18n="match.dob">Ngày sinh</label>
             <input class="input" type="date" id="mBDob">
           </div>
         </div>
       </div>
-      <button class="btn btn-moon btn-block" id="btnMatch" style="margin-top:8px">Xem hai người hợp tới đâu</button>
+      <button class="btn btn-moon btn-block" id="btnMatch" style="margin-top:8px" data-i18n="match.submit">Xem hai người hợp tới đâu</button>
     </div>
 
     <div class="narrow result hidden" id="matchResult">

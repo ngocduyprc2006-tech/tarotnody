@@ -127,6 +127,7 @@
     document.getElementById('btnRequestTopup').onclick = async () => {
       const msg = document.getElementById('topupMsg');
       if (!window.Shell.requireLogin(window.I18N ? window.I18N.t('wallet.loginToTopup') : undefined)) return;
+      if (!window.Shell.cooldown('topup-send', 10)) return;
       const amount = Number(document.getElementById('topupAmount').value);
       const note = document.getElementById('topupNote').value.trim();
       if (!amount || amount < 10000) { msg.textContent = 'Nhập số tiền hợp lệ (tối thiểu 10.000đ) nhé.'; return; }

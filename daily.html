@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script src="js/perf.js"></script>
-<title>Lá bài hôm nay — Nody Tarot</title>
+<title data-i18n="daily.pageTitle">Lá bài hôm nay — Nody Tarot</title>
 <meta name="description" content="Mỗi ngày một lá Tarot và một việc nhỏ để làm hôm nay. Miễn phí, không cần đăng nhập.">
 <meta name="theme-color" content="#0a0714">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,10 +25,10 @@
   <header id="site-head"></header>
   <main class="wrap section">
     <div class="section-head center">
-      <h2>Lá bài của riêng hôm nay</h2>
-      <p>Một lá, một thông điệp, một việc nhỏ. Lá này cố định cho cả ngày —
+      <h2 data-i18n="daily.title">Lá bài của riêng hôm nay</h2>
+      <p data-i18n="daily.desc">Một lá, một thông điệp, một việc nhỏ. Lá này cố định cho cả ngày —
          tải lại bao nhiêu lần cũng vẫn là nó.</p>
-      <div class="streak" style="margin-top:14px">🐾 <b id="streakN">0</b> ngày liên tiếp</div>
+      <div class="streak" style="margin-top:14px" data-i18n-html="daily.streak">🐾 <b id="streakN">0</b> ngày liên tiếp</div>
     </div>
 
     <div class="daily-stage">
@@ -36,7 +36,7 @@
     </div>
 
     <div class="center" style="margin-top:20px">
-      <button class="btn btn-moon" id="btnReveal">Lật lá bài</button>
+      <button class="btn btn-moon" id="btnReveal" data-i18n="daily.reveal">Lật lá bài</button>
     </div>
 
     <div class="narrow result hidden" id="dailyResult">

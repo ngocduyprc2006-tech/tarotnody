@@ -163,10 +163,16 @@ Có thêm hai collection mới:
 
 1. Đăng nhập vào web bằng tài khoản bạn muốn làm admin — việc này tự tạo doc trong
    `users/{uid}`.
-2. Vào **Firebase Console → Firestore Database → users** → tìm đúng doc theo email →
-   sửa trường `role` từ `"user"` thành `"admin"`.
+2. Vào **Firebase Console → Firestore Database → users** → tìm đúng doc theo tên
+   đăng nhập (trường `email` trong doc này giờ giữ **tên đăng nhập**, không phải
+   email thật — xem mục "Đăng nhập bằng tên đăng nhập" bên trên) → sửa trường
+   `role` từ `"user"` thành `"admin"`.
 3. Tải lại web, đăng nhập lại, vào `admin.html` — từ giờ có thể cấp/thu hồi quyền admin
    cho người khác ngay trên trang Quản trị mà không cần vào Console nữa.
+
+   Cách khác nhanh hơn cho LẦN ĐẦU: mở `js/firebase-init.js`, thêm tên đăng nhập
+   của bạn vào mảng `Nody.ADMIN_LOGINS` — tài khoản đó sẽ tự thành admin ngay khi
+   đăng nhập, không cần sửa tay trong Console.
 
 ### Luật Firestore cần có (bắt buộc trước khi công khai web thật)
 
@@ -234,7 +240,30 @@ hay tự cộng tiền vào ví của chính mình; chỉ admin mới duyệt đ
 
 Vào Firebase Console → Authentication → Settings → Authorized domains,
 thêm domain bạn deploy lên (ví dụ `nodytarot.web.app` đã có sẵn, nhưng nếu
-gắn domain riêng thì cần thêm domain đó vào).
+gắn domain riêng thì cần thêm domain đó vào). Cũng nhớ bật provider
+**Google** ở Authentication → Sign-in method (bật một lần, không cần code).
+
+### Đăng nhập bằng tên đăng nhập (không cần email)
+
+Web đăng ký/đăng nhập bằng **tên đăng nhập** (3–20 ký tự, chữ/số/gạch dưới),
+không bắt người dùng phải có email. Cách làm: Firebase Authentication chỉ hỗ
+trợ sẵn đăng nhập bằng email/mật khẩu hoặc các nhà cung cấp như Google — không
+có kiểu "tên đăng nhập" riêng — nên `js/firebase-init.js` tự ghép tên đăng
+nhập thành một **email nội bộ, giả** không ai gửi thư tới được (ví dụ
+`minhanh98` → `minhanh98@nodytarot.users`) rồi nói chuyện với Firebase bằng
+email giả đó. Người dùng chỉ thấy và gõ tên đăng nhập, không bao giờ thấy chữ
+"email". Cách này **không cần bật thêm gì trong Firebase Console** ngoài
+Email/Password provider (Authentication → Sign-in method) vốn đã phải bật sẵn.
+
+Đánh đổi cần biết: vì không thu email thật, web **không có tính năng tự gửi
+email đặt lại mật khẩu**. Ai quên mật khẩu thì:
+- Đăng nhập lại bằng nút **Google** nếu trước đó họ dùng Google (tài khoản
+  Google tự quản lý mật khẩu riêng, không liên quan tới mật khẩu web này), hoặc
+- Admin tự đặt mật khẩu mới giúp họ qua Firebase Console → Authentication →
+  tìm đúng user → **Reset password**.
+
+Muốn đổi tên miền giả (`@nodytarot.users`) hoặc thêm xác thực số điện thoại thay
+thế, sửa hằng số `FAKE_EMAIL_DOMAIN` ở đầu `js/firebase-init.js`.
 
 ## Mở rộng bản dịch (thêm chữ, viết dài hơn cho ZH/KO/JA...)
 

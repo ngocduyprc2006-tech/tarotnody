@@ -43,7 +43,18 @@ Thêm các header chuẩn ngành cho mọi trang:
 **Bạn cần làm:** nếu deploy bằng `firebase deploy`, các header này tự có hiệu lực
 — không cần làm gì thêm.
 
-### 3. Điều thật lòng cần nói về `unsafe-inline`
+### 3. Chặn spam bấm-liên-tục (`Shell.cooldown`)
+Thêm lớp chặn bấm liên tục cho các hành động tạo dữ liệu: gửi thư tương lai (8
+giây/lần), gửi yêu cầu nạp tiền (10 giây/lần), kể giấc mơ (3 giây/lần), và mọi
+lượt lưu lịch sử bói (`Shell.log`, tối đa 1 lần / 2 giây). **Nói thật: đây KHÔNG
+phải rào chắn bảo mật thật** — ai mở DevTools Console vẫn gọi thẳng được hàm ghi
+Firestore để bỏ qua lớp này. Nó chỉ hữu ích chặn spam **vô tình** (double-click,
+bấm lia lịa) và một số script rất đơn giản. Muốn chặn spam THẬT SỰ (bot, script cố
+tình), cần **Firebase App Check** (mục 2 bên dưới) cộng với giới hạn ở tầng
+Cloud Functions — việc này cần dựng thêm hạ tầng, để dành cho một đợt sau khi
+cần.
+
+### 4. Điều thật lòng cần nói về `unsafe-inline`
 CSP ở trên có cho phép `'unsafe-inline'` cho script và style, vì code hiện tại dùng
 khá nhiều `onclick="..."` viết thẳng trong HTML (một cách viết phổ biến, không sai,
 nhưng khiến CSP không thể chặn 100% kiểu tấn công XSS nếu có lỗ hổng chèn HTML ở

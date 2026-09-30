@@ -271,7 +271,9 @@ window.DreamBook = (function () {
     const found = SYMBOLS.filter(s => keysFor(s).some(k => t.includes(k.toLowerCase()))).map(localize);
     const moodHit = MOODS.find(m => keysFor(m).some(k => t.includes(k.toLowerCase())));
     const mood = moodHit ? localize(moodHit) : null;
-    return { symbols: found, mood, generic: GENERIC };
+    const lg = lang(), gi = window.DreamI18N && window.DreamI18N.generic;
+    const generic = (lg !== 'vi' && gi && gi[lg]) ? gi[lg] : GENERIC;
+    return { symbols: found, mood, generic };
   }
 
   return { SYMBOLS, MOODS, lookup, GENERIC, localize, keysFor };

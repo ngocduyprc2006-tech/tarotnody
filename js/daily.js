@@ -139,6 +139,7 @@
     Sh.store.set('dailySeen', picked.day);
 
     window.addEventListener('nody:lang', () => {
+      paintStreak();
       if (!$('dailyCard').classList.contains('turned')) paintCard();
       else reveal.calledOnce = true; // đã lật rồi thì để nguyên nội dung phiên hiện tại
     });

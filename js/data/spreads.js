@@ -7,7 +7,7 @@
 window.SpreadData = (function () {
   'use strict';
 
-  const SPREADS = [
+  const SPREADS_VI = [
     {
       id: 'one',
       name: 'Một lá',
@@ -92,7 +92,7 @@ window.SpreadData = (function () {
   ];
 
   /* Chủ đề — đổi giọng luận giải cho hợp chuyện bạn hỏi */
-  const TOPICS = [
+  const TOPICS_VI = [
     { id: 'work',    glyph: '🌿', name: 'Công việc',   hint: 'nghề nghiệp, học hành, tiền bạc' },
     { id: 'love',    glyph: '🌸', name: 'Tình cảm',    hint: 'người thương, gia đình, bạn bè' },
     { id: 'change',  glyph: '🍃', name: 'Ngã rẽ',      hint: 'chuyển chỗ, đổi việc, quyết định lớn' },
@@ -102,7 +102,7 @@ window.SpreadData = (function () {
   ];
 
   /* Giọng lời khuyên theo chủ đề */
-  const TOPIC_VOICE = {
+  const VOICE_VI = {
     work: {
       up: 'Ở chuyện công việc, đây là tín hiệu để bạn làm tới. Chọn một việc cụ thể trong tuần này và hoàn thành nó trọn vẹn.',
       rev: 'Ở chuyện công việc, lá ngược khuyên bạn chậm lại một nhịp. Có chỗ đang gồng mà bạn chưa chịu thừa nhận là đang gồng.'
@@ -129,8 +129,45 @@ window.SpreadData = (function () {
     }
   };
 
-  return { SPREADS, TOPICS, TOPIC_VOICE,
-    spread: (id) => SPREADS.find(s => s.id === id),
-    topic:  (id) => TOPICS.find(t => t.id === id)
+  /* ---------- Tra bản dịch theo ngôn ngữ đang bật ----------
+     Các mảng *_VI ở trên là bản gốc tiếng Việt. Ba getter bên dưới trả
+     về bản đã dịch (dựng mới mỗi lần gọi, nên đổi ngôn ngữ là có hiệu
+     lực ngay). Toạ độ x/y, số lá, chiều cao giữ nguyên; chỉ thay chữ. */
+  const lang = () => (window.I18N ? window.I18N.get() : 'vi');
+  const TR = () => window.SpreadI18N || { spreads: {}, topics: {}, voice: {} };
+
+  function localSpreads() {
+    const lg = lang(), tr = TR().spreads;
+    return SPREADS_VI.map(sp => {
+      const t = lg !== 'vi' && tr[sp.id] && tr[sp.id][lg];
+      if (!t) return sp;
+      return Object.assign({}, sp, {
+        name: t.name, desc: t.desc,
+        slots: sp.slots.map((slot, i) => Object.assign({}, slot, { label: t.slots[i] || slot.label }))
+      });
+    });
+  }
+  function localTopics() {
+    const lg = lang(), tr = TR().topics;
+    return TOPICS_VI.map(tp => {
+      const t = lg !== 'vi' && tr[tp.id] && tr[tp.id][lg];
+      return t ? Object.assign({}, tp, { name: t.name, hint: t.hint }) : tp;
+    });
+  }
+  function localVoice() {
+    const lg = lang(), tr = TR().voice, out = {};
+    Object.keys(VOICE_VI).forEach(k => {
+      const t = lg !== 'vi' && tr[k] && tr[k][lg];
+      out[k] = t || VOICE_VI[k];
+    });
+    return out;
+  }
+
+  return {
+    get SPREADS() { return localSpreads(); },
+    get TOPICS() { return localTopics(); },
+    get TOPIC_VOICE() { return localVoice(); },
+    spread: (id) => localSpreads().find(s => s.id === id),
+    topic:  (id) => localTopics().find(t => t.id === id)
   };
 })();

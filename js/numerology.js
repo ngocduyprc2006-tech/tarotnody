@@ -16,38 +16,17 @@
     return row || L.num(n);
   }
 
-  function roleLabel(role) {
-    const lg = lang();
-    if (lg === 'vi' || !LI) return { name: role.name, note: role.note };
-    if (lg === 'en') return { name: LI.numRoles[role.key], note: LI.numRoles.en ? LI.numRoles.en : role.note };
-    return { name: role.name, note: role.note };
-  }
-
-  // Bảng nhãn vai trò theo ngôn ngữ — tách riêng cho rõ vì cấu trúc
-  // dữ liệu gốc (LI.numRoles) gộp theo ngôn ngữ, không theo vai trò.
+  // Tên & ghi chú của từng vai trò (đường đời/linh hồn/...) theo ngôn ngữ
+  // đang bật; thiếu thì rơi về bản tiếng Việt gốc trong lore.js.
   function roleName(role) {
     const lg = lang();
-    if (lg === 'vi' || !LI) return role.name;
-    const table = { en: LI.numRoles.en, zh: LI.numRoles.zh, ko: LI.numRoles.ko, ja: LI.numRoles.ja };
-    const t = table[lg];
-    return (t && t[role.key]) || role.name;
+    const t = LI && LI.numRoles[lg];
+    return (lg !== 'vi' && t && t[role.key]) || role.name;
   }
-  function roleNote(role) {
-    const lg = lang();
-    if (lg === 'vi' || !LI) return role.note;
-    if (lg === 'en') return (LI.numRoles.en && LI.numRoles.en.note) || role.note; // unused fallback
-    const table = { zh: LI.numRoles.zhNote, ko: LI.numRoles.koNote, ja: LI.numRoles.jaNote };
-    const t = table[lg];
-    return (t && t[role.key]) || role.note;
-  }
-  const EN_ROLE_NOTE = {
-    life: 'the main lesson of your whole life', soul: 'what you truly long for',
-    person: 'the impression others get from you', expr: 'the ability you bring into the world',
-    birth: 'your innate gift'
-  };
   function roleNoteFinal(role) {
-    if (lang() === 'en') return EN_ROLE_NOTE[role.key] || role.note;
-    return roleNote(role);
+    const lg = lang();
+    const t = LI && LI.numRoles[lg + 'Note'];
+    return (lg !== 'vi' && t && t[role.key]) || role.note;
   }
 
   function personalYearText(py) {
