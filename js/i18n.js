@@ -522,6 +522,9 @@
     'common.tooFast':   { vi: 'Bạn thao tác hơi nhanh, chờ {s} giây nữa nhé.', en: "That's a bit fast — please wait {s}s.", zh: '操作太快了，请等待{s}秒。', ko: '조금 빠르네요, {s}초만 기다려 주세요.', ja: '少し早すぎます。{s}秒お待ちください。' },
     'common.needLogin': { vi: 'Bạn đăng nhập trước nhé, để Nody giữ giúp kết quả.', en: 'Please log in first so Nody can save this for you.', zh: '请先登录，这样诺迪才能帮你保存结果。', ko: '먼저 로그인해 주세요, 노디가 결과를 저장해드릴게요.', ja: '先にログインしてください。ノディが結果を保存します。' },
     'head.themeToggle': { vi: 'Đổi giao diện', en: 'Toggle theme', zh: '切换主题', ko: '테마 전환', ja: 'テーマ切替' },
+    'pwa.install': { vi: 'Cài đặt ứng dụng', en: 'Install app', zh: '安装应用', ko: '앱 설치', ja: 'アプリをインストール' },
+    'pwa.installedToast': { vi: 'Đã cài xong, hẹn gặp lại trên màn hình chính 🌙', en: "All set — see you on your home screen 🌙", zh: '安装完成，主屏幕见 🌙', ko: '설치 완료, 홈 화면에서 만나요 🌙', ja: 'インストール完了。ホーム画面でまた会いましょう 🌙' },
+    'pwa.iosHint': { vi: 'Trên iPhone: bấm nút Chia sẻ ở thanh dưới, rồi chọn "Thêm vào MH chính".', en: 'On iPhone: tap the Share button in the bottom bar, then choose "Add to Home Screen".', zh: '在 iPhone 上：点击底部栏的分享按钮，然后选择"添加到主屏幕"。', ko: '아이폰에서는: 하단 바의 공유 버튼을 누른 뒤 "홈 화면에 추가"를 선택하세요.', ja: 'iPhoneでは：下部バーの共有ボタンをタップし、「ホーム画面に追加」を選んでください。' },
 
     /* ---------- nút & bảng hướng dẫn nổi ---------- */
     'help.btnTitle':    { vi: 'Trợ giúp — cách dùng web', en: 'Help — how this site works', zh: '帮助 — 使用说明', ko: '도움말 — 사용법', ja: 'ヘルプ — 使い方' },

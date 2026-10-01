@@ -265,6 +265,34 @@ email đặt lại mật khẩu**. Ai quên mật khẩu thì:
 Muốn đổi tên miền giả (`@nodytarot.users`) hoặc thêm xác thực số điện thoại thay
 thế, sửa hằng số `FAKE_EMAIL_DOMAIN` ở đầu `js/firebase-init.js`.
 
+## Cài đặt như ứng dụng (PWA)
+
+Web giờ cài được vào màn hình chính như một app thật — không cần lên App Store
+/ Play Store. Những file phụ trách việc này:
+
+- **`manifest.json`** — tên app, icon, màu nền, kiểu mở (toàn màn hình, không
+  thanh địa chỉ).
+- **`sw.js`** (Service Worker) — cho phép mở lại nhanh hơn và xem được giao
+  diện ngay cả khi mất mạng. Chỉ cache phần tĩnh (HTML/CSS/JS/ảnh cùng gốc) —
+  **không bao giờ** đụng tới Firebase (đăng nhập, ví tiền, lịch sử bói) nên dữ
+  liệu luôn mới nhất, không lo bị cache nhầm.
+- **`js/pwa.js`** — tự đăng ký Service Worker, và tự hiện nút 📲 ở khay công cụ
+  đầu trang khi trình duyệt báo có thể cài đặt. Trên iPhone (Safari không hỗ
+  trợ hộp thoại cài tự động), nút này đổi thành mẹo hướng dẫn qua nút Chia sẻ.
+- **`img/icon-*.png`, `favicon.ico`** — icon app, tự vẽ bằng mã (không phải
+  ảnh thật) theo đúng màu thương hiệu (xanh ánh trăng trên nền tối). Muốn đổi
+  icon thật, thay các file trong thư mục `img/` bằng ảnh PNG cùng kích thước
+  (xem tên file để biết đúng size).
+
+**Bạn cần làm:** không cần làm gì thêm — deploy lên Firebase Hosting như bình
+thường là chạy được, vì `sw.js` chỉ hoạt động qua HTTPS (Firebase Hosting đã
+tự có HTTPS). Muốn kiểm tra đã cài đặt được chưa: mở Chrome trên điện thoại,
+vào web, nếu thấy biểu tượng cài đặt trên thanh địa chỉ (hoặc nút 📲 trong web)
+là đã sẵn sàng.
+
+Muốn đổi tên hiển thị khi cài, màu nền splash screen, hay icon: sửa trực tiếp
+trong `manifest.json`.
+
 ## Mở rộng bản dịch (thêm chữ, viết dài hơn cho ZH/KO/JA...)
 
 - **Chữ giao diện** (menu, nút, form...): sửa object `STRINGS` trong `js/i18n.js`. Mỗi
